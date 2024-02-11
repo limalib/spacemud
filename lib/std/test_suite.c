@@ -141,11 +141,15 @@ int std_clone_move(object ob, mixed items)
 // Result of call_other will fail if value is fail_on.
 // Example: inv_do(troll, "wield", "axe", "query_wielding", 0)
 //    Troll wields axe, and if axe->query_wielding() == 0 we fail.
+//
+// If check is set to "gone", the test will return true if the object is gone.
 varargs int inv_do(object who, string doo, string what, string check, int fail_on)
 {
    object ob;
    cmd(who, doo + " " + what);
    ob = present(what, who);
+   if (!ob && check == "gone")
+      return 1;
    if (!ob || call_other(ob, check) == fail_on)
    {
       debug("Failed to " + doo + " " + what);
