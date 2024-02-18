@@ -105,8 +105,10 @@ int decay_it()
 
    num_decays--;
 
-   if (!num_decays && auto_remove)
+   if (num_decays <= 0 && auto_remove)
+   {
       remove();
+   }
    if (!num_decays)
       return 0;
    return 1;
@@ -122,6 +124,7 @@ int state_update()
 
 void stop_decay()
 {
+   STATE_D->remove_from_queue(this_object());
    decays = 0;
 }
 
