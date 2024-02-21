@@ -126,4 +126,5 @@ void stop_decay()
 void mudlib_setup()
 {
    m_stateful::mudlib_setup();
+   this_object()->add_save(({"num_decays"}));
 }
