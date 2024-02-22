@@ -32,9 +32,9 @@ void set_lit(int x)
    m_light_source::set_lit(x);
 }
 
-int query_is_lit()
+int is_lit()
 {
-   return m_lightable::query_is_lit();
+   return m_lightable::is_lit();
 }
 
 mixed check_fuel()
@@ -64,7 +64,7 @@ mixed light()
 //This object is only stateful when it's lit. Otherwise it's not.
 int is_stateful()
 {
-   return query_is_lit();
+   return is_lit();
 }
 
 void burn_out()

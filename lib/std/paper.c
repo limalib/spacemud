@@ -61,7 +61,7 @@ mixed extinguish()
 
 string read()
 {
-   if (query_is_lit() && !mangled)
+   if (is_lit() && !mangled)
       mangle_text();
    return ::read();
 }

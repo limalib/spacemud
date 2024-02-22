@@ -14,10 +14,15 @@ int last_time;
 
 mapping queue = ([]);
 
+int in_queue(object ob)
+{
+   return member_array(ob, flatten_array(values(queue))) != -1;
+}
+
 varargs void add_to_queue(object ob, int add_to_time)
 {
    int update_time;
-   if (ob && ob->query_call_interval())
+   if (ob && ob->query_call_interval() && !in_queue(ob))
    {
       update_time = (ob->query_call_interval() * 60 + time()) + add_to_time;
 
@@ -70,6 +75,8 @@ void process_queue()
       }
       foreach (object target in targets)
       {
+         if (target && !target->is_stateful())
+            continue;
          if (update_time < time() && target->state_update())
             add_to_queue(target);
       }
