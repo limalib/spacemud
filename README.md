@@ -9,7 +9,12 @@ Please see https://limamudlib.readthedocs.io/en/latest/
 
 # How to test and contribute
 ```
+#Stable 
 git clone --recurse-submodules https://github.com/fluffos/lima
+
+#or use (for development)
+#git clone --recurse-submodules https://github.com/tsathoqqua/lima
+
 cd lima
 ./build.sh
 ./run.sh
