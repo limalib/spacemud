@@ -19,10 +19,11 @@ int in_queue(object ob)
    return member_array(ob, flatten_array(values(queue))) != -1;
 }
 
-varargs void add_to_queue(object ob, int add_to_time)
+varargs void add_to_queue(object ob, int add_to_time, int force)
 {
    int update_time;
-   if (ob && ob->query_call_interval() && !in_queue(ob))
+
+   if (ob && ob->query_call_interval() && (force || !in_queue(ob)))
    {
       update_time = (ob->query_call_interval() * 60 + time()) + add_to_time;
 
@@ -67,22 +68,31 @@ void process_queue()
    int t = time();
    foreach (int update_time, object * targets in queue)
    {
+      // Strip away any objects from the queue that are now 0 (destroyed/removed).
       queue[update_time] -= ({0});
+
+      // If targets array is empty, just delete the entire entry - and on we go.
       if (!sizeof(targets))
       {
          map_delete(queue, update_time);
          continue;
       }
+      // Walk through each target in targets and check if they are still stateful and return true on state_update().
       foreach (object target in targets)
       {
          if (target && !target->is_stateful())
             continue;
          if (update_time < time() && target->state_update())
-            add_to_queue(target);
+         {
+            add_to_queue(target, 0, 1);
+         }
       }
+
+      // Remove old timestamps from the queue
       if (update_time < time())
          map_delete(queue, update_time);
-      processed++;
+
+      // We'll be back later for more processing.
       if (processed == MAX_PROCESSED)
          return;
    }
@@ -119,7 +129,16 @@ void create()
 
 string stat_me()
 {
+   string squeue = "";
+   foreach (int update_time, object * targets in queue)
+   {
+      string *str_targets = map(targets, ( : sprintf("%O", $1) :));
+      squeue += " In " + (update_time - time()) + " seconds:\n";
+      squeue += "\t" + format_list(str_targets) + "\n";
+   }
+
    return "STAT_D:\n-------\n" + "Queue Length: " + sizeof(keys(queue)) +
           "\n"
-          "\n";
+          "\n" +
+          squeue;
 }
