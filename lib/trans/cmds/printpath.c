@@ -6,7 +6,7 @@
 
 //: COMMAND
 //$$ see: addpath, rmpath
-// USAGE: showpath
+// USAGE: printpath
 //
 // This command will show you your current list of exec paths.
 
