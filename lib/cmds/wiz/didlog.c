@@ -12,6 +12,11 @@
 //       didlog <value>
 //       didlog /on
 //       didlog /off
+//       didlog /help (more info here!)
+//       didlog /versions
+//       didlog /version <name>
+//       didlog /version <name> <pattern> <days>
+//       dudlog /newversion
 //
 // Shows you the "did" log (ie log of changes recorded by wizards).
 // With no arguments it shows the log for the past day.
@@ -37,6 +42,7 @@ void main(string str)
          version = pattern;
       else
          out("Unknown version '" + pattern + "'.");
+      pattern = 0;
    }
 
    if (!str)
@@ -44,11 +50,12 @@ void main(string str)
    else if (str == "help" || str == "/help" && this_body())
    {
       out("didlog:\n"
-          "\tdidlog <days>|all        - Show didlog since <days> or all.\n"
-          "\tdidlog /version <name>   - Show all changes in <version>.\n"
-          "\tdidlog /on|/off          - Turn didlog on login on/off.\n"
-          "\tdidlog /newversion       - Set a new version (admin only).\n"
-          "\tdidlog /versions         - Show the versions stored.");
+          "  didlog <days>|all                     - Show didlog since <days> or all.\n"
+          "  didlog /version <name>                - Show all changes in <version>.\n"
+          "  didlog /on|/off                       - Turn didlog on login on/off.\n"
+          "  didlog /newversion                    - Set a new version (admin only).\n"
+          "  didlog /versions                      - Show the versions stored.\n"
+          "  didlog /version <name> <pat> <days>   - Show changes in version matching pattern since days.");
       return;
    }
    else if (str == "/off" && this_body())
@@ -90,13 +97,13 @@ void main(string str)
    }
    else if (!(ndays = to_int(str)))
    {
-      if (sscanf(str, "%s %d", pattern, ndays) != 2)
+      if (str == "all")
+         ndays = -1;
+      else if (sscanf(str, "%s %d", pattern, ndays) != 2)
       {
          pattern = str;
          ndays = 1;
       }
-      if (str == "all")
-         ndays = -1;
    }
 
    if (ndays == 1)
