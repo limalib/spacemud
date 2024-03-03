@@ -1,24 +1,32 @@
 /*
 ** state_d.c -- Changes states for objects on the MUD
-**
-** This daemon periodically calls objects on the MUD to allow them to change state. This can
-** be used to grow crops, make food rot, make critically wounded things die.
-**
 ** Tsath 2020-07-10 (Created)
 */
 
+//: MODULE
+// This daemon periodically calls objects on the MUD to allow them to change state. This can
+// be used to grow crops, make food rot, make critically wounded things die.
+//
+// This daemon runs on a heartbeat, so is as granular as the heartbeat settings.
+// See M_STATEFUL, M_DECAY, LIGHT_OBJECT and ^std/consumable/hamburger.c for some examples of usage.
+
 #define MAX_PROCESSED 10
-#define INITIAL_SPREAD 20
+#define INITIAL_SPREAD 5
 
 int last_time;
 
 mapping queue = ([]);
 
+//: MODULE in_queue
+// Checks if ob is in the queue (anywhere in queue).
 int in_queue(object ob)
 {
    return member_array(ob, flatten_array(values(queue))) != -1;
 }
 
+//: FUNCTION add_to_queue
+// Adds ob to queue, to be scheduled at NOW + add_to_time in minutes.
+// If force=1, the object is added even if already in queue.
 varargs void add_to_queue(object ob, int add_to_time, int force)
 {
    int update_time;
@@ -34,12 +42,14 @@ varargs void add_to_queue(object ob, int add_to_time, int force)
    }
 }
 
+//: FUNCTION add_to_queue_secs
 // Useful for faster testing, should probably not be used in the real mudlib.
-// If it's this brief, then use a call_out().
-varargs void add_to_queue_secs(object ob, int add_to_time)
+// If it's this brief, then use a call_out(). See add_to_queue for documentation.
+// This function adds seconds, and not minutes.
+varargs void add_to_queue_secs(object ob, int add_to_time, int force)
 {
    int update_time;
-   if (ob && ob->query_call_interval())
+   if (ob && ob->query_call_interval() && (force || !in_queue(ob)))
    {
       update_time = (time()) + add_to_time;
 
@@ -50,6 +60,8 @@ varargs void add_to_queue_secs(object ob, int add_to_time)
    }
 }
 
+//: FUNCTION remove_from_queue
+// Removes ob from the queue nomatter when scheduled.
 varargs void remove_from_queue(object ob)
 {
    foreach (int update_time, object * targets in queue)
@@ -62,6 +74,7 @@ varargs void remove_from_queue(object ob)
    }
 }
 
+private
 void process_queue()
 {
    int processed;
@@ -83,9 +96,7 @@ void process_queue()
          if (target && !target->is_stateful())
             continue;
          if (update_time < time() && target->state_update())
-         {
             add_to_queue(target, 0, 1);
-         }
       }
 
       // Remove old timestamps from the queue
@@ -98,22 +109,18 @@ void process_queue()
    }
 }
 
-mapping queue()
-{
-   return queue;
-}
-
-void heart_beat()
-{
-   process_queue();
-}
-
+private
 void capture_all_statefuls()
 {
    object *statefuls = filter_array(objects(), ( : clonep($1) && $1->is_stateful() :));
    queue = ([]);
    foreach (object ob in statefuls)
       add_to_queue(ob, random(INITIAL_SPREAD));
+}
+
+void heart_beat()
+{
+   process_queue();
 }
 
 void create()
@@ -137,7 +144,7 @@ string stat_me()
       squeue += "\t" + format_list(str_targets) + "\n";
    }
 
-   return "STAT_D:\n-------\n" + "Queue Length: " + sizeof(keys(queue)) +
+   return "STATE_D:\n-------\n" + "Queue Length: " + sizeof(keys(queue)) +
           "\n"
           "\n" +
           squeue;
