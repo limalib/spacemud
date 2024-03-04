@@ -292,6 +292,7 @@
 
 #define ADDTO_OB          "/trans/obj/addto_ob"
 #define ADMTOOL           "/obj/admtool/admtool2"
+#define ADMTOOL_BASE      "/obj/admtool/internal/base"
 #define CONFIG_EDITOR     "/trans/obj/config_editor"
 #define DATAEDIT          "/trans/obj/dataedit"
 #define ED_SESSION        "/trans/obj/ed_session"
