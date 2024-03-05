@@ -153,10 +153,10 @@
 #define OUTDOOR_ROOM       "/std/outdoor_room"
 #define WATER_ROOM         "/std/water_room"
 
-#define HEAVEN             "/domains/std/Heaven"
-#define LAB                "/domains/std/Laboratory"
-#define VOID_ROOM          "/domains/std/Void"
-#define WIZ_ROOM           "/domains/std/Wizroom"
+#define HEAVEN             "/domains/std/room/Heaven"
+#define LAB                "/domains/std/room/Laboratory"
+#define VOID_ROOM          "/domains/std/room/Void"
+#define WIZ_ROOM           "/domains/std/room/Wizroom"
 
 #define	MENUS              "/std/menu"
 #define ADVERSARY          "/std/adversary"
