@@ -34,6 +34,7 @@
 
 #include <mudlib.h>
 #include <security.h>
+#include <config/user_menu.h>
 
 inherit M_DAEMON_DATA;
 
@@ -69,8 +70,8 @@ class var_info
    string *lines;
 }
 
-nomask
-void register_body(string user, string body)
+nomask void
+register_body(string user, string body)
 {
    if (!arrayp(user_names[user]))
       user_names[user] = ({});
@@ -79,8 +80,7 @@ void register_body(string user, string body)
    save_me();
 }
 
-nomask
-void remove_body(string user, string body)
+nomask void remove_body(string user, string body)
 {
    if (!arrayp(user_names[user]))
       user_names[user] = ({});
@@ -91,11 +91,12 @@ void remove_body(string user, string body)
 
 string find_real_user(string body)
 {
-   foreach(string user, string *bodies in user_names)
+   foreach (string user, string * bodies in user_names)
    {
-      if (member_array(body,bodies)!=-1)
+      if (member_array(body, bodies) != -1)
          return user;
    }
+   return body;
 }
 
 void create()
@@ -141,7 +142,9 @@ nomask mixed *query_variable(string userid, string *vlist)
    mixed *results;
    string var;
 
-   userid=find_real_user(userid);
+#ifdef USE_USER_MENU
+   userid = find_real_user(userid);
+#endif
 
    if (!check_privilege(1))
       error("insufficient privilege to query variables\n");
@@ -185,6 +188,8 @@ nomask mixed *query_variable(string userid, string *vlist)
          {
             if (!is_file(which.fname))
             {
+               TBUG(which.fname);
+               TBUG("no such player");
                /* no such player */
                return 0;
             }
