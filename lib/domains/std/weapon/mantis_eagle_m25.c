@@ -15,4 +15,5 @@ void setup()
    set_ammo_type("11mm bullets");
    set_combat_messages("combat-torch");
    set_salvageable((["textile":10, "metal":70, "wood":20]));
+   set_can_dual_wield(1);
 }
