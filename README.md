@@ -5,7 +5,7 @@ Lima Mudlib that work with latest FluffOS
 - #LIMA Channel on LPC Discord - https://discord.gg/wzUbBgs3AQ
 
 # Documentation
-Please see https://limamudlib.readthedocs.io/en/latest/
+Please see https://limamudlib.readthedocs.io/
 
 # How to test and contribute
 ```
