@@ -177,7 +177,6 @@ nomask void rebuild_data()
 
    topics = ([]);
    restrict = ([]);
-   functions = ([]);
    fun_total = 0;
 
    lines = explode(read_file(DIR_HELP "/_restrict"), "\n");
@@ -225,7 +224,7 @@ nomask string *find_topic(string name)
           mixed *parts = explode(file, "/");
           if (sizeof(parts) < 3)
              return 1;
-          return (lvl >= restrict[parts[1]]);
+          return (lvl >= restrict[parts[1]] || lvl >= restrict[parts[1] + "/" + parts[2]]);
        },
        lvl);
 }
