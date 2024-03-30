@@ -26,7 +26,7 @@
 //
 //    ``unittest mytest``
 //
-// If you file is called */std/tests/mytest.c*
+// If your file is called */std/tests/mytest.c*
 
 inherit M_WIDGETS;
 
@@ -189,6 +189,7 @@ varargs int inv_do(object who, string doo, string what, string check, int fail_o
    }
    return 1;
 }
+
 
 //: FUNCTION add_test_true
 // Add a test to the queue that should be considered successful if it returns a value evaluating to true.
