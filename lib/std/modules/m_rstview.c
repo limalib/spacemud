@@ -228,7 +228,14 @@ string *replace_code(string *lines, string searchtext)
 string reformat_see(string line)
 {
    // ## Ack! My deepest apoligies for this one. Let me know if you figure out what it does, I might have a job for you.
-   return "<227>See<res>: " + format_list(map(filter_array(explode(line, " "), ( : $1[0] != '<' :)), ( : $1[1..] :))[1..]) + "\n";
+   return "<227>See<res>: " +
+          format_list(map(filter_array(explode(line, " "), (
+                                                               : $1[0] != '<'
+                                                               :)),
+                          (
+                              : $1[1..]
+                              :))[1..]) +
+          "\n";
 }
 
 //: FUNCTION rst_format
@@ -288,9 +295,7 @@ string rst_format(string *file, string searchtext)
       {
          if (lines - 1 < 0)
             continue;
-         output[lines - 1] =
-             "\n" + header_type(line) + output[lines - 1][5..] +
-             repeat_string("_", (this_user()->query_screen_width() - 5) - colour_strlen(output[lines - 1]));
+         output[lines - 1] = "\n" + header_type(line) + output[lines - 1][5..];
          continue;
       }
 

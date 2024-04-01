@@ -62,6 +62,8 @@ string md_format(string *file, string searchtext)
             line = replace_types(line, k, "<039>" + k + "<res>");
       }
 
+      line = replace_string(line, "#include", "<212>#include<214>");
+      line = replace_string(line, "//", "<035>//");
       line = replace_string(line, "###", "<208>") + "<res>";
 
       output += ({line});
