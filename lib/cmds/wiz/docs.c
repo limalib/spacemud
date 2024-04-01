@@ -28,7 +28,7 @@ void main(mixed arg)
    int rst_files, md_files, other_files;
    mapping rst_categories = ([]);
    mapping rst_tag_cats = ([]);
-   int width = this_user()->query_screen_width() - 28;
+   int width = this_user()->query_screen_width() - 30;
    string *rst_tags = HELP_D->query_tags()["RST"];
 
    // Build help pages index of unique pages
