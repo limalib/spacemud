@@ -8,7 +8,8 @@
 //     ``hp``
 //
 // Prints your current HP on all your limbs with AC stats and types.
-// TAGS: RST
+//
+// .. TAGS: RST
 
 #include <classes.h>
 #include <limbs.h>

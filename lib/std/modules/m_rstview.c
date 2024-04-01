@@ -249,7 +249,7 @@ string rst_format(string *file, string searchtext)
          continue;
 
       // Skip TAGS line
-      if (strlen(line) > 4 && line[0..3] == "TAGS")
+      if (strlen(line) > 4 && line[0..6] == ".. TAGS")
          continue;
 
       if (strlen(line) > 5 && line[0..3] == "See:")

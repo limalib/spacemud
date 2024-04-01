@@ -3,9 +3,13 @@
 // Tsath 2024
 
 //: COMMAND
-// USAGE:  docs
+// USAGE
+//   |  ``docs``
+//   |  ``docs refresh`` - rebuild HELP_D.
 //
 // This command shows status of the documentation.
+//
+// .. TAGS: RST
 
 inherit CMD;
 inherit M_WIDGETS;
@@ -29,7 +33,6 @@ void main(mixed arg)
 
    // Build help pages index of unique pages
    help_pages = clean_array(flatten_array(values(HELP_D->query_topics())));
-
    if (arg == "refresh")
       return update_stats();
 
@@ -50,11 +53,11 @@ void main(mixed arg)
    rst_files = sizeof(filter_array(help_pages, ( : $1[ < 4..] == ".rst" :)));
    md_files = sizeof(filter_array(help_pages, ( : $1[ < 3..] == ".md" :)));
    other_files = sizeof(help_pages) - md_files - rst_files;
-   write("                      Rst files   : " + rst_files + "    MD files    : " + md_files + "    Other files : " + other_files + "\n");
+   write("                           Rst files: " + rst_files + "    MD files: " + md_files + "    Other files: " + other_files + "\n");
 
    // Print categories
    foreach (string cat, int val in rst_categories)
    {
-      write(sprintf("[%3.3s/%3.3s] %15.15s %s", ""+rst_tag_cats[cat], ""+val, cat, green_bar(rst_tag_cats[cat], val, width)));
+      write(sprintf("[%3.3s/%3.3s] %15.15s %s", "" + rst_tag_cats[cat], "" + val, cat, green_bar(rst_tag_cats[cat], val, width)));
    }
 }

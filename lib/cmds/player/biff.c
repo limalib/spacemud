@@ -12,13 +12,15 @@
 //$$see: mail
 //
 // USAGE
-//      ``biff`` 
-//      ``biff on``
-//      ``biff off``
+// 
+//    |  ``biff`` 
+//    |  ``biff on``
+//    |  ``biff off``
 //
 // Setting biff on or off will determine whether you receive mail notifications from the in-game
 // mail system or not.
-// TAGS: RST
+//
+// .. TAGS: RST
 
 #include <flags.h>
 

@@ -91,9 +91,9 @@ parse_rst(string path, string file)
       string fun, tmp;
       fun = explode(explode(f, "(")[0], " ")[ < 1];
 
-      if (strlen(f) > 7 && f[0..4] == "TAGS:")
+      if (strlen(f) > 7 && f[0..7] == ".. TAGS:")
       {
-         string *taglist = explode(f[6..], " ");
+         string *taglist = explode(f[8..], " ");
          foreach (string t in taglist)
          {
             if (tags[t])
@@ -101,6 +101,7 @@ parse_rst(string path, string file)
             else
                tags[t] = ({path + file});
          }
+         continue;
       }
 
       if (topics[fun])
