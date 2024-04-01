@@ -30,6 +30,10 @@ nosave mapping topic_refs =
         "/help/player/command/":"player_commands", "/help/player/quests/":"quests", "/help/player/":"topics",
             "/help/wizard/bin/":"wizard_commands", "/help/admin/command/":"admin_commands", ]);
 
+// mapping tags holds tags for each of the documentation files.
+private
+mapping tags;
+
 /*
 ** This mapping contains all the topics in the system.  It
 ** maps topic names to an array of pathnames.  The level-
@@ -75,7 +79,7 @@ int f_restrict(string s)
 private
 parse_rst(string path, string file)
 {
-   string *contents = filter_array(explode(read_file(path + file), "\n"), ( : strsrch($1, ".. c:function::") != -1 :));
+   string *contents = filter_array(explode(read_file(path + file), "\n"), ( : strsrch($1, ".. c:function::") != -1 || strsrch($1, "TAGS: ") != -1 :));
 
    if (!sizeof(contents))
       return;
@@ -86,6 +90,18 @@ parse_rst(string path, string file)
    {
       string fun, tmp;
       fun = explode(explode(f, "(")[0], " ")[ < 1];
+
+      if (strlen(f) > 7 && f[0..4] == "TAGS:")
+      {
+         string *taglist = explode(f[6..], " ");
+         foreach (string t in taglist)
+         {
+            if (tags[t])
+               tags[t] += ({path + file});
+            else
+               tags[t] = ({path + file});
+         }
+      }
 
       if (topics[fun])
          topics[fun] += ({path + file});
@@ -176,6 +192,7 @@ nomask void rebuild_data()
    initiator = this_user();
 
    topics = ([]);
+   tags = ([]);
    restrict = ([]);
    fun_total = 0;
 
@@ -251,6 +268,11 @@ nomask void conflict_report()
 mapping query_topics()
 {
    return topics;
+}
+
+mapping query_tags()
+{
+   return tags;
 }
 
 mapping query_restrict()

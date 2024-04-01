@@ -175,7 +175,7 @@ nomask void parse_file(string fname, string topic)
 **
 ** Present a topic to the user
 */
-private
+private varargs
 nomask void present_topic(string fname, string topic)
 {
    switch (file_size(fname))
@@ -247,7 +247,7 @@ nomask void lookup_topic(string topic)
    }
    else if (sizeof(files) == 1)
    {
-      present_topic(files[0], topic);
+      present_topic(files[0]);
    }
    else
    {
