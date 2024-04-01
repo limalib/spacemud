@@ -145,6 +145,11 @@ void process_file(string path, string file)
       file = file[0.. < 5];
    }
 
+   if (strlen(file) > 4 && file[ < 3..] == ".md")
+   {
+      file = file[0.. < 4];
+   }
+
    file = lower_case(file);
    if (topics[file])
       topics[file] += ({pathname});
