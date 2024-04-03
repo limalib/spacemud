@@ -2,6 +2,11 @@
 
 //: COMMAND
 //$$see: dbx
+// USAGE: ``dbxframe [<who>] <frame>``
+//
+// 
+//
+//
 
 #include <security.h>
 
