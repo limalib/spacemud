@@ -205,3 +205,11 @@ string emoji_replace(string input, int msg_type)
    }
    return input;
 }
+
+string *emoji_replace_array(string *input, int msg_type)
+{
+   string *out = ({});
+   foreach (string i in input)
+      out += ({emoji_replace(i, msg_type)});
+   return out;
+}
