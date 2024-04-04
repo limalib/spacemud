@@ -10,7 +10,6 @@
 #define WIZ_CHANNELS ({"wiz", "errors", "announce", "news"})
 
 void save_me();
-object query_shell_ob();
 
 varargs void receive_private_msg(string msg, int message_type, mixed other);
 
