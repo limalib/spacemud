@@ -329,11 +329,11 @@ void process_file(string fname)
 
    if (sizeof(cmd_info) > 0)
    {
-      string cfunch = file_info[FILE_TYPE] == "player command" ? "Player Command" : "Command";
+      string cfun = file_info[FILE_TYPE] == "player command" ? "Player Command" : "Command";
       int todoi = 1;
       int usage = 0;
 
-      rstout += cfunch + "\n" + repeat_string("=", strlen(cfunch)) + "\n\n";
+      rstout += cfun + "\n" + repeat_string("=", strlen(cfun)) + "\n\n";
       foreach (string cinf in cmd_info)
       {
          if (strlen(cinf) > 2 && (cinf[0..6] == "$$ see:" || cinf[0..5] == "$$see:"))
@@ -386,9 +386,9 @@ void process_file(string fname)
 
    if (sizeof(c_functions) > 0)
    {
-      string cfunch = "Functions";
+      string cfun = "Functions";
 
-      rstout += cfunch + "\n" + repeat_string("=", strlen(cfunch)) + "\n";
+      rstout += cfun + "\n" + repeat_string("=", strlen(cfun)) + "\n";
       foreach (string cfunc in c_functions)
       {
          rstout += cfunc;
