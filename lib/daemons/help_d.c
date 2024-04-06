@@ -142,7 +142,7 @@ void process_file(string path, string file)
       ++pending_count;
    }
 
-   if (strlen(file) > 5 && file[ < 4..] == ".rst")
+   if (strlen(file) > 4 && file[ < 4..] == ".rst")
    {
       parse_rst(path, file);
       file = file[0.. < 5];

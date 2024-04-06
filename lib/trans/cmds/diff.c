@@ -5,7 +5,7 @@
 //
 // Finds the difference between two files.
 //
-// .. TAGS: RTS
+// .. TAGS: RST
 
 /* This file is originally a part of the TMI distribution mudlib.
    Please retain this header if you use this code.

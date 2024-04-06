@@ -9,7 +9,8 @@
 */
 
 //: COMMAND
-// USAGE ``idfind <name>``
+// USAGE 
+//   ``idfind <name>``
 //
 // Lists all objects in the mud with the specified id,
 // together with their location.
