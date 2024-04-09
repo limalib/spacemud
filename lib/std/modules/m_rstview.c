@@ -224,7 +224,10 @@ string *replace_code(string *lines, string searchtext)
 
    return lines;
 }
-
+//: Function reformat_see
+// Replaces any occurence of the word command with  a blanck space, then creates an array of substrings with space as the delimiter.
+// Filters out any words that start with the character "<", then does a transformation on the filtereed array starting at the 1st char
+// and removing the "<". It then formats the list into a string and prints out the resulting string.
 string reformat_see(string line)
 {
    // ## Ack! My deepest apoligies for this one. Let me know if you figure out what it does, I might have a job for you.
