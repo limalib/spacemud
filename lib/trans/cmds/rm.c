@@ -17,7 +17,7 @@
 //
 // will remove harry.c from my current directory if it exists.
 //
-// Wildcards can be used to select multiple files - eg *.c.
+// Wildcards can be used to select multiple files - eg \*.c.
 //
 // .. TAGS: RST
 

@@ -18,7 +18,7 @@
 //
 // The flags and path are both optional, if you leave off the path
 // ls assumes you meant the current directory.
-// You can use wildcards in the path - eg *.h.
+// You can use wildcards in the path - eg \*.h.
 //
 // .. TAGS: RST
 
