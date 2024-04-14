@@ -12,5 +12,5 @@ cd build
 # Add packages as needed here.
 cmake ../driver -DPACKAGE_UIDS=OFF
 
-make install
+make -j `nproc` install
 cd ..
