@@ -21,8 +21,11 @@ inherit CMD;
 private
 void main(string *arg)
 {
-   if (mkdir(arg[0]))
-      outf("Ok.\n");
-   else
-      outf("Failed to make directory: %s\n", arg[0]);
+   foreach (string d in arg[0])
+   {
+      if (mkdir(d))
+         outf("Ok.\n");
+      else
+         outf("Failed to make directory: %s\n", arg[0]);
+   }
 }
