@@ -45,7 +45,7 @@ mixed do_say_str(string str)
       more(out);
       break;
    default:
-      msgs = this_body()->action(({this_body()}), "%^SAY%^$N $vsay:%^RESET%^ $o", punctuate(str));
+      msgs = this_body()->action(({this_body()}), "%^SAY%^$N $vsay:%^RESET%^ $o<res>", punctuate(str));
       this_body()->inform(({this_body()}), msgs, others);
       this_body()->add_say_history(msgs[0]);
       others->add_say_history(msgs[1]);

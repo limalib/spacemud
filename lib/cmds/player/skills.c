@@ -108,6 +108,7 @@ void main(string arg)
             content = "";
             set_frame_title(pretty_name);
          }
+         // Screen width > 50
          else if ((percentage || target->is_body()) && width > 50)
             content += sprintf("%-25s " + (bonus > 0 ? "<010>+<res>" : (bonus < 0 ? "<009>-<res>" : " ")) +
                                    "%4s [<040>%s<238>%s<res>] %-7s\n",
@@ -119,17 +120,17 @@ void main(string arg)
                                ""
 #endif
             );
+         // Screen width < 50
          else if ((percentage || target->is_body()) && width <= 50)
-            content +=
-                sprintf("%-25s " + (bonus > 0 ? "<010>+<res>" : (bonus < 0 ? "<009>-<res>" : " ")) + "%4s(%-3s)\n",
-                        repeat_string(" " + (level == next_level ? contbend : bend), level - 2) + pretty_name,
-                        percentage + "%",
+            content += sprintf(
+                "%-25s " + (bonus > 0 ? "<010>+<res>" : (bonus < 0 ? "<009>-<res>" : " ")) + "%4s(%-3s)\n",
+                repeat_string(" " + (level == next_level ? contbend : bend), level - 2) + pretty_name, percentage + "%",
 #ifdef SKILL_CONFIG_USES_TRAINING_PTS
-                        target->is_body() ? accent(skill.training_points) : ""
+                target->is_body() ? accent(skill.training_points) : ""
 #else
-                        ""
+                ""
 #endif
-                );
+            );
          i++;
       }
       if (content)
