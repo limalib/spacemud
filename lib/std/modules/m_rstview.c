@@ -1,7 +1,5 @@
 /* Do not remove the headers from this file! see /USAGE for more info. */
 
-inherit M_COLOURS;
-
 //: MODULE
 // Inherit this module to gain access to reStructured text functions for formatting
 // and creating layout suitable for the MUD. The RST source is parsed into colour
