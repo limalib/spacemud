@@ -36,7 +36,7 @@ mixed do_say_str(string str)
       string *out = ({});
    case "/last":
    case "/history":
-      out = ({"History of says:\n"});
+      out = ({"History of says:"});
       msgs = this_body()->list_say_history();
       if (sizeof(msgs))
          out += msgs;
