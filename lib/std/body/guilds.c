@@ -40,7 +40,7 @@ int add_guild(string name, int level)
       this_body()->query_shell_ob()->add_path("/cmds/guild/" + name + "/");
       if (wizardp(this_body()))
          tell(this_body(),
-              "**Wizard info: Use 'addpath /cmds/guild/" + name + "/' if you want to this gang added to your path.\n");
+              "**Wizard info: Use 'addpath /cmds/guild/" + name + "/' if you want to this guild added to your path.\n");
       return 1;
    }
    else
@@ -52,7 +52,7 @@ int add_guild(string name, int level)
    this_body()->query_shell_ob()->add_path("/cmds/guild/" + name + "/");
    if (wizardp(this_body()))
       tell(this_body(),
-           "**Scientist info: Use 'addpath /cmds/guild/" + name + "/' if you want to this gang added to your path.\n");
+           "**Scientist info: Use 'addpath /cmds/guild/" + name + "/' if you want to this guild added to your path.\n");
 
    return 1;
 }
