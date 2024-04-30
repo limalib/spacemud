@@ -3,6 +3,7 @@
 #include <config/guild.h>
 
 inherit M_CONVERSATION;
+inherit M_RSTVIEW;
 
 varargs void targetted_action();
 void add_a_member(object who);
@@ -71,7 +72,7 @@ void artefact_install()
 
 void more_specials_help()
 {
-   write("\n\n" + read_file("/cmds/guild/" + which_guild + "/SPECIALS_HELP"));
+   write("\n\n" + rst_format_file("/cmds/guild/" + which_guild + "/SPECIALS_HELP.rst"));
 }
 
 string guild_name()
@@ -86,8 +87,8 @@ void setup_guild_conversation()
    add_options((["join":"Can I join " + guild_name() + "?",
                 "release":"I need to leave " + guild_name() + " ...",
                "artefact":"Would a " + GUILD_ARTEFACT + " be useful for me in " + guild_name() + "?",
-        "artefact_module":"If I have an empty " + GUILD_ARTEFACT_PLUGIN + ", can you put a " + guild_name() +
-                              " program on it?",
+        "artefact_module":"If I have an empty " + GUILD_ARTEFACT + " " + GUILD_ARTEFACT_PLUGIN + ", can you put a " +
+                              guild_name() + " program on it?",
        "artefact_install":"Okay, then I'll give you one.", "comms":"Can we communicate somehow?",
                "specials":"Which special skills can I learn?", ]));
 
