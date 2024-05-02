@@ -93,6 +93,8 @@ parse_rst(string path, string file)
    {
       string fun, tmp;
       fun = explode(explode(f, "(")[0], " ")[ < 1];
+      if (fun[0] == '*')
+         fun = fun[1..];
 
       if (strlen(f) > 7 && f[0..7] == ".. TAGS:")
       {
@@ -245,7 +247,8 @@ nomask string *find_topic(string name)
       return 0;
 
    // ### simulate the old levels
-   lvl = adminp(this_user()) ? 5 : wizardp(this_user()) ? 1 : 0;
+   lvl = adminp(this_user()) ? 5 : wizardp(this_user()) ? 1
+                                                        : 0;
 
    return filter_array(
        result,

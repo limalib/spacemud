@@ -118,7 +118,7 @@ string *mod_name(string file)
       subdir = "api";
 
    sscanf(file, "%s.c", file);
-   return ({file[strsrch(file, "/", -1) + 1..], subdir});
+   return ({implode(explode(file, "/")[ < 2..], "_"), subdir});
 }
 
 string func_name(string bar)
@@ -129,20 +129,27 @@ string func_name(string bar)
 
 string command_link(string cmd, string type, int same_level)
 {
-   if (type == "player command")
-      return "`" + cmd + " <" + (same_level ? "" : "player_command/") + cmd + ".html>`_";
-   if (type == "verb")
-      return "`" + cmd + " <" + (same_level ? "" : "verb/") + cmd + ".html>`_";
-   if (type == "command")
-      return "`Command: " + cmd + " <" + (same_level ? "" : "command/") + cmd + ".html>`_";
-   if (type == "daemon")
-      return "`Daemon: " + cmd + " <" + (same_level ? "" : "daemon/") + cmd + ".html>`_";
-   if (type == "module")
-      return "`Module: " + cmd + " <" + (same_level ? "" : "module/") + cmd + ".html>`_";
-   if (type == "mudlib")
-      return "`" + cmd + " <" + (same_level ? "" : "mudlib/") + cmd + ".html>`_";
+   string name;
+   // For API's, do "simul efun misc" and "user misc".
    if (type == "api")
-      return "`" + cmd + " <" + (same_level ? "" : "api/") + cmd + ".html>`_";
+      return "`" + replace_string(cmd, "_", " ") + " <" + (same_level ? "" : "api/") + cmd + ".html>`_";
+
+   if (type == "daemon")
+      return "`Daemon: " + replace_string(cmd, "daemons_", "") + " <" + (same_level ? "" : "daemon/") + cmd + ".html>`_";
+
+   // For all others use just the last part of the filename
+   name = explode(cmd, "_")[ < 1];
+
+   if (type == "player command")
+      return "`" + name + " <" + (same_level ? "" : "player_command/") + cmd + ".html>`_";
+   if (type == "verb")
+      return "`" + name + " <" + (same_level ? "" : "verb/") + cmd + ".html>`_";
+   if (type == "command")
+      return "`Command: " + name + " <" + (same_level ? "" : "command/") + cmd + ".html>`_";
+   if (type == "module")
+      return "`Module: " + name + " <" + (same_level ? "" : "module/") + cmd + ".html>`_";
+   if (type == "mudlib")
+      return "`" + name + " <" + (same_level ? "" : "mudlib/") + cmd + ".html>`_";
 }
 
 void process_file(string fname)
