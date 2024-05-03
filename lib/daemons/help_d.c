@@ -155,6 +155,8 @@ void process_file(string path, string file)
       file = file[0.. < 4];
    }
 
+   file = implode(explode(file, "-")[1..], "");
+
    file = lower_case(file);
    if (topics[file])
       topics[file] += ({pathname});
@@ -247,8 +249,7 @@ nomask string *find_topic(string name)
       return 0;
 
    // ### simulate the old levels
-   lvl = adminp(this_user()) ? 5 : wizardp(this_user()) ? 1
-                                                        : 0;
+   lvl = adminp(this_user()) ? 5 : wizardp(this_user()) ? 1 : 0;
 
    return filter_array(
        result,
