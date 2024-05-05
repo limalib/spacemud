@@ -46,9 +46,9 @@ private
 string print_guild(string g)
 {
     string output = "";
-    output += "[" + upper_case(g) + "] - members online: " + sizeof(GUILD_D->belongs_to(g)) + "\n";
-    output += "\tLeader: " + (leaders[g] ? capitalize(leaders[g]) : "None") + "\n";
-    output += "\tManagers: " + (managers[g] ? implode(map(managers[g], ( : capitalize($1) :)), ", ") : "None") + "\n";
+    output += "<154>[" + upper_case(g) + "]<res> - members online: " + sizeof(GUILD_D->belongs_to(g)) + "\n";
+    output += "\t<226>Leader:<res> " + (leaders[g] ? capitalize(leaders[g]) : "None") + "\n";
+    output += "\t<226>Managers:<res> " + (managers[g] ? implode(map(managers[g], ( : capitalize($1) :)), ", ") : "None") + "\n";
     output += "\n";
     return output;
 }
