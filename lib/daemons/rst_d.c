@@ -89,7 +89,7 @@ void complete_rebuild()
 }
 
 // Everything below here is
-//private:
+private:
 // ---------------------------------------------------------------------
 
 nosave private string *filtered_dirs =
