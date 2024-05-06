@@ -168,10 +168,11 @@ string func_name(string bar)
 string command_link(string cmd, string type, int same_level)
 {
    string name;
-   // For API's, do "simul efun misc" and "user misc".
+   // For API's, do "simul_efun: misc" and "user: misc".
    if (type == "api" || type == "mudlib")
       return "`" + replace_string(cmd, "-", ": ") + " <" + (same_level ? "" : type + "/") + cmd + ".html>`_";
 
+   // Prettier names for daemons, e.g. Daemon: foo_d
    if (type == "daemon")
       return "`Daemon: " + replace_string(cmd, "daemons-", "") + " <" + (same_level ? "" : "daemon/") + cmd +
              ".html>`_";
