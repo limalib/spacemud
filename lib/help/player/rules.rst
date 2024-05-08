@@ -1,5 +1,6 @@
 Rules
 #####
+.. TAGS: RST
 
 See: `bug <../player_command/bug.html>`_ `idea <../player_command/idea.html>`_ `typo <../player_command/typo.html>`_ `discipline <discipline.html>`_
 
