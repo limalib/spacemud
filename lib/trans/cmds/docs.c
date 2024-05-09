@@ -68,8 +68,6 @@ void main(mixed arg)
    foreach (string f in filter_array(help_pages, ( : $1[ < 4..] == ".rst" :)))
    {
       string *parts = explode(f, "/");
-      if (parts[1] != "autodoc")
-         TBUG(parts);
       if (sizeof(parts) > 2 && parts[0] == "help" && member_array(parts[1], checked_dirs) != -1)
       {
          string category = parts[ < 2];
