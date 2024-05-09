@@ -26,15 +26,19 @@ void update_stats()
 private
 void update_playerdoc()
 {
-   string out = "Commands\n========\n\n.. TAGS: RST\n.. INFO: This help file is created using 'docs playerdoc'. Don't "
+   string out = "Commands\n========\n\n"
+                ".. TAGS: RST\n.. INFO: This help file is created using 'docs playerdoc'. Don't "
                 "edit manually.\n\nThe following commands are currently available:\n\n";
    string *verbs = map(get_dir(CMD_DIR_VERBS + "/*.c"), ( : $1[0.. < 3] :));
    CMD_D->find_cmd_in_path("who", ({CMD_DIR_PLAYER}));
    out += colour_table(CMD_D->query_cmds(CMD_DIR_PLAYER + "/"), 80);
-   out += "\n\nYou can also try many \"real life verbs\", which have no help because they use\n" +
-          "real english syntax.  For example:\n" + "   ``look at rust``\n" + "   ``move the yellow table``\n\n" +
+   out += "\n\nYou can also try many \"real life verbs\", which have no help because they use\n"
+          "real english syntax.  For example:\n"
+          "   ``look at rust``\n"
+          "   ``move the yellow table``\n\n"
           "The following verbs are currently available:\n\n";
    out += colour_table(verbs, 80);
+   out += "\n\nSome of the verbs have aliases, like 'repair' can be 'fix' or 'patch'.\n";
 
    write_file("/help/player/commands.rst", out, 1);
    write("Done: commands.rst updated.");

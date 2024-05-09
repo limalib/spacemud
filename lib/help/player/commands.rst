@@ -42,3 +42,5 @@ crawl        fill         look         ring         turn         xyzzy
 cross        fire         mount        salvage      unlock       
 curse        flip         move         say          unready      
 descend      follow       open         search       untie        
+
+Some of the verbs have aliases, like 'repair' can be 'fix' or 'patch'.
