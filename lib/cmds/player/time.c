@@ -20,15 +20,29 @@
 //
 // .. TAGS: RST
 
-
 #include <localtime.h>
 
 inherit CMD;
+inherit M_FRAME;
 
 #define MIN 60
 #define HOUR (60 * MIN)
 #define DAY (24 * HOUR)
 #define WEEK (7 * DAY)
+
+private
+string week_view()
+{
+   string day = EVENT_D->time_to_weekday();
+   string out = "";
+   TBUG(day);
+
+   foreach (string d in EVENT_D->week_days())
+   {
+      out += "[" + (d == day ? "<190>" : "") + d + "<res>] ";
+   }
+   return out+"\n";
+}
 
 private
 void main(string notused)
@@ -39,11 +53,12 @@ void main(string notused)
    int tm3 = tm1 - uptime();
    string tm4 = ctime(tm3);
    int tm5;
-   string str;
+   string str = "";
    mixed local = localtime(tm1);
    int offset = local[LT_GMTOFF];
    string gmt;
    int x;
+   string game_time = EVENT_D->time_to_str();
    mixed my_offset;
 
    my_offset = this_body()->query_tz();
@@ -53,17 +68,19 @@ void main(string notused)
       tm5 = tm1 + my_offset;
    }
    gmt = ctime(tm1 - offset);
-   outf("Local MUD time %s. \n", tm2);
-   outf("GMT            %s.\n", gmt);
+   str += sprintf("<190>%s<res>\n", game_time);
+   str += week_view()+"\n";
+   str += sprintf("%s.\n", tm2);
+   str += sprintf("%s.\n", gmt);
    my_offset = this_body()->query_tz();
    if (intp(my_offset) || floatp(my_offset))
    {
       my_offset = to_int(3600.0 * my_offset);
       tm5 = tm1 + my_offset;
-      outf("Player time    %s.\n", ctime(tm1 + my_offset));
+      str += sprintf("\n%s.\n", ctime(tm1 + my_offset));
    }
-   out(mud_name() + " restarted on " + tm4 + ". \n \n");
-   str = mud_name() + " has been up for ";
+   str += sprintf("\n" + mud_name() + " restarted on " + tm4 + ". \n");
+   str += mud_name() + " has been up for ";
    if (x = (tm / WEEK))
    {
       str += x + "w ";
@@ -92,7 +109,12 @@ void main(string notused)
       str += tm + "s ";
 
    str = str[0.. < 2] + ".\n";
-   out(str);
+   frame_init_user();
+   set_frame_left_header();
+   set_frame_title("Game Time & Real Time");
+   set_frame_content(str);
+   set_frame_header("Game Time\n\n\nLocal MUD time\nGMT\n\nYour timezone\n\nUptime");
+   out(frame_render());
 }
 
 void player_menu_entry(string str)
