@@ -41,7 +41,7 @@ string week_view()
    {
       out += "[" + (d == day ? "<190>" : "") + d + "<res>] ";
    }
-   return out+"\n";
+   return out + "\n";
 }
 
 private
@@ -68,8 +68,8 @@ void main(string notused)
       tm5 = tm1 + my_offset;
    }
    gmt = ctime(tm1 - offset);
-   str += sprintf("<190>%s<res>\n", game_time);
-   str += week_view()+"\n";
+   str += sprintf("<190>%s<res> -  %d game days / real day\n", game_time, EVENT_D->game_days_per_day());
+   str += week_view() + "\n";
    str += sprintf("%s.\n", tm2);
    str += sprintf("%s.\n", gmt);
    my_offset = this_body()->query_tz();
