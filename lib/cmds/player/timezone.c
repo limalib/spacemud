@@ -25,7 +25,7 @@ void main(string val)
       outf("Your timezone setting is %f\n", actual);
       return;
    }
-   if (actual)
+   if (actual>=-12 || actual <=12)
    {
       this_body()->set_tz(actual);
       actual = to_float(this_body()->query_tz());
