@@ -54,13 +54,24 @@ int game_days_per_day()
    return GAME_DAYS_PER_DAY;
 }
 
+int adjusted_time()
+{
+   return time() + (3600 * ADJUST_HOURS);
+}
+
 //: FUNCTION time_to_weekday
 // Returns the week day name given time or uses time().
 varargs string time_to_weekday(int time)
 {
-   int t = time || time();
-   int real_day = to_int(strftime("%w", time||time()));
-   int day_number = ((time || time()) % 86400) / (86400 / GAME_DAYS_PER_DAY);
+   int t = time || adjusted_time();
+   int real_day = to_int(strftime("%w", time || adjusted_time()))
+
+#ifdef WEEK_BEGINS_MONDAY
+   +DAYS_PER_WEEK-1;
+#else
+   ;
+#endif
+   int day_number = ((time || adjusted_time()) % 86400) / (86400 / GAME_DAYS_PER_DAY);
    int game_day = ((GAME_DAYS_PER_DAY * real_day) + day_number) % DAYS_PER_WEEK;
    return day_names[game_day];
 }
@@ -70,7 +81,7 @@ varargs string time_to_weekday(int time)
 // The string returned will be in game time as defined in *config/time.h*.
 varargs string time_to_str(int time)
 {
-   int t = (((time || time()) % 86400) * GAME_DAYS_PER_DAY) % 86400;
+   int t = (((time || adjusted_time()) % 86400) * GAME_DAYS_PER_DAY) % 86400;
    int hours = t / 3600;
    int minutes = (t % 3600) / 60;
    int seconds = (t % 60);
@@ -90,8 +101,8 @@ varargs int str_to_time(string date)
    int hours, minutes, seconds;
    string day;
    int delta;
-   int real_day = to_int(strftime("%w", time()));
-   int day_number = (time() % 86400) / (86400 / GAME_DAYS_PER_DAY);
+   int real_day = to_int(strftime("%w", adjusted_time()));
+   int day_number = (adjusted_time() % 86400) / (86400 / GAME_DAYS_PER_DAY);
    // gameday+(GAME DAYS PER DAY*real day)%7
    int game_day = ((GAME_DAYS_PER_DAY * real_day) + day_number) % DAYS_PER_WEEK;
    int total;
@@ -109,13 +120,13 @@ varargs int str_to_time(string date)
    if (skip_days < game_day)
       skip_days += sizeof(day_names);
    total =
-       (real_time() - (real_time() % (86400 / GAME_DAYS_PER_DAY))) + delta + ((86400 / GAME_DAYS_PER_DAY) * skip_days);
+       (adjusted_time() - (adjusted_time() % (86400 / GAME_DAYS_PER_DAY))) + delta + ((86400 / GAME_DAYS_PER_DAY) * skip_days);
    /*
      TBUG("Current day: " + game_day + " Must goto " + skip_days);
      TBUG("Day number: " + member_array(day, day_names));
      TBUG("Matching day: " + 14400 * skip_days);
-     TBUG(time_to_str(real_time() - (real_time() % 14400)));
-     TBUG("*****" + (real_time() - (real_time() % 14400)));
+     TBUG(time_to_str(adjusted_time() - (adjusted_time() % 14400)));
+     TBUG("*****" + (adjusted_time() - (adjusted_time() % 14400)));
      TBUG(delta);
      TBUG(((86400 / GAME_DAYS_PER_DAY) * skip_days) + "******");
      TBUG(total);
