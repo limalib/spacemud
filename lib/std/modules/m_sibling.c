@@ -1,5 +1,13 @@
 /* Do not remove the headers from this file! see /USAGE for more info. */
-// Folded out from DOOR.   --OH.
+
+// Folded out from DOOR.   --OH. (Around 1996)
+
+//: MODULE
+// This module handles an object that has a corrsponding sibling. Typical use for doors, where two door objects in 
+// two different rooms should act as one object. Could also be used for teleporters, mirrors and other things where
+// the object is on two rooms, but should be considered as one object. Elevator doors use this functionality as well.
+//
+// .. TAGS: RST
 
 private
 string our_ident;
@@ -8,7 +16,6 @@ function sibling_room;
 private
 object cached_sibling;
 
-// DEPRECATED
 void setup_sibling(string ident, mixed room)
 {
    if (ident)
@@ -90,20 +97,7 @@ void initial_move()
 {
    object ob;
    // when we initially get moved to a room, check if our sibling already
-   // exits, and if so, get it's state.
+   // exists, and if so, get it's state.
    if (ob = get_sibling())
       update_state(ob);
 }
-
-/*
- * This is here to properly setup the sibling room.  If it's done in setup()
- * or mudlib_create() etc, it is called before the door is moved into its
- * environment which makes things work 'not quite right'
- */
-
-/*** Deprecated by change to funptr for sibling_room -- Marroc
-varargs void on_clone(string direction,string room, mixed rest...)
-{
-    setup_sibling(0,room);
-}
-***/
