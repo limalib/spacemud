@@ -57,11 +57,9 @@ object get_sibling()
       if (!sibling_room || !evaluate(sibling_room))
          return 0;
       ob = load_object(evaluate(sibling_room));
+
       if (!ob)
-      {
-         TBUG("NO LOAD");
          return 0;
-      }
 
       foreach (object ob2 in all_inventory(ob))
       {
