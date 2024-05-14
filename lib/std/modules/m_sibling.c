@@ -3,8 +3,8 @@
 // Folded out from DOOR.   --OH. (Around 1996)
 
 //: MODULE
-// This module handles an object that has a corrsponding sibling. Typical use for doors, where two door objects in
-// two different rooms should act as one object. Could also be used for teleporters, mirrors and other things where
+// This module handles an object that has a corrsponding sibling. Typically used for doors, where two door objects in
+// two different rooms should act as one object. Could also be used for teleporters, one-way mirrors, and other things where
 // the object is on two rooms, but should be considered as one object. Elevator doors use this functionality as well.
 //
 // .. TAGS: RST
