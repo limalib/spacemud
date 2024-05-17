@@ -74,7 +74,6 @@ object get_sibling()
    if (!cached_sibling)
    {
       object ob;
-      TBUG(evaluate(sibling_room));
       if (!sibling_room || !evaluate(sibling_room))
          return 0;
       ob = load_object(evaluate(sibling_room));
