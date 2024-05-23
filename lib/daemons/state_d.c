@@ -164,6 +164,7 @@ void create()
       return;
    }
    capture_all_statefuls();
+   EVENT_D->run_scheduler();
    set_heart_beat(1);
 }
 
@@ -172,14 +173,20 @@ mapping queue()
    return queue;
 }
 
+private
+string pretty_name(object ob)
+{
+   return replace_string(replace_string(explode(sprintf("%O", ob), " ")[0], "/domains/", "^"), "/wiz/", "~");
+}
+
 string stat_me()
 {
    string squeue = "";
    foreach (int update_time, object * targets in queue)
    {
-      foreach (string t in targets)
+      foreach (mixed *t in targets)
       {
-         squeue += sprintf("%-45s%-25s%-10s\n", t[0]->short(), t[1], time_to_string(update_time - time(), 1));
+         squeue += sprintf("%-45s%-25s%-10s\n", pretty_name(t[0]), t[1], time_to_string(update_time - time(), 1));
       }
    }
 

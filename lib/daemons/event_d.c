@@ -126,7 +126,7 @@ varargs int str_to_time(string date)
    total = (adjusted_time() - (adjusted_time() % (SECS_PER_DAY / GAME_DAYS_PER_DAY))) + delta +
            ((SECS_PER_DAY / GAME_DAYS_PER_DAY) * skip_days);
 
-   TBUG("skip_days: " + skip_days + " game_day: " + game_day + " real_day: " + real_day);
+   //TBUG("skip_days: " + skip_days + " game_day: " + game_day + " real_day: " + real_day);
 
    // This part adds a week if we're planning for things in the past.
    if (total - adjusted_time() < 0)
