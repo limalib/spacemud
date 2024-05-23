@@ -27,7 +27,6 @@
 #include <config/time.h>
 
 #define SECS_PER_DAY 86400
-#define RESCHEDULE_DAYS DAYS_PER_WEEK - 1
 
 inherit M_DAEMON_DATA;
 
@@ -188,8 +187,8 @@ varargs void schedule_event(string timing, mixed ob, string extra)
    foreach (int d in d_ar)
       foreach (int h in h_ar)
          foreach (int m in m_ar)
-            STATE_D->add_to_queue_at_time(
-                ob, str_to_time(sprintf("%s %2.2d:%2.2d:00", week_day(d), h, m)), extra); // - (3600 * ADJUST_HOURS), extra);
+            STATE_D->add_to_queue_at_time(ob, str_to_time(sprintf("%s %2.2d:%2.2d:00", week_day(d), h, m)),
+                                          extra); // - (3600 * ADJUST_HOURS), extra);
 }
 
 void register_event(string timing, string file, string extra)
@@ -220,7 +219,7 @@ void run_scheduler()
          else
             write("** Not scheduling jobs for file '" + file + "' since it does not exist.");
       }
-   call_out("run_scheduler", 86400 * RESCHEDULE_DAYS);
+   call_out("run_scheduler", 86400/24);
 }
 
 mapping query_events()
