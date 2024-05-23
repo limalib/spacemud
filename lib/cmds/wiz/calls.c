@@ -86,4 +86,5 @@ void main()
    }
 
    outf("\nThere are %d call_outs active.\n", sizeof(call_out_stuff));
+   outf("\nActive states:\n%s", STATE_D->stat_me());
 }

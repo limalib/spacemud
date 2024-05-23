@@ -119,7 +119,7 @@ void process_queue()
       {
          if (stringp(target[0]))
             target[0] = load_object(target[0]);
-      
+
          // Strip away any objects from the queue that are now 0 (destroyed/removed).
          if (!target[0])
          {
@@ -177,13 +177,14 @@ string stat_me()
    string squeue = "";
    foreach (int update_time, object * targets in queue)
    {
-      string *str_targets = map(targets, ( : sprintf("%O", $1[0]) + " " + sprintf("%O", $1[1]) :));
-      squeue += " In " + time_to_string(update_time - time()) + " seconds:\n";
-      squeue += "\t" + format_list(str_targets) + "\n";
+      foreach (string t in targets)
+      {
+         squeue += sprintf("%-45s%-25s%-10s\n", t[0]->short(), t[1], time_to_string(update_time - time(), 1));
+      }
    }
 
-   return "STATE_D:\n-------\n" + "Queue Length: " + sizeof(keys(queue)) +
-          "\n"
-          "\n" +
-          squeue;
+   return sprintf("%-45s%-25s%-10s\n", "Short", "Arguments", "Delay") +
+          "-------------------------------------------------------------------------------"
+          "----\n" +
+          squeue + "\nThere are " + sizeof(flatten_array(values(STATE_D->queue()))) / 2 + " statefuls in queue.";
 }
