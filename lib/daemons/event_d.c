@@ -219,7 +219,8 @@ void run_scheduler()
          else
             write("** Not scheduling jobs for file '" + file + "' since it does not exist.");
       }
-   call_out("run_scheduler", 86400 / 24);
+   if (find_call_out("run_scheduler") == -1)
+      call_out("run_scheduler", 86400 / 24);
 }
 
 mapping query_events()
