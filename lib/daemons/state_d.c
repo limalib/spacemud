@@ -173,12 +173,6 @@ mapping queue()
    return queue;
 }
 
-private
-string pretty_name(object ob)
-{
-   return replace_string(replace_string(explode(sprintf("%O", ob), " ")[0], "/domains/", "^"), "/wiz/", "~");
-}
-
 string stat_me()
 {
    string squeue = "";
@@ -186,12 +180,11 @@ string stat_me()
    {
       foreach (mixed *t in targets)
       {
-         squeue += sprintf("%-45s%-25s%-10s\n", pretty_name(t[0]), t[1], time_to_string(update_time - time(), 1));
+         squeue += sprintf("%-55s%-25s%-10s\n", shorten_filename(t[0]), t[1], time_to_string(update_time - time(), 1));
       }
    }
 
-   return sprintf("%-45s%-25s%-10s\n", "Short", "Arguments", "Delay") +
-          "-------------------------------------------------------------------------------"
-          "----\n" +
+   return sprintf("%-55s%-25s%-10s\n", "Object", "Arguments", "Delay") +
+          sprintf("%92'-'s\n", "") +
           squeue + "\nThere are " + sizeof(flatten_array(values(STATE_D->queue()))) / 2 + " statefuls in queue.";
 }
