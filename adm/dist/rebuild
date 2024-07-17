@@ -66,6 +66,7 @@ mkdir ${mudlib_path}/help/fluffos
 echo -e "Installing driver documentation into lib"
 cd docs
 cp -r apply efun concepts driver lpc ${mudlib_path}/help/fluffos/
+find ${mudlib_path}/help/fluffos -name 'index.md' -exec rm {} \;
 
 # Escape slashes for sed
 escaped_mudlib_path=$(echo $mudlib_path | sed 's/\//\\\//g')
