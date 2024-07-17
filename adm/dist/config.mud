@@ -167,6 +167,9 @@ wombles : 0
 # CALL_OTHER_TYPE_CHECK: enable type checking for call_other()
 # (-> operator on objects)
 #
+# Notice: LIMA does not currently support this due to using the parser
+#         for verbs. All the verbs would complain at every parsed verb.
+#
 call other type check : 0
 
 # CALL_OTHER_WARN, make it warning instead of errors
@@ -177,10 +180,6 @@ call other warn : 1
 #   objects off.  Information about the error is passed in a mapping
 #   to the error_handler() function in the master object.  Whatever is
 #   returned is put in the debug.log.
-#
-# A good mudlib error handler is one of the best tools for tracking down
-# errors.  Unfortunately, you need to have one.  Check the testsuite or
-# other libs for an example.
 #
 mudlib error handler : 1
 

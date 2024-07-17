@@ -11,7 +11,7 @@
 #include <mudlib.h>
 #include <security.h>
 
-// Commented out for now, crashes user input on several errors in succession.
+// Doesn't support dbxframe and dbxwhere, so not including it yet.
 // inherit __DIR__ "error_handler.c";
 
 private
