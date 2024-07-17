@@ -60,6 +60,12 @@ git reset --hard HEAD > /dev/null
 mudlib_path="${repo_root}/lib"
 log_path="${repo_root}/lib/log"
 
+# Copy driver documentation
+rm -rf ${mudlib_path}/help/fluffos/*
+echo -e "Installing driver documentation into lib"
+cd docs
+cp -r apply efun concepts driver lpc ${mudlib_path}/help/fluffos/
+
 # Escape slashes for sed
 escaped_mudlib_path=$(echo $mudlib_path | sed 's/\//\\\//g')
 escaped_log_path=$(echo $log_path | sed 's/\//\\\//g')
