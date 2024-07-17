@@ -3,8 +3,6 @@
 # Exit immediately if a command exits with a non-zero status
 set -e
 
-echo "Running"
-
 # Set up some colors for use in the script
 reset='\e[0m'
 green='\e[38;5;78m'
@@ -14,7 +12,6 @@ red='\e[38;5;124m'
 # Change to the directory containing the script
 cd "$(dirname "$0")"
 
-echo "Running"
 # Check if config.mud exists
 config_file="$(pwd)/config.mud"
 if [[ ! -f "$config_file" ]]; then
@@ -22,23 +19,17 @@ if [[ ! -f "$config_file" ]]; then
     exit 1
 fi
 
-echo "Running"
-
 # Record the top of the repository directory
 repo_root=$(cd ../.. && pwd)
-echo "Running"
 
 # Absolute path to the driver executable
 driver="${repo_root}/adm/dist/bin/driver"
-echo "Running"
 
 # Ensure the FluffOS driver submodule is up to date
 git submodule update --init --recursive > /dev/null
 cd fluffos
 git checkout master > /dev/null 2>&1
 git pull origin master > /dev/null
-
-echo "Running"
 
 # Copy our custom local_options to the driver for compilation
 cp -v ../local_options src/local_options
@@ -66,8 +57,8 @@ cd ..
 git reset --hard HEAD > /dev/null
 
 # Update config.mud with the correct absolute paths
-mudlib_path="${repo_root}"
-log_path="${repo_root}/log"
+mudlib_path="${repo_root}/lib"
+log_path="${repo_root}/lib/log"
 
 # Escape slashes for sed
 escaped_mudlib_path=$(echo $mudlib_path | sed 's/\//\\\//g')
