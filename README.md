@@ -15,9 +15,9 @@ git clone --recurse-submodules https://github.com/fluffos/lima
 #or use (for development)
 #git clone --recurse-submodules https://github.com/tsathoqqua/lima
 
-cd lima
-./build.sh
-./run.sh
+cd lima/adm/dist
+./rebuild
+./run
 ```
 
 # License
