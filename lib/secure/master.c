@@ -82,7 +82,7 @@ void debug_connections(object ob)
 }
 #endif
 
-object connect()
+object connect(int port)
 {
    object ob;
    string ret;
@@ -546,7 +546,7 @@ string make_path_absolute(string path)
    return evaluate_path(path);
 }
 
-int valid_override(string file, string efun_name)
+int valid_override(string file, string efun_name, string main_file)
 {
    if (file[0] != '/')
    {
@@ -586,12 +586,13 @@ nomask void preload(string file)
 {
    object o;
 
-   //    write("Preloading: "+file+"...  ");
    catch (o = load_object(file));
-   //    if ( objectp(o) )
-   //	write("success\n");
-   //    else
-   //	write("FAILED\n");
+   /*
+   if (objectp(o))
+      write("success\n");
+   else
+      write("FAILED: " + err + "\n");
+   */
 }
 
 string *epilog(int eflag)
