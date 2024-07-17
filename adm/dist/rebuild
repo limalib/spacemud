@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Original file contributed by Gesslar, adapted by Tsath 2024 for LIMA
+
 # Exit immediately if a command exits with a non-zero status
 set -e
 
