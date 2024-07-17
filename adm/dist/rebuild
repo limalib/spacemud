@@ -61,7 +61,8 @@ mudlib_path="${repo_root}/lib"
 log_path="${repo_root}/lib/log"
 
 # Copy driver documentation
-rm -rf ${mudlib_path}/help/fluffos/*
+rm -rf ${mudlib_path}/help/fluffos
+mkdir ${mudlib_path}/help/fluffos
 echo -e "Installing driver documentation into lib"
 cd docs
 cp -r apply efun concepts driver lpc ${mudlib_path}/help/fluffos/
