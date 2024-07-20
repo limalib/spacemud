@@ -614,7 +614,6 @@ string object_name(object ob)
       if (link = ob->query_link())
          return link->query_userid() + "'s body";
 
-   /* uncomment when driver is more tolerant of errors in this function */
    return ob->short();
 }
 
