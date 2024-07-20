@@ -11,7 +11,7 @@
 #include <mudlib.h>
 #include <security.h>
 
-// Doesn't support dbxframe and dbxwhere, so not including it yet.
+// ### Doesn't support dbxframe and dbxwhere, so not including it yet.
 // inherit __DIR__ "error_handler.c";
 
 private
