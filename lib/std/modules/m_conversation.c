@@ -101,7 +101,7 @@ void add_option(string key, mixed act)
 //: FUNCTION remove_option
 // Removes a single option from the actions available.
 // See also add_option() documentation.
-void remove_option(string key, mixed act)
+void remove_option(string key)
 {
    map_delete(options, key);
 }
