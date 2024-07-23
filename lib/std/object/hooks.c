@@ -38,6 +38,7 @@ void add_hook(string tag, function hook)
    }
    else
       hooks[tag] = tmp;
+   hooks[tag] -= ({(:0:)});
 }
 
 //: FUNCTION remove_hook
@@ -56,6 +57,7 @@ void remove_hook(string tag, function hook)
          TBUG("Warning: Failed to remove tag: " + tag + " hook: " + sprintf("%O", hook) +
               "  Owner: " + function_owner(hook));
    }
+   hooks[tag] -= ({(:0:)});
    if (!sizeof(hooks[tag]))
       map_delete(hooks, tag);
 }
@@ -98,6 +100,8 @@ varargs mixed call_hooks(string tag, mixed func, mixed start, mixed *args...)
    {
       hooks_to_call = filter(hooks_to_call, ( : !(functionp($1) & FP_OWNER_DESTED) :));
       hooks[tag] = hooks_to_call;
+
+      hooks[tag] -= ({(:0:)});
 
       if (!intp(func))
          return implode(map(hooks_to_call, ( : evaluate($1, $(args)...) :)), func, start);
