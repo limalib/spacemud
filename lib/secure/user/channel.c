@@ -43,9 +43,9 @@ void initialize_channels()
 /*
  * Ok, we're leaving.  Unregister us from the channels
  */
-protected
 void exit_all_channels()
 {
+   printf("Turning off all channels.");
    CHANNEL_D->unregister_channels(channel_list);
 }
 

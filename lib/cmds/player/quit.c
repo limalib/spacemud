@@ -27,6 +27,7 @@ void main()
       return;
    }
 #ifdef USE_USER_MENU
+   this_user()->exit_all_channels();
    new (USER_MENU)->start_menu();
 #else
    this_user()->save_me();
