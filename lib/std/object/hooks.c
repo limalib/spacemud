@@ -35,10 +35,10 @@ void add_hook(string tag, function hook)
       // Make sure we only have one
       hooks[tag] -= tmp;
       hooks[tag] += tmp;
+      hooks[tag] -= ({( : 0 :)});
    }
    else
       hooks[tag] = tmp;
-   hooks[tag] -= ({( : 0 :)});
 }
 
 //: FUNCTION remove_hook
