@@ -4,8 +4,7 @@
 // This daemon handles the 256 Colours of XTERM code.
 
 // Created:     2022/04/08: Gesslar
-//
-// 2022/04/08: Gesslar - Created
+// Integrated into LIMA by Tsath (2022 at some point)
 
 #include <xterm256.h>
 
