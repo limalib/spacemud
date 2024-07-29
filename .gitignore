@@ -15,3 +15,4 @@ tmp_*
 !/open/README
 !/lib/data/config
 !/lib/log/README
+lib/trans/tmp/exec.c

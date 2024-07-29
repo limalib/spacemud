@@ -26,6 +26,7 @@ inherit M_GETTABLE;
 inherit M_EXIT;
 inherit __DIR__ "room/roomdesc";
 inherit __DIR__ "room/state";
+inherit __DIR__ "room/custom";
 
 private
 nosave string *area_names = ({});

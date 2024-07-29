@@ -877,6 +877,13 @@ varargs string get_stack(int x)
    return list;
 }
 
+//: FUNCTION clone_class
+// Create a copy of an existing class.
+mixed clone_class(mixed x)
+{
+   return assemble_class(disassemble_class(x));
+}
+
 //: FUNCTION pround
 // Preceision round a float into a string with a specific number of decimals.
 // Example:
