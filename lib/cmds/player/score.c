@@ -58,8 +58,9 @@ string stats_string(object body, int width)
              "\n";
 
    content += "Spare stat points: " + body->spare_points() + "\n\n";
-   content += sprintf("XP Buff: %s\n\n",
-                      (body->query_guild_xp_buff() ? "Guild buff " + body->query_guild_xp_buff() + "%" : "None"));
+   content += sprintf("XP Buff: %-10.10s  Party: %s\n\n",
+                      (body->query_guild_xp_buff() ? body->query_guild_xp_buff() + "%" : "None"),
+                      (PARTY_D->locate_user(body->short()) || "None"));
 
    return content;
 }

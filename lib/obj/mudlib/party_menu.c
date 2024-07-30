@@ -33,12 +33,12 @@ void who_current()
 
    s = sprintf("%%^BOLD%%^%%^WHITE%%^Members of %s%%^RESET%%^%%^MAGENTA%%^:%%^RESET%%^\n", party_name);
 
-   printf("%s%%^BOLD%%^%%^BLUE%%^%s\n", s, repeat_string("-", sizeof(s)));
+   printf("%s%%^BOLD%%^%%^BLUE%%^%s\n", s, repeat_string("-", sizeof(s)) + "<res>");
    foreach (string str in members)
    {
       printf("%s\n", str);
    }
-   printf("%%^BOLD%%^%%^BLUE%%^%s\n\n", repeat_string("-", sizeof(s)));
+   printf("%%^BOLD%%^%%^BLUE%%^%s\n\n", repeat_string("-", sizeof(s)) + "<res>");
 }
 
 void party_maint()
@@ -213,9 +213,10 @@ varargs void enter_party_password(string owner, string party_name, int failures,
 private
 void enter_party_name(string owner, string response)
 {
-   if (!response || response == "" || !regexp(response, "^[a-zA-Z]+$"))
+   response = trim(response);
+   if (!response || response == "" || !regexp(response, "^[a-zA-Z 0-9]+$"))
    {
-      write("Invalid name.\n");
+      write("Invalid name, only letters, numbers and spaces.\n");
       modal_simple(( : enter_party_name, owner:), "   Enter party name: ");
       return;
    }

@@ -6,6 +6,7 @@ lib/data/daemons/
 /lib/help/
 /lib/log/
 /lib/wiz/
+/lib/trans/tmp/
 /lib/.vscode/
 /lib/tmp/
 /open/
@@ -15,4 +16,3 @@ tmp_*
 !/open/README
 !/lib/data/config
 !/lib/log/README
-lib/trans/tmp/exec.c

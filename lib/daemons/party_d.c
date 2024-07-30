@@ -48,7 +48,7 @@ nomask int register_party(string name, string owner, string password)
    new_party.kills[owner] = 0;
    new_party.password = password;
    new_party.total_kills = 0;
-   parties += ([lower_case(name):new_party]);
+   parties += ([name:new_party]);
    save_me();
    return 1;
 }
@@ -65,12 +65,12 @@ mixed test(string name)
 
 nomask int award_experience(object slayer, string name, object *viable, int level)
 {
-   class party tmp = parties[lower_case(name)];
+   class party tmp = parties[name];
    string *party_members = keys(tmp.members);
    int x = 0;
    float total = 0.0;
 
-   parties[lower_case(name)].total_kills++;
+   parties[name].total_kills++;
 
    foreach (string member_name in party_members)
    {
@@ -78,7 +78,7 @@ nomask int award_experience(object slayer, string name, object *viable, int leve
       if (b && member_array(b, viable) != -1)
       {
          if (slayer && slayer == b)
-            parties[lower_case(name)].kills[member_name]++;
+            parties[name].kills[member_name]++;
 
          total += b->query_level();
       }
@@ -104,7 +104,7 @@ nomask int award_experience(object slayer, string name, object *viable, int leve
 #ifdef USE_KARMA
 nomask void modify_karma(string name, object *viable, int karma_impact)
 {
-   class party tmp = parties[lower_case(name)];
+   class party tmp = parties[name];
    string *party_members = keys(tmp.members);
    int x = 0;
 
@@ -119,7 +119,7 @@ nomask void modify_karma(string name, object *viable, int karma_impact)
 
 nomask string *query_party_members(string pname)
 {
-   return keys(((class party)parties[lower_case(pname)])->members);
+   return keys(((class party)parties[pname])->members);
 }
 
 nomask int add_member(string new_member, string pname, string password)
@@ -128,7 +128,6 @@ nomask int add_member(string new_member, string pname, string password)
    int access;
    string *members = query_party_members(pname);
 
-   pname = lower_case(pname);
    if (password != ((class party)parties[pname])->password)
       return 0;
 
@@ -161,7 +160,6 @@ nomask int add_member(string new_member, string pname, string password)
 
 nomask int remove_member(string member, string pname)
 {
-   pname = lower_case(pname);
    if (!((class party)parties[pname])->members[member])
    {
       return 0; // no such member
@@ -179,7 +177,6 @@ nomask string locate_access_member(string pname, int access)
 {
    string *members;
 
-   pname = lower_case(pname);
    members = keys(((class party)parties[pname])->members);
    foreach (string name in members)
    {
@@ -200,7 +197,6 @@ int change_access(string pname, string member, int access)
    string current_member;
    int old_access;
 
-   pname = lower_case(pname);
    current_member = locate_access_member(pname, access);
    old_access = ((((class party)parties[pname])->members[member]));
    ((((class party)parties[pname])->members[current_member])) = old_access;
@@ -230,17 +226,17 @@ nomask string *list_all_parties()
 
 nomask int query_party_kills(string pname)
 {
-   return ((class party)parties[lower_case(pname)])->total_kills;
+   return ((class party)parties[pname])->total_kills;
 }
 
 nomask int query_member_access(string pname, string member)
 {
-   return ((((class party)parties[lower_case(pname)])->members[member]));
+   return ((((class party)parties[pname])->members[member]));
 }
 
 nomask int query_member_kills(string pname, string member)
 {
-   return ((((class party)parties[lower_case(pname)])->kills[member]));
+   return ((((class party)parties[pname])->kills[member]));
 }
 
 // Find a user in the party 'pname' with a given access level.
@@ -248,7 +244,7 @@ nomask string locate_member_by_access(string pname, int access)
 {
    string *m;
 
-   pname = lower_case(pname);
+   
    m = keys(((class party)parties[pname])->members);
    foreach (string s in m)
    {
@@ -261,12 +257,12 @@ nomask string locate_member_by_access(string pname, int access)
 // The maximum number of members that can be active in one login.
 nomask int query_max_active(string pname)
 {
-   return ((class party)parties[lower_case(pname)])->max_active;
+   return ((class party)parties[pname])->max_active;
 }
 
 nomask void set_max_active(string pname, int n)
 {
-   ((class party)parties[lower_case(pname)])->max_active = n;
+   ((class party)parties[pname])->max_active = n;
    save_me();
 }
 
@@ -275,7 +271,6 @@ nomask string *query_active_members(string pname)
    int max;
    string *all;
 
-   pname = lower_case(pname);
    max = ((class party)parties[pname])->max_active;
    all = ({});
    // If there is no limit, list all users. Default is no limit.
@@ -290,35 +285,35 @@ nomask string *query_active_members(string pname)
 
 nomask void set_title(string pname, string title)
 {
-   ((class party)parties[lower_case(pname)])->title = title;
+   ((class party)parties[pname])->title = title;
    save_me();
 }
 
 nomask string query_title(string pname)
 {
-   return ((class party)parties[lower_case(pname)])->title;
+   return ((class party)parties[pname])->title;
 }
 
 nomask void set_password(string pname, string password)
 {
-   ((class party)parties[lower_case(pname)])->password = password;
+   ((class party)parties[pname])->password = password;
    save_me();
 }
 
 nomask string query_password(string pname)
 {
-   return ((class party)parties[lower_case(pname)])->password;
+   return ((class party)parties[pname])->password;
 }
 
 nomask void remove_party(string pname)
 {
-   map_delete(parties, lower_case(pname));
+   map_delete(parties, pname);
    save_me();
 }
 
 nomask int party_exists(string pname)
 {
-   return pname ? (parties[lower_case(pname)] ? 1 : 0) : 0;
+   return pname ? (parties[pname] ? 1 : 0) : 0;
 }
 
 void create()
