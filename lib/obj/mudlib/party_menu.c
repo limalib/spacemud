@@ -13,6 +13,8 @@
 #include <mudlib.h>
 
 inherit MENUS;
+inherit M_FRAME;
+inherit CLASS_PARTY;
 
 private
 varargs void enter_password(string owner, string party_name, int failures, string response);
@@ -28,17 +30,32 @@ string party_name;
 
 void who_current()
 {
-   string s;
-   string *members = PARTY_D->query_party_members(party_name);
+   int online;
+   class party party = PARTY_D->query_party(party_name);
+   string c = "";
+   mapping members = party.members;
+   mapping kills = party.kills;
+   frame_init_user();
+   set_frame_title("Party: " + party_name);
+   set_frame_header(sprintf("%-15.15s %-10.10s %-10.10s %-10.10s", "Player", "Level", "Role", "Kills"));
 
-   s = sprintf("%%^BOLD%%^%%^WHITE%%^Members of %s%%^RESET%%^%%^MAGENTA%%^:%%^RESET%%^\n", party_name);
-
-   printf("%s%%^BOLD%%^%%^BLUE%%^%s\n", s, repeat_string("-", sizeof(s)) + "<res>");
-   foreach (string str in members)
+   foreach (string name in keys(members))
    {
-      printf("%s\n", str);
+      object body = find_body(lower_case(name));
+      if (body)
+      {
+         c += sprintf(" %-15.15s %-10.10s %-10.10s %-10.10s\n", body->query_name(), "" + body->query_level(),
+                      members[name] == 1 ? "Lead" : "Member", "" + kills[name]);
+         online++;
+      }
+      else
+         c += sprintf(warning(" %-15.15s %-10.10s %-10.10s %-10.10s") + "\n", name, "Offline",
+                      members[name] == 1 ? "Lead" : "Member", "" + kills[name]);
    }
-   printf("%%^BOLD%%^%%^BLUE%%^%s\n\n", repeat_string("-", sizeof(s)) + "<res>");
+   set_frame_footer(sprintf("%d member%s, %d online right now", sizeof(members),
+                            sizeof(members) == 1 ? "" : "s. Total kills for the party: %s", online, party));
+   set_frame_content(c);
+   write(frame_render());
 }
 
 void party_maint()
@@ -53,21 +70,34 @@ void party_help()
 
 void last_ten_kills()
 {
-   return;
-}
+   string *list = PARTY_D->query_kill_list(party_name);
+   int count = sizeof(list);
+   printf("Last 10 kills in the party");
+   printf("--------------------------");
+   foreach (string kill in list)
+   {
+      printf("%-3.3s %s", "" + count, kill);
+      count--;
+   }
+   printf("--------------------------\n\n");
 
-void who_offline()
-{
    return;
 }
 
 void list_active()
 {
-   string *active = PARTY_D->list_all_parties();
-   string line = sprintf("%%^BOLD%%^%%^BLUE%%^%s%%^RESET%%^", repeat_string("-", 20));
+   string c = "";
+   mapping active = PARTY_D->list_all_parties();
+   frame_init_user();
+   set_frame_title("Party: " + party_name);
+   set_frame_header(sprintf("%-25.25s %-12.12s", "Party Name", "Kill count"));
 
-   printf("%%^BOLD%%^%%^WHITE%%^Parties on %s%%^RESET%%^\n", mud_name());
-   printf("%s\n  %s\n%s\n\n", line, implode(active, "\n  "), line);
+   foreach (string name, int total_kills in active)
+   {
+      c += sprintf(" %-25.25s %-12.12s", name, "" + total_kills);
+   }
+   set_frame_content(c);
+   write(frame_render());
 }
 
 void quit_party()
@@ -83,27 +113,23 @@ void quit_party()
 void start_menu()
 {
    party_name = PARTY_D->locate_user(this_body()->query_name());
-   toplevel = new_menu(party_name + " party Menu");
+   toplevel = new_menu(party_name + " Party Menu");
    maint = new_menu(party_name + " Maintenance Menu");
 
    quit_item = new_menu_item("Quit", ( : quit_menu_application:), "q");
-   main_seperator = new_seperator(repeat_string("-", 34));
 
-   add_menu_item(toplevel, main_seperator);
-   add_menu_item(toplevel, new_menu_item("Who is in " + party_name + "?", ( : who_current:), "w"));
+   add_menu_item(toplevel, new_menu_item("Members in " + party_name, ( : who_current:), "m"));
 
-   add_menu_item(toplevel, new_menu_item("List all active parties.", ( : list_active:), "a"));
+   add_menu_item(toplevel, new_menu_item("Active parties", ( : list_active:), "a"));
 
-   add_menu_item(toplevel, new_menu_item("List last ten kills. (Disabled)", ( : last_ten_kills:), "k"));
-
-   add_menu_item(toplevel, new_menu_item("List offline party memebers.", ( : who_offline:), "o"));
+   add_menu_item(toplevel, new_menu_item("Last ten kills", ( : last_ten_kills:), "k"));
+   TBUG(PARTY_D->query_owner(party_name));
+   TBUG(this_body()->query_name());
 
    if (PARTY_D->query_owner(party_name) == this_body()->query_name())
       add_menu_item(toplevel, new_menu_item("Party maintenance", ( : party_maint:), "m"));
 
    add_menu_item(toplevel, new_menu_item("QUIT " + party_name + " permanently.", ( : quit_party:), "X"));
-
-   add_menu_item(toplevel, main_seperator);
 
    add_menu_item(toplevel, new_menu_item("Help!", ( : party_help:), "h"));
 
