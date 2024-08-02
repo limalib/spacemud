@@ -9,22 +9,21 @@
 
 #define MAX_ATTEMPTS 3
 
-#include <menu.h>
 #include <mudlib.h>
 
-inherit MENUS;
+inherit "/std/menu2";
 inherit M_FRAME;
 inherit CLASS_PARTY;
 
 private
 varargs void enter_password(string owner, string party_name, int failures, string response);
 
-MENU toplevel;
-MENU maint;
+class menu toplevel;
+class menu maint;
 
-MENU_ITEM quit_item;
-MENU_ITEM main_seperator;
-MENU_ITEM help_item;
+class menu_item quit_item;
+class menu_item main_seperator;
+class menu_item help_item;
 private
 string party_name;
 
@@ -52,8 +51,8 @@ void who_current()
          c += sprintf(warning(" %-15.15s %-10.10s %-10.10s %-10.10s") + "\n", name, "Offline",
                       members[name] == 1 ? "Lead" : "Member", "" + kills[name]);
    }
-   set_frame_footer(sprintf("%d member%s, %d online right now", sizeof(members),
-                            sizeof(members) == 1 ? "" : "s. Total kills for the party: %s", online, party));
+   set_frame_footer(sprintf("%d member%s, %d online right now. Total kills for the party: %d", sizeof(members),
+                            sizeof(members) == 1 ? "" : "s", online, party.total_kills));
    set_frame_content(c);
    write(frame_render());
 }
@@ -90,11 +89,11 @@ void list_active()
    mapping active = PARTY_D->list_all_parties();
    frame_init_user();
    set_frame_title("Party: " + party_name);
-   set_frame_header(sprintf("%-25.25s %-12.12s", "Party Name", "Kill count"));
+   set_frame_header(sprintf("%-25.25s %-12.12s %-12.12s", "Party Name", "Kill count", "Members"));
 
-   foreach (string name, int total_kills in active)
+   foreach (string name, int *data in active)
    {
-      c += sprintf(" %-25.25s %-12.12s", name, "" + total_kills);
+      c += sprintf(" %-25.25s %-12.12s %-12.12s", name, "" + data[0], "" + data[1]);
    }
    set_frame_content(c);
    write(frame_render());
@@ -127,7 +126,7 @@ void start_menu()
    TBUG(this_body()->query_name());
 
    if (PARTY_D->query_owner(party_name) == this_body()->query_name())
-      add_menu_item(toplevel, new_menu_item("Party maintenance", ( : party_maint:), "m"));
+      add_menu_item(toplevel, new_menu_item("Party maintenance", ( : party_maint:), "p"));
 
    add_menu_item(toplevel, new_menu_item("QUIT " + party_name + " permanently.", ( : quit_party:), "X"));
 

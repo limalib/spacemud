@@ -1,4 +1,4 @@
-#include <menu.h>
+
 
 inherit M_ACTIONS;
 inherit MENUS;
@@ -7,7 +7,7 @@ void do_menu_setup();
 void set_id(string *id...);
 
 private
-MENU toplevel;
+class menu toplevel;
 private
 string bank_id = "unknown", bank_name = "Unknown Bank";
 private

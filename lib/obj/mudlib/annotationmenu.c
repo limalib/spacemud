@@ -13,17 +13,16 @@
 
 #include <classes.h>
 #include <edit.h>
-#include <menu.h>
 
 inherit MENUS;
 inherit CLASS_ANNOTATION;
 
-MENU toplevel;
-MENU view_annotations;
-MENU rm_annotations;
-MENU_ITEM quit_item;
-MENU_ITEM goto_main_menu_item;
-MENU_ITEM seperator;
+class menu toplevel;
+class menu view_annotations;
+class menu rm_annotations;
+class menu_item quit_item;
+class menu_item goto_main_menu_item;
+class menu_item seperator;
 private
 nosave object annotation_target;
 private

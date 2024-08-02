@@ -15,7 +15,6 @@
 **      add a security check in the input callback.
 */
 
-#include <menu.h>
 #include <mudlib.h>
 
 inherit M_INPUT;
@@ -57,7 +56,7 @@ void display_current_menu();
 protected
 void prompt_then_return();
 
-MENU current_menu, previous_menu;
+class menu current_menu, previous_menu;
 int need_refreshing;
 
 protected
@@ -66,9 +65,14 @@ void remove()
    destruct();
 }
 
-varargs protected MENU new_menu(string title, string prompt, int allow_enter, function no_match_function)
+int screen_width()
 {
-   MENU new_menu;
+   return this_user()->query_screen_width();
+}
+
+varargs protected class menu new_menu(string title, string prompt, int allow_enter, function no_match_function)
+{
+   class menu new_menu;
 
    new_menu = new (MENU);
    new_menu.items = ({});
@@ -80,9 +84,9 @@ varargs protected MENU new_menu(string title, string prompt, int allow_enter, fu
    return new_menu;
 }
 
-varargs protected MENU new_prompt(string prompt, function callback, string *completions)
+varargs protected class menu new_prompt(string prompt, function callback, string *completions)
 {
-   MENU new_menu;
+   class menu new_menu;
 
    new_menu = new (MENU);
    new_menu.prompt = prompt;
@@ -92,9 +96,9 @@ varargs protected MENU new_prompt(string prompt, function callback, string *comp
    return new_menu;
 }
 
-varargs protected MENU_ITEM new_seperator(string description, function constraint)
+varargs protected class menu_item new_seperator(string description, function constraint)
 {
-   MENU_ITEM new_menu_item;
+   class menu_item new_menu_item;
 
    new_menu_item = new (MENU_ITEM);
    new_menu_item.description = description;
@@ -104,10 +108,10 @@ varargs protected MENU_ITEM new_seperator(string description, function constrain
    return new_menu_item;
 }
 
-varargs protected MENU_ITEM new_menu_item(string description, mixed action, string choice_name, int prompt,
+varargs protected class menu_item new_menu_item(string description, mixed action, string choice_name, int prompt,
                                           function constraint)
 {
-   MENU_ITEM new_menu_item;
+   class menu_item new_menu_item;
 
    new_menu_item = new (MENU_ITEM);
    new_menu_item.description = description;
@@ -120,25 +124,25 @@ varargs protected MENU_ITEM new_menu_item(string description, mixed action, stri
 }
 
 protected
-void add_menu_item(MENU menu, MENU_ITEM menu_item)
+void add_menu_item(class menu menu, class menu_item menu_item)
 {
    menu.items += ({menu_item});
 }
 
 protected
-void set_menu_items(MENU menu, MENU_ITEM *menu_items)
+void set_menu_items(class menu menu, class menu_item *menu_items)
 {
    menu.items = menu_items;
 }
 
 protected
-void set_menu_title(MENU menu, string title)
+void set_menu_title(class menu menu, string title)
 {
    menu.title = title;
 }
 
 protected
-void set_menu_prompt(MENU menu, mixed prompt)
+void set_menu_prompt(class menu menu, mixed prompt)
 {
    if (!(stringp(prompt) || functionp(prompt)))
    {
@@ -150,49 +154,49 @@ void set_menu_prompt(MENU menu, mixed prompt)
 }
 
 protected
-void allow_empty_selection(MENU menu)
+void allow_empty_selection(class menu menu)
 {
    menu.allow_enter = 1;
 }
 
 protected
-void disallow_empty_selection(MENU menu)
+void disallow_empty_selection(class menu menu)
 {
    menu.allow_enter = 0;
 }
 
 protected
-void set_no_match_function(MENU menu, function f)
+void set_no_match_function(class menu menu, function f)
 {
    menu.no_match_function = f;
 }
 
 protected
-void set_number_of_columns(MENU menu, int n)
+void set_number_of_columns(class menu menu, int n)
 {
    menu.num_columns = n;
 }
 
 protected
-void disable_menu_item(MENU_ITEM item)
+void disable_menu_item(class menu_item item)
 {
    item.disabled = 1;
 }
 
 protected
-void enable_menu_item(MENU_ITEM item)
+void enable_menu_item(class menu_item item)
 {
    item.disabled = 0;
 }
 
 protected
-void set_menu_item_description(MENU_ITEM item, string description)
+void set_menu_item_description(class menu_item item, string description)
 {
    item.description = description;
 }
 
 protected
-void set_menu_item_action(MENU_ITEM item, mixed action)
+void set_menu_item_action(class menu_item item, mixed action)
 {
    //  Should type check here, but I can't figure out how
    //  to typecheck the class.
@@ -200,7 +204,7 @@ void set_menu_item_action(MENU_ITEM item, mixed action)
 }
 
 protected
-void set_menu_item_choice_name(MENU_ITEM item, string choice_name)
+void set_menu_item_choice_name(class menu_item item, string choice_name)
 {
    item.choice_name = choice_name;
 }
@@ -214,7 +218,7 @@ void user_is_active()
 }
 
 protected
-void constrain_menu_item(MENU_ITEM item, function f)
+void constrain_menu_item(class menu_item item, function f)
 {
    item.constraint = f;
 }
@@ -225,15 +229,15 @@ void constrain_menu_item(MENU_ITEM item, function f)
 // menus as a real menu without having to go through and modify
 // every single action
 private
-MENU menu_after_selection;
+class menu menu_after_selection;
 
 protected
 void new_parse_menu_input(string input)
 {
    string *matches;
    int i;
-   MENU_ITEM matched_item;
-   MENU completion_menu;
+   class menu_item matched_item;
+   class menu completion_menu;
    input = trim(input);
    user_is_active();
    if (input == "" && !current_menu.allow_enter)
@@ -318,7 +322,7 @@ protected
 void parse_menu_input(mixed input)
 {
    int counter;
-   MENU_ITEM item;
+   class menu_item item;
    mixed action;
 
    user_is_active();
@@ -374,7 +378,7 @@ string get_current_prompt()
       // I did that because comma seperating choices is ugly.
       string s = "";
       string c;
-      MENU_ITEM item;
+      class menu_item item;
       int counter;
       foreach (item in current_menu.items)
       {
@@ -406,7 +410,7 @@ string get_current_prompt()
 }
 
 protected
-void init_menu_application(MENU toplevel)
+void init_menu_application(class menu toplevel)
 {
    modal_push(( : parse_menu_input:), ( : get_current_prompt:));
    current_menu = toplevel;
@@ -421,7 +425,7 @@ void quit_menu_application()
 }
 
 protected
-void goto_menu(MENU m)
+void goto_menu(class menu m)
 {
    previous_menu = current_menu;
    current_menu = m;
@@ -429,7 +433,7 @@ void goto_menu(MENU m)
 }
 
 protected
-void goto_menu_silently(MENU m)
+void goto_menu_silently(class menu m)
 {
    previous_menu = current_menu;
    current_menu = m;
@@ -438,7 +442,7 @@ void goto_menu_silently(MENU m)
 protected
 void goto_previous_menu()
 {
-   MENU swap;
+   class menu swap;
    swap = current_menu;
    current_menu = previous_menu;
    previous_menu = swap;
@@ -451,7 +455,7 @@ void display_current_menu()
    int num_columns, i, j;
    int counter;
    string output;
-   MENU_ITEM this_item;
+   class menu_item this_item;
 
    need_refreshing = 0;
    if (!sizeof(current_menu.items) && !current_menu.no_match_function)
@@ -486,7 +490,7 @@ void display_current_menu()
    output = current_menu.title + "\n";
 
    if (!(num_columns = current_menu.num_columns))
-      num_columns = 78 / (leftwidth + rightwidth + 6);
+      num_columns = screen_width() / (leftwidth + rightwidth + 6);
    if (!num_columns)
       num_columns = 1;
    // Build this each time, and pass it on to the input handler,

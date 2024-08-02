@@ -14,9 +14,12 @@ class party
    string *kill_list;
    string title;
    string password;
+   string description;
    int min_level;
    int max_level;
    int max_active;
    int total_kills;
+   int recruits;
+   int max_size;
 }
 

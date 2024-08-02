@@ -6,6 +6,8 @@
 //          if experience is used.
 // March 1, 1997: Iizuka@Lima Bean created.
 
+// ## Change access system to use leaders, and members marked in different way.
+
 #define PARTIES_SAVE
 
 #ifdef PARTIES_SAVE
@@ -118,6 +120,25 @@ nomask void modify_karma(string name, object *viable, int karma_impact)
 }
 #endif
 
+//: FUNCTION flip_mapping
+// Reverses the keys and values in a mapping if
+// the values are compatible as keys.
+mapping flip_mapping(mapping map)
+{
+   mapping new_map = ([]);
+   map_mapping(map, ( : $(new_map)[$2] = $1:));
+   return new_map;
+}
+
+nomask string query_owner(string pname)
+{
+   mapping members = ((class party)parties[pname]).members;
+   int min = min(values(members));
+   TBUG(members);
+   TBUG(min);
+   return flip_mapping(members)[min];
+}
+
 nomask string *query_party_members(string pname)
 {
    return keys(((class party)parties[pname]).members);
@@ -131,8 +152,6 @@ nomask int add_member(string new_member, string pname, string password)
 
    if (!check_password(pname, password))
       return 0;
-
-   TBUG(pname);
 
    // If the difference in levels between the new member
    // and any existing member of the party is greater
@@ -228,7 +247,7 @@ nomask mapping list_all_parties()
    mapping p = ([]);
    foreach (string name, class party party in parties)
    {
-      p[name] = party.total_kills;
+      p[name] = ({party.total_kills, sizeof(party.members)});
    }
 
    return p;
