@@ -35,11 +35,11 @@ class menu_item
 
 class menu
 {
-   // Items should only ever be MENU_ITEM*'s or string*'s, and
+   // Items should only ever be class menu:item*'s or string*'s, and
    // should be of uniform type.  If this is of type string,
    // The menu won't display options.
    // And if items is a string*, you'd better have a no_match_function,
-   // because there won't be any MENU_ITEMS to match against.
+   // because there won't be any class menu_itemS to match against.
    mixed *items;
    mixed title;
    mixed prompt;
@@ -50,7 +50,7 @@ class menu
    string *current_choices;
 }
 
-protected void goto_menu(MENU);
+protected void goto_menu(class menu);
 protected
 void display_current_menu();
 protected
@@ -74,7 +74,7 @@ varargs protected class menu new_menu(string title, string prompt, int allow_ent
 {
    class menu new_menu;
 
-   new_menu = new (MENU);
+   new_menu = new (class menu);
    new_menu.items = ({});
    new_menu.title = title;
    new_menu.prompt = prompt;
@@ -88,7 +88,7 @@ varargs protected class menu new_prompt(string prompt, function callback, string
 {
    class menu new_menu;
 
-   new_menu = new (MENU);
+   new_menu = new (class menu);
    new_menu.prompt = prompt;
    new_menu.no_match_function = callback;
    new_menu.items = completions ? completions : ({});
@@ -100,7 +100,7 @@ varargs protected class menu_item new_seperator(string description, function con
 {
    class menu_item new_menu_item;
 
-   new_menu_item = new (MENU_ITEM);
+   new_menu_item = new (class menu_item);
    new_menu_item.description = description;
    new_menu_item.constraint = constraint;
    new_menu_item.seperator = 1;
@@ -113,7 +113,7 @@ varargs protected class menu_item new_menu_item(string description, mixed action
 {
    class menu_item new_menu_item;
 
-   new_menu_item = new (MENU_ITEM);
+   new_menu_item = new (class menu_item);
    new_menu_item.description = description;
    new_menu_item.action = action;
    new_menu_item.choice_name = choice_name;
@@ -283,8 +283,8 @@ void new_parse_menu_input(string input)
       matched_item =
           filter_array(current_menu.items,
                        (
-                           : intp(((MENU_ITEM)$1)->choice_name) ? sprintf("%d", ((MENU_ITEM)$1)->choice_name) == $2
-                                                                : ((MENU_ITEM)$1)->choice_name == $2:),
+                           : intp(((class menu_item)$1)->choice_name) ? sprintf("%d", ((class menu_item)$1)->choice_name) == $2
+                                                                : ((class menu_item)$1)->choice_name == $2:),
                        matches[0])[0];
       if (functionp(matched_item.action))
       {
@@ -307,9 +307,9 @@ void new_parse_menu_input(string input)
       set_menu_items(completion_menu,
                      filter_array(current_menu.items,
                                   (
-                                      : intp(((MENU_ITEM)$1)->choice_name)
-                                            ? member_array(sprintf("%d", ((MENU_ITEM)$1)->choice_name), $2) != -1
-                                            : member_array(((MENU_ITEM)$1)->choice_name, $2) != -1
+                                      : intp(((class menu_item)$1)->choice_name)
+                                            ? member_array(sprintf("%d", ((class menu_item)$1)->choice_name), $2) != -1
+                                            : member_array(((class menu_item)$1)->choice_name, $2) != -1
                                       :),
                                   matches));
       add_menu_item(completion_menu, new_menu_item("Return to previous menu", current_menu));
@@ -473,17 +473,17 @@ void display_current_menu()
       return;
    }
    rightwidth = max(map(filter_array(current_menu.items, (
-                                                             : !(((MENU_ITEM)$1)->seperator)
+                                                             : !(((class menu_item)$1)->seperator)
                                                              :)),
                         (
-                            : strlen(((MENU_ITEM)$1)->description)
+                            : strlen(((class menu_item)$1)->description)
                             :)));
    // This stuff is getting as ugly as Amylaar closures =P
    leftwidth = max(map(filter_array(current_menu.items, (
-                                                            : stringp(((MENU_ITEM)$1)->choice_name)
+                                                            : stringp(((class menu_item)$1)->choice_name)
                                                             :)),
                        (
-                           : strlen(((MENU_ITEM)$1)->choice_name)
+                           : strlen(((class menu_item)$1)->choice_name)
                            :)) +
                    ({3}));
 
