@@ -15,17 +15,17 @@
 // Styles and colours are hardcoded in here, and should be moved to admtool tool
 // or a config file.
 
-#define TRD 0  // Right down
-#define TH 1   // Horisontal
-#define THD 2  // Horisontal down
-#define TLD 3  // Left down
-#define TD 4   // Down
-#define TDR 5  // Down right
-#define TX 6   // Cross
-#define TDL 7  // Down left
-#define TRU 8  // Right up
-#define THU 9  // Horisontal up
-#define TLU 10 // Left up
+#define TRD 0  // Right down ┌
+#define TH 1   // Horisontal ─
+#define THD 2  // Horisontal down ┬
+#define TLD 3  // Left down ┐
+#define TD 4   // Down │
+#define TDR 5  // Down right ├
+#define TX 6   // Cross ┼
+#define TDL 7  // Down left ┤
+#define TRU 8  // Right up └
+#define THU 9  // Horisontal up ┴
+#define TLU 10 // Left up ┘
 
 #define FALLBACK_STYLE "ascii"
 #define COL_GRADIENT 0
@@ -57,12 +57,13 @@ nosave string *bits;
 
 /* Strings */
 private
-string title, header_content, footer_content, content, style;
+string title, header_content, footer_content, *content, style;
 /* Ints */
 private
-nosave int width, // Width of the frame, default user screen width
-    title_margin, // Margin the header takes from left side, default 2
-    text_margin;  // Margin around header text
+nosave int width,  // Width of the frame, default user screen width
+    title_margin,  // Margin the header takes from left side, default 2
+    text_margin,   // Margin around header text
+    section_width; // Width of sections in menus.
 /* Booleans*/
 private
 nosave int add_header, add_footer, left_header;
@@ -70,6 +71,9 @@ nosave int add_header, add_footer, left_header;
 // Colour configuration storage.
 private
 nosave string *hcolours;
+
+private
+nosave string *sections;
 
 //: FUNCTION colour_strlen
 // Gives the length of the visible portion of s.  Colour
@@ -160,6 +164,20 @@ string raw_accent()
    return hcolours[COL_ACCENT];
 }
 
+//: FUNCTION raw_title
+// Returns the raw title colour, i.e. the XXX number triplet.
+string raw_title()
+{
+   return hcolours[COL_TITLE];
+}
+
+//: FUNCTION raw_warn
+// Returns the raw warning colour, i.e. the XXX number triplet.
+string raw_warning()
+{
+   return hcolours[COL_WARNING];
+}
+
 //: FUNCTION warning
 // Takes a string and applies the warning colour to it.
 string warning(mixed t)
@@ -184,6 +202,13 @@ void set_frame_title(string s)
 void set_width(int w)
 {
    width = clamp(w, 10, 1000);
+}
+
+//: FUNCTION query_width
+// Returns the width of the frame.
+int query_width()
+{
+   return width;
 }
 
 //: FUNCTION set_title_margin
@@ -252,10 +277,13 @@ void set_frame_footer(string fc)
 
 //: FUNCTION set_frame_content
 // This is the main function to call for the main content of
-// the frame.
-void set_frame_content(string c)
+// the frame. Content must either be an array of strings or a single string.
+void set_frame_content(mixed c)
 {
-   content = c;
+   if (arrayp(c))
+      content = c;
+   else
+      content = ({c});
 }
 
 //: FUNCTION set_frame_hcolours
@@ -278,6 +306,91 @@ string simple_header()
 {
    string out = "";
    out += bits[TRD] + repeat_string(bits[TH], width - 2) + bits[TLD] + "\n";
+   return out;
+}
+
+void set_frame_sections(string *s, int width)
+{
+   sections = s;
+   section_width = width;
+}
+
+private
+string *create_section_header()
+{
+   string *headers = ({});
+   string out;
+   int first_header = 1;
+   int len;
+   foreach (string *data in sections)
+   {
+      // TBUG("Width: " + width + " Len: " + len + " Out len: " + colour_strlen(out));
+      if (colour_strlen(out) + len > width)
+      {
+         headers += ({out + (first_header ? bits[TLD] : bits[TDL]) + "\n"});
+         first_header = 0;
+         out = 0;
+      }
+      if (data[1] == "accent")
+         data[1] = "<" + raw_accent() + ">";
+      if (data[1] == "title")
+         data[1] = "<" + raw_title() + ">";
+      if (data[1] == "warning")
+         data[1] = "<" + raw_warning() + ">";
+      if (!out)
+         out = bits[TDR];
+      else
+         out += bits[TH];
+      out += bits[TH] + sprintf("<bld>%s%s<res> ", data[1], data[0]) +
+             repeat_string(bits[TH], (section_width - strlen(data[0]) + 3));
+      if (!len)
+         len = colour_strlen(out + bits[TLD]);
+   }
+
+   if (strlen(out))
+   {
+      if (sizeof(headers) && colour_strlen(out) < colour_strlen(headers[0]))
+         headers +=
+             ({out + repeat_string(bits[TH], colour_strlen(headers[0]) - colour_strlen(out) - 2) + bits[TDL] + "\n"});
+      else
+         headers += ({out + (first_header ? bits[TLD] : bits[TDL]) + "\n"});
+   }
+
+   return headers;
+}
+
+private
+string create_menu_header()
+{
+   string out = "";
+   string h_title = colour_strlen(title) > (width - 8) ? title[0..width - 8] : title;
+   int i = 0;
+   int simple_header = style == "lines" || style == "none";
+   int header_width = colour_strlen(h_title) + (text_margin * 2);
+   string *headers = explode(header_content || "", "\n");
+
+   out += repeat_string(" ", title_margin) + " " + bits[TRD];
+   while (i < header_width)
+   {
+      out += bits[TH];
+      i++;
+   }
+
+   out += bits[TLD] + "\n";
+   out += bits[TRD] + repeat_string(bits[TH], title_margin) + bits[TDL] + repeat_string(" ", text_margin) + h_title +
+          repeat_string(" ", text_margin) + bits[TD] + "\n";
+
+   out += bits[TD] + " " + repeat_string(" ", title_margin - 1) + bits[TRU];
+
+   i = 0;
+
+   while (i < header_width)
+   {
+      out += bits[TH];
+      i++;
+   }
+   out += bits[TLU] + "\n";
+   out += bits[TD] + "\n"; // End of Title box section
    return out;
 }
 
@@ -370,12 +483,37 @@ string create_footer()
 }
 
 private
+string *create_menu_content()
+{
+   string *lines = ({});
+   string out;
+   int len;
+
+   foreach (string c in content)
+   {
+      out = "";
+      foreach (string l in explode(c, "\n"))
+      {
+         if (!len)
+            len = colour_strlen(l);
+         out += bits[TD] + l[0.. < 2];
+         out += bits[TD] + "\n";
+      }
+      lines += ({out});
+   }
+   out = bits[TRU] + repeat_string(bits[TH], (len - 1)) + bits[TLU];
+   lines += ({out});
+
+   return lines;
+}
+
+private
 string create_left_header()
 {
    string out = "";
    string *headers = explode(header_content || "", "\n");
    int header_width, max_header_width, i = 0;
-   string *contents = explode(content || "", "\n");
+   string *contents = explode(content[0] || "", "\n");
    int content_length = max(({sizeof(headers), sizeof(contents)}));
 
    if (title)
@@ -456,7 +594,7 @@ private
 string create_content()
 {
    string out = "";
-   string *contents = explode(content || "", "\n");
+   string *contents = explode(content[0] || "", "\n");
 
    foreach (string c in contents)
    {
@@ -529,8 +667,8 @@ string query_frame_warning(string theme)
 string frame_demo_string(string theme, int w)
 {
    return styles[style][TRD] + styles[style][TH] + styles[style][TH] + styles[style][TH] +
-          repeat_string(styles[style][TH], (w / 2) - 6) + styles[style][THD] + styles[style][TH] + styles[style][TH] +
-          styles[style][TH] + repeat_string(styles[style][TH], (w / 2) - 6) + styles[style][TH] + styles[style][TH] +
+          repeat_string(styles[style][TH], ((w - 10))) + styles[style][THD] + styles[style][TH] + styles[style][TH] +
+          styles[style][TH] + repeat_string(styles[style][TH], (w - 10)) + styles[style][TH] + styles[style][TH] +
           styles[style][TH] + styles[style][TLD];
 }
 
@@ -543,6 +681,30 @@ string frame_colour_demo(string style, string colour, int w)
    return h_colours(frame_demo_string(style, w), colours[colour]);
 }
 
+string menu_render()
+{
+   string out = "";
+   string *headers, *contents;
+   int content_count = 0;
+
+   out += create_menu_header();
+   headers = create_section_header();
+   contents = create_menu_content();
+
+   foreach (string h in headers)
+   {
+      out += h;
+      out += contents[content_count];
+      content_count++;
+   }
+   out += contents[content_count];
+
+   if (hcolours && this_user()->terminal_mode() != "plain")
+      out = h_colours(out);
+
+   return out;
+}
+
 //: FUNCTION frame_render
 // Renders the final frame into a string for printing.
 string frame_render()
@@ -550,8 +712,11 @@ string frame_render()
    string out = "";
 
    if (!bits)
-      error("Need to set frame style before render() using frame->set_style().\n" +
-            "Current styles: " + format_list(query_frame_styles()) + ".");
+      error("Need to set frame style before render() using frame->set_style().\n"
+            "Current styles: " +
+            format_list(query_frame_styles()) +
+            ".\n"
+            "Did you forget to call frame_init_user() ?");
 
    if (left_header)
    {

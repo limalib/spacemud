@@ -12,7 +12,6 @@
 #include <mudlib.h>
 
 inherit "/std/menu2";
-inherit M_FRAME;
 inherit CLASS_PARTY;
 
 private
@@ -20,10 +19,16 @@ varargs void enter_password(string owner, string party_name, int failures, strin
 
 class menu toplevel;
 class menu maint;
+class menu empty;
 
 class menu_item quit_item;
 class menu_item main_seperator;
 class menu_item help_item;
+
+class section party_data;
+class section party_maint;
+class section party_menu;
+
 private
 string party_name;
 
@@ -112,27 +117,33 @@ void quit_party()
 void start_menu()
 {
    party_name = PARTY_D->locate_user(this_body()->query_name());
+   frame_init_user();
    toplevel = new_menu(party_name + " Party Menu");
+   party_data = new_section("Party Data", "title");
+   party_maint = new_section("Party Admin", "warning");
+   party_menu = new_section("Other", "<081>");
+   empty = new_menu("Empty Menu");
    maint = new_menu(party_name + " Maintenance Menu");
 
    quit_item = new_menu_item("Quit", ( : quit_menu_application:), "q");
+   add_section_item(toplevel, party_data);
 
-   add_menu_item(toplevel, new_menu_item("Members in " + party_name, ( : who_current:), "m"));
-
-   add_menu_item(toplevel, new_menu_item("Active parties", ( : list_active:), "a"));
-
-   add_menu_item(toplevel, new_menu_item("Last ten kills", ( : last_ten_kills:), "k"));
-   TBUG(PARTY_D->query_owner(party_name));
-   TBUG(this_body()->query_name());
+   add_menu_item(party_data, new_menu_item("Members list", ( : who_current:), "m"));
+   add_menu_item(party_data, new_menu_item("Active parties", ( : list_active:), "a"));
+   add_menu_item(party_data, new_menu_item("Last ten kills", ( : last_ten_kills:), "k"));
 
    if (PARTY_D->query_owner(party_name) == this_body()->query_name())
-      add_menu_item(toplevel, new_menu_item("Party maintenance", ( : party_maint:), "p"));
+   {
+      add_menu_item(party_maint, new_menu_item("Kick member", ( : party_maint:), "k"));
+      add_menu_item(party_maint, new_menu_item("Invite member", ( : party_maint:), "i"));
+      add_menu_item(party_maint, new_menu_item("Change password", ( : party_maint:), "p"));
+      add_section_item(toplevel, party_maint);
+   }
 
-   add_menu_item(toplevel, new_menu_item("QUIT " + party_name + " permanently.", ( : quit_party:), "X"));
-
-   add_menu_item(toplevel, new_menu_item("Help!", ( : party_help:), "h"));
-
-   add_menu_item(toplevel, quit_item);
+   add_section_item(toplevel, party_menu);
+   add_menu_item(party_data, new_menu_item("QUIT party", ( : quit_party:), "X"));
+   add_menu_item(party_menu, new_menu_item("Help!", ( : party_help:), "h"));
+   add_menu_item(party_menu, quit_item);
 
    init_menu_application(toplevel);
 }
