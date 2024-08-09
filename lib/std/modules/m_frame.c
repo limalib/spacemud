@@ -702,6 +702,8 @@ string menu_render()
    if (hcolours && this_user()->terminal_mode() != "plain")
       out = h_colours(out);
 
+   out = replace_string(out, "<>", "");
+
    return out;
 }
 

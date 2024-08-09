@@ -871,7 +871,7 @@ nomask varargs int check_privilege(mixed prot, int ignore)
       if (function_exists("query_privilege", ob) != M_ACCESS)
       {
          string temp, temp2;
-         if (sscanf(file_name(ob), "/wiz/%s/%s", temp, temp2) == 2)
+         if (sscanf(file_name(ob), WIZ_DIR+"/%s/%s", temp, temp2) == 2)
          {
             return higher_privilege(temp + ":", prot);
          }

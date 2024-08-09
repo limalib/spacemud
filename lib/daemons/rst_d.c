@@ -91,7 +91,7 @@ private:
 // ---------------------------------------------------------------------
 
 nosave private string *filtered_dirs =
-    ({"/data/", "/ftp/", "/help/", "/include/", "/log/", "/open/", "/tmp/", "/user/", "/wiz/", "/contrib/"});
+    ({"/data/", "/ftp/", "/help/", "/include/", "/log/", "/open/", "/tmp/", "/user/", WIZ_DIR+"/", "/contrib/"});
 
 string *mod_name(string file)
 {
