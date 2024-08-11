@@ -11,7 +11,7 @@
 #include <playerflags.h>
 #include <security.h>
 
-inherit MENUS;
+inherit "/std/menu2";
 inherit M_ACCESS;
 
 class menu toplevel;
@@ -19,6 +19,9 @@ class menu toplevel;
 class menu_item quit_item;
 class menu_item goto_main_menu_item;
 class menu_item main_seperator;
+class section play;
+class section create;
+class section other;
 
 // right now, we're just going to call the help command.
 // private class menu helpmenu;
@@ -436,18 +439,23 @@ void create()
    quit_item = new_menu_item("Quit", ( : quit_game:), "q");
    goto_main_menu_item = new_menu_item("Return to main menu", toplevel, "m");
 
-   main_seperator = new_seperator("---------------------------------------------------------------");
+   play = new_section("Play", "accent");
+   create = new_section("Characters", "<085>");
+   other = new_section("Other", "warning");
+   add_section_item(toplevel, play);
+   add_section_item(toplevel, create);
+   add_section_item(toplevel, other);
+
    if (clonep())
       call_out(( : quit_idle_menu:), USER_MENU_TIMEOUT);
 
    // Add items to the toplevel (main) menu.
-   add_menu_item(toplevel, main_seperator);
-   add_menu_item(toplevel, new_menu_item("See who's on (who)", ( : simple_cmd:), "w"));
-   add_menu_item(toplevel, new_menu_item("Select character to play", ( : select_char:), "s"));
-   add_menu_item(toplevel, new_menu_item("Create new character", ( : create_char:), "c"));
-   add_menu_item(toplevel, new_menu_item("Remove a character", ( : remove_char:), "r"));
-   add_menu_item(toplevel, new_menu_item("Enter the game", ( : enter_game:), "p"));
-   add_menu_item(toplevel, quit_item);
+   add_menu_item(other, new_menu_item("See who's on (who)", ( : simple_cmd:), "w"));
+   add_menu_item(play, new_menu_item("Select character to play", ( : select_char:), "s"));
+   add_menu_item(create, new_menu_item("Create new character", ( : create_char:), "c"));
+   add_menu_item(create, new_menu_item("Remove a character", ( : remove_char:), "r"));
+   add_menu_item(play, new_menu_item("Enter the game", ( : enter_game:), "p"));
+   add_menu_item(other, quit_item);
 }
 
 void user_is_active()
@@ -487,6 +495,10 @@ void auto_login()
 void start_menu()
 {
    string selected = this_user()->query_selected_body();
+   frame_init_user();
+   if (query_style() == "ascii")
+      set_style("none");
+
    if (selected)
       write("\n(Auto login in " + AUTO_LOGIN_AFTER + " enabled, type anything to stop it)\n\n");
    init_menu_application(toplevel);

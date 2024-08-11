@@ -134,8 +134,6 @@ nomask string query_owner(string pname)
 {
    mapping members = ((class party)parties[pname]).members;
    int min = min(values(members));
-   TBUG(members);
-   TBUG(min);
    return flip_mapping(members)[min];
 }
 

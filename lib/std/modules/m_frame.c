@@ -94,6 +94,13 @@ string use_colour(string *cols, int position, int width)
    return cols[col_index] != "" ? "<" + cols[col_index] + ">" : "";
 }
 
+//: FUNCTION query_style
+// Returns the current frame style.
+string query_style()
+{
+   return style;
+}
+
 //: FUNCTION set_style
 // Set a specific style if it exists.
 void set_style(string t)
@@ -133,6 +140,14 @@ string *query_frame_styles()
 void set_frame_left_header()
 {
    left_header = 1;
+}
+
+//: FUNCTION i_simplify
+// Returns TRUE if the current user (not the object receiving the message!)
+// has simplify turned on.
+nomask int i_simplify()
+{
+   return get_user_variable("simplify") != 0;
 }
 
 private
@@ -693,7 +708,8 @@ string menu_render()
 
    foreach (string h in headers)
    {
-      out += h;
+      if (!i_simplify())
+         out += h;
       out += contents[content_count];
       content_count++;
    }

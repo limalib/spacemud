@@ -404,6 +404,8 @@ protected
 string get_current_prompt()
 {
    mixed prompt;
+   if (i_simplify())
+      return "";
 
    prompt = current_menu.prompt;
    if (need_refreshing)
@@ -491,6 +493,7 @@ void goto_previous_menu()
 string generate_section_output(class section *sections, int largest_section, int leftwidth, int rightwidth, int columns)
 {
    string output = repeat_string(" ", (columns * (leftwidth + rightwidth + 4))) + "\n";
+   string format = accent("%" + leftwidth + "s") + (i_simplify() ? ", " : "") + " %-" + rightwidth + "s   ";
    class menu_item this_item;
    class menu_item empty_item = new_menu_item("", "", " ");
    int counter;
@@ -512,8 +515,9 @@ string generate_section_output(class section *sections, int largest_section, int
          }
          if (!stringp(this_item.choice_name) && strlen(this_item.choice_name))
          {
-            output +=
-                sprintf(accent("%" + leftwidth + "d") + " %-" + rightwidth + "s   ", ++counter, this_item.description);
+            if (strlen(this_item.description) > 0)
+               output += sprintf(format, ++counter + "",
+                                 i_simplify() ? punctuate(this_item.description) : this_item.description);
             current_menu.current_choices += ({sprintf("%d", counter)});
             // Note, this will still get recalculated every time, since
             // we're setting it to an int, and not a string, but that's
@@ -525,9 +529,9 @@ string generate_section_output(class section *sections, int largest_section, int
          }
          else
          {
-            if (strlen(this_item.choice_name))
-               output += sprintf(accent("%" + leftwidth + "s") + " %-" + rightwidth + "s   ", this_item.choice_name,
-                                 this_item.description);
+            if (strlen(trim(this_item.choice_name)) > 0)
+               output += sprintf(format, this_item.choice_name,
+                                 i_simplify() ? punctuate(this_item.description) : this_item.description);
             current_menu.current_choices += ({this_item.choice_name});
          }
       }
