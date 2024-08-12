@@ -141,7 +141,7 @@ void start_menu()
    }
 
    add_section_item(toplevel, party_menu);
-   add_menu_item(party_data, new_menu_item("QUIT party", ( : quit_party:), "X"));
+   add_menu_item(party_data, new_menu_item("QUIT party", ( : quit_party:), "x"));
    add_menu_item(party_menu, new_menu_item("Help!", ( : party_help:), "h"));
    add_menu_item(party_menu, quit_item);
 
