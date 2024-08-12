@@ -237,24 +237,40 @@ void do_select(string name)
 }
 
 private
+int uses_unicode()
+{
+   return member_array(this_user()->frames_style(), ({"ascii", "lines", "none"})) == -1;
+}
+
+private
+string simple_divider(int width)
+{
+   string barchar = uses_unicode() ? "─" : "-";
+   if (i_simplify())
+      return "";
+   return repeat_string(barchar, width);
+}
+
+private
 string *list_chars()
 {
    mapping bodies = this_user()->query_bodies();
    string *sorted_bodies = sort_array(keys(bodies), 1);
    string selected = this_user()->query_selected_body();
    string *genders = ({"None", "Male", "Female", "Non-binary"});
-   string format = "%-8.8s %-14.14s %-7.7s %-25.25s %-20.20s\n";
+   string format = "<bld>%-8.8s %-24.24s %-7.7s %-25.25s %-20.20s";
    int count = 1;
-   printf(format, "Select", "Name", "Level", "Race", "Gender");
-   write("--------------------------------------------------------------------------\n");
+   printf(title(format), "Select", "Name", "Level", "Race", "Gender");
+   format = format[0..10] + "<res>" + last_colour() + format[11..19] + "<res>" + format[20..];
+   write(first_colour() + simple_divider(74) + "<res>");
    foreach (string name in sorted_bodies)
    {
       mixed *ar = bodies[name];
-      string s = "[" + count + (name == selected ? "*" : "") + "]";
+      string s = count + (name == selected ? "*" : "");
       printf(format, s, capitalize(name), "" + ar[1], capitalize(ar[2]), genders[ar[3]]);
       count++;
    }
-   write("--------------------------------------------------------------------------\n" + "(* Selected character)\n");
+   write(first_colour() + simple_divider(74) + "<res>\n" + "(<bld>*<res> Selected character)\n");
    return sorted_bodies;
 }
 

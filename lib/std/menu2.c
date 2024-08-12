@@ -500,6 +500,7 @@ string generate_section_output(class section *sections, int largest_section, int
 
    for (int i = 0; i < largest_section; i++)
    {
+      int printed_columns = 0;
       foreach (class section section in sections)
       {
          if (i >= sizeof(section.items))
@@ -526,17 +527,21 @@ string generate_section_output(class section *sections, int largest_section, int
             // without having to recalculate all this crap when it comes
             // time to process the choice.
             this_item.choice_name = counter;
+            printed_columns++;
          }
-         else
+         else if (strlen(trim(this_item.choice_name)) > 0)
          {
-            if (strlen(trim(this_item.choice_name)) > 0)
-               output += sprintf(format, this_item.choice_name,
-                                 i_simplify() ? punctuate(this_item.description) : this_item.description);
+            output += sprintf(format, this_item.choice_name,
+                              i_simplify() ? punctuate(this_item.description) : this_item.description);
             current_menu.current_choices += ({this_item.choice_name});
+            printed_columns++;
          }
       }
-      if (sizeof(sections) < columns)
-         output += repeat_string(" ", (columns - sizeof(sections)) * (leftwidth + rightwidth + 4));
+
+      if (printed_columns < columns)
+      {
+         output += repeat_string(" ", (columns - printed_columns) * (leftwidth + rightwidth + 4));
+      }
       output += "\n";
    }
    return output + repeat_string(" ", (columns * (leftwidth + rightwidth + 4))) + "\n";

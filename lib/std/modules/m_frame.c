@@ -240,6 +240,16 @@ void set_text_margin(int tm)
    text_margin = tm;
 }
 
+string first_colour()
+{
+   return "<" + explode(hcolours[0], ",")[0] + ">";
+}
+
+string last_colour()
+{
+   return "<" + explode(hcolours[0], ",")[ < 1] + ">";
+}
+
 //: FUNCTION frame_init_user
 // Init the frame based on the user settings. This is normally always called before
 // the rendering to set the frame up correctly. See most commands using frames.
