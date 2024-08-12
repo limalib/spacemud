@@ -22,7 +22,7 @@ void modal_pop();
 void set_privilege(mixed priv); // from M_ACCESS
 mixed unguarded(mixed priv, function fp);
 
-void start_shell();
+void start_shell(int);
 void run_login_script();
 
 /*
@@ -118,7 +118,7 @@ nomask void incarnate(string name, int is_new, string new_fname)
       body->set_gender(query_gender(name));
    save_me();
 
-   start_shell();
+   start_shell(0);
    body->enter_game(is_new);
    run_login_script();
 
@@ -149,7 +149,7 @@ nomask void rcv_try_to_boot(object who, string answer)
          who->receive_private_msg("You are taken over by yourself, or something.\n");
          body = who->query_body();
          who->steal_body();
-         start_shell();
+         start_shell(0);
          body->reconnect(this_object());
          return;
       }
@@ -217,7 +217,7 @@ nomask void sw_body_handle_existing_logon(string name, int enter_now)
             {
                master()->refresh_parse_info();
                the_user->steal_body();
-               start_shell();
+               start_shell(0);
                body->reconnect(this_object());
                return;
             }

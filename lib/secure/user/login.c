@@ -25,6 +25,7 @@ void modal_recapture();
 mixed unguarded(mixed priv, function fp);
 void initialize_channels();
 void display_didlog();
+void start_shell(int init_only);
 
 /* Login states */
 #define TIMEOUT -1
@@ -440,6 +441,7 @@ nomask varargs void login_handle_logon(int state, mixed extra, string arg)
          */
          modal_pop();
 #ifdef USE_USER_MENU
+         start_shell(1);
          new (USER_MENU)->start_menu();
          return;
 #else

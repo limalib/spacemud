@@ -17,7 +17,7 @@
 #include <driver/function.h>
 
 string query_userid();
-void start_shell();
+void start_shell(int);
 mixed query_privilege();
 
 #define INPUT_NORMAL 0
@@ -106,7 +106,7 @@ nomask int create_handler()
    /*
    ** Attempt to create a handler (the user has none!)
    */
-   start_shell();
+   start_shell(0);
 
    if (!sizeof(modal_stack))
    {
