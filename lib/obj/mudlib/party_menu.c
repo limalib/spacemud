@@ -16,6 +16,7 @@ inherit CLASS_PARTY;
 
 private
 varargs void enter_password(string owner, string party_name, int failures, string response);
+void start_menu();
 
 class menu toplevel;
 class menu maint;
@@ -31,6 +32,8 @@ class section party_menu;
 
 private
 string party_name;
+private
+object user;
 
 void who_current()
 {
@@ -72,10 +75,25 @@ void party_help()
    return;
 }
 
+void remove()
+{
+   destruct();
+}
+
+string query_user()
+{
+   return user ? user->query_name() : "none";
+}
+
 void last_ten_kills()
 {
    string *list = PARTY_D->query_kill_list(party_name);
    int count = sizeof(list);
+   if (!list)
+   {
+      write("No kills yet, go slay.");
+      return;
+   }
    printf("Last 10 kills in the party");
    printf("--------------------------");
    foreach (string kill in list)
@@ -110,42 +128,8 @@ void quit_party()
    if (sizeof(PARTY_D->query_party_members(party_name)) == 1)
       PARTY_D->remove_party(party_name);
    else
-      PARTY_D->remove_member(this_body()->query_name(), party_name);
+      PARTY_D->remove_member(user->query_name(), party_name);
    quit_menu_application();
-}
-
-void start_menu()
-{
-   party_name = PARTY_D->locate_user(this_body()->query_name());
-   frame_init_user();
-   toplevel = new_menu(party_name + " Party Menu");
-   party_data = new_section("Party Data", "title");
-   party_maint = new_section("Party Admin", "warning");
-   party_menu = new_section("Other", "<081>");
-   empty = new_menu("Empty Menu");
-   maint = new_menu(party_name + " Maintenance Menu");
-
-   quit_item = new_menu_item("Quit", ( : quit_menu_application:), "q");
-   add_section_item(toplevel, party_data);
-
-   add_menu_item(party_data, new_menu_item("Members list", ( : who_current:), "m"));
-   add_menu_item(party_data, new_menu_item("Active parties", ( : list_active:), "a"));
-   add_menu_item(party_data, new_menu_item("Last ten kills", ( : last_ten_kills:), "k"));
-
-   if (PARTY_D->query_owner(party_name) == this_body()->query_name())
-   {
-      add_menu_item(party_maint, new_menu_item("Kick member", ( : party_maint:), "k"));
-      add_menu_item(party_maint, new_menu_item("Invite member", ( : party_maint:), "i"));
-      add_menu_item(party_maint, new_menu_item("Change password", ( : party_maint:), "p"));
-      add_section_item(toplevel, party_maint);
-   }
-
-   add_section_item(toplevel, party_menu);
-   add_menu_item(party_data, new_menu_item("QUIT party", ( : quit_party:), "x"));
-   add_menu_item(party_menu, new_menu_item("Help!", ( : party_help:), "h"));
-   add_menu_item(party_menu, quit_item);
-
-   init_menu_application(toplevel);
 }
 
 void confirm_create(string owner, string party_name, string response)
@@ -183,6 +167,92 @@ void confirm_password(string owner, string party_name, string password, int fail
    PARTY_D->register_party(party_name, owner, password);
    write("\n");
    start_menu();
+}
+
+void confirm_change_password(string password, string confirmed_password)
+{
+   if (strlen(password) < 3)
+   {
+      write(warning("** Password must be at least 3 characters."));
+      return;
+   }
+
+   if (!confirmed_password)
+   {
+      modal_simple(( : confirm_change_password, password:), "   Once more: ", 1);
+      return;
+   }
+   if (password != confirmed_password)
+   {
+      write(warning("\nYour passwords are a poor match, try couples therapy?\n"));
+      return;
+   }
+   PARTY_D->set_password(party_name, confirmed_password);
+   write("New password set for " + party_name + ".");
+}
+
+private
+void change_password()
+{
+   modal_simple(( : confirm_change_password:), "   Enter password: ", 1);
+}
+
+private
+void kill_menu_for(string s)
+{
+   object *menus = filter_array(objects(), (
+                                               : base_name($1) == "/obj/mudlib/party_menu" &&
+                                                     ($1->query_user() == $(s) || $1->query_user() == "none")
+                                               :));
+   menus->remove();
+}
+
+private
+void kick_member(string member)
+{
+   class party party = PARTY_D->query_party(party_name);
+   string c = "";
+   int count = 0;
+   mapping members = party.members;
+
+   // Check if member is a number > 0
+   if (to_int(member))
+   {
+      int k = to_int(member);
+      if (k > 0 && k <= sizeof(sort_array(keys(members), 1)))
+      {
+         string kickee = sort_array(keys(members), 1)[k - 1];
+         if (user->query_name() == kickee)
+         {
+            write("Cannot kick party lead, leave if you must.");
+            return;
+         }
+         write("Removed " + kickee + " from " + party_name + ".");
+         if (find_body(lower_case(kickee)))
+            tell(find_body(lower_case(kickee)), "You have been kicked from the party.");
+         PARTY_D->remove_member(kickee, party_name);
+         kill_menu_for(kickee);
+         return;
+      }
+      write(warning("Invalid entry."));
+   }
+
+   if (lower_case(member) == "q")
+   {
+      write("Ok, no kicks.");
+      return;
+   }
+
+   if (!member || member == "k")
+   {
+      write(accent("Who do you want to kick?"));
+      foreach (string m in sort_array(keys(members), 1))
+      {
+         count++;
+         write("[" + count + "] " + m);
+      }
+   }
+   modal_simple(( : kick_member:), "[1" + (count > 1 ? "-" + count : "") + ",q]: ", 1);
 }
 
 private
@@ -296,4 +366,39 @@ void join_party()
    {
       start_menu();
    }
+}
+
+void start_menu()
+{
+   user = this_body();
+   party_name = PARTY_D->locate_user(user->query_name());
+   frame_init_user();
+   toplevel = new_menu(party_name + " Party Menu");
+   party_data = new_section("Party Data", "title");
+   party_maint = new_section("Party Admin", "warning");
+   party_menu = new_section("Other", "<081>");
+   empty = new_menu("Empty Menu");
+   maint = new_menu(party_name + " Maintenance Menu");
+
+   quit_item = new_menu_item("Quit", ( : quit_menu_application:), "q");
+   add_section_item(toplevel, party_data);
+
+   add_menu_item(party_data, new_menu_item("Members list", ( : who_current:), "m"));
+   add_menu_item(party_data, new_menu_item("Active parties", ( : list_active:), "a"));
+   add_menu_item(party_data, new_menu_item("Last ten kills", ( : last_ten_kills:), "l"));
+
+   if (PARTY_D->query_owner(party_name) == user->query_name())
+   {
+      add_menu_item(party_maint, new_menu_item("Kick member", ( : kick_member:), "k"));
+      add_menu_item(party_maint, new_menu_item("Invite member", ( : party_maint:), "i"));
+      add_menu_item(party_maint, new_menu_item("Change password", ( : change_password:), "p"));
+      add_section_item(toplevel, party_maint);
+   }
+
+   add_section_item(toplevel, party_menu);
+   add_menu_item(party_data, new_menu_item("QUIT party", ( : quit_party:), "x"));
+   add_menu_item(party_menu, new_menu_item("Help!", ( : party_help:), "h"));
+   add_menu_item(party_menu, quit_item);
+
+   init_menu_application(toplevel);
 }
