@@ -72,6 +72,7 @@ void party_maint()
 
 void party_help()
 {
+   display_current_menu();
    return;
 }
 
@@ -224,7 +225,7 @@ void kick_member(string member)
          string kickee = sort_array(keys(members), 1)[k - 1];
          if (user->query_name() == kickee)
          {
-            write("Cannot kick party lead, leave if you must.");
+            write(warning("Cannot kick party lead, leave if you must."));
             return;
          }
          write("Removed " + kickee + " from " + party_name + ".");
@@ -237,7 +238,7 @@ void kick_member(string member)
       write(warning("Invalid entry."));
    }
 
-   if (lower_case(member) == "q")
+   if (lower_case(member) == "q" || member=="")
    {
       write("Ok, no kicks.");
       return;

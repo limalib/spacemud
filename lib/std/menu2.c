@@ -1,19 +1,20 @@
 /* Do not remove the headers from this file! see /USAGE for more info. */
 
-/*
-** Stanadard Menuing facilities.
-** Jul-4-95. John Viega (rust@virginia.edu)  -- Created
-**
-**
-** To-do for this:
-**      make it so you can have a single item that you can choose that
-**      doesn't get displayed in the menu.
-**	Convert strings like titles, etc... to allow functionals.
-**      move completion callback into a closure.
-**	finish new_prompt() support / dont_complete... remove old completion
-**      code.
-**      add a security check in the input callback.
-*/
+//: MODULE
+// Fancy menu, loosely based on /std/menu by John Viega (rust@virginia.edu) from 1995.
+//
+// Several examples for how to use this module in /obj/mudlib.
+// "help","?","HELP","h" will always print out the menu again.
+// Implement "h" shortcut as a standard to provide additional help text for your menu.
+// "q" should always get the user out of the menu, unless you have a very good reason.
+//
+// This object consists of menus, that hold sections, that hold the menu items.
+// Create the menu, sections and items, and add the sections to the menus,
+// then add the menu items to the appropriate sections.
+// 
+// Sections have colours you can specify via the codes in ``palette``, but you can also
+// use "warning", "accent" and "title" to reuse the theme colours the user has picked
+// if you do not want to specify new section colours that risk not fitting the themes.
 
 #include <mudlib.h>
 
@@ -28,10 +29,6 @@ class menu_item
    mixed choice_name; // should be a string if the user sets it.
    int prompt_after_action;
    function constraint;
-   // A seperator is just a line of text, and not something that
-   // can be chosen.  Therefore, action, choice_name, and
-   // prompt_after_selection are meaningless if this is non-zero.
-   int seperator;
 }
 
 class section
@@ -114,18 +111,6 @@ varargs protected class menu new_prompt(string prompt, function callback, string
    new_menu.items = completions ? completions : ({});
 
    return new_menu;
-}
-
-varargs protected class menu_item new_seperator(string description, function constraint)
-{
-   class menu_item new_menu_item;
-
-   new_menu_item = new (class menu_item);
-   new_menu_item.description = description;
-   new_menu_item.constraint = constraint;
-   new_menu_item.seperator = 1;
-
-   return new_menu_item;
 }
 
 varargs protected class menu_item new_menu_item(string description, mixed action, string choice_name, int prompt,
@@ -366,8 +351,15 @@ void parse_menu_input(mixed input)
       return;
    }
    input = trim(input);
+
    if (input == "" && !current_menu.allow_enter)
       return;
+
+   if (input == "?" || lower_case(trim(input)) == "help")
+   {
+      display_current_menu();
+      return;
+   }
 
    foreach (class section section in current_menu.items)
    {
@@ -376,7 +368,7 @@ void parse_menu_input(mixed input)
          // Quick and sleazy way of knowing we're a prompt...
          if (stringp(item))
             break;
-         if (item.disabled || item.seperator || (item.constraint && !evaluate(item.constraint)))
+         if (item.disabled || (item.constraint && !evaluate(item.constraint)))
             continue;
          if ((!stringp(item.choice_name) && sprintf("%d", ++counter) == input) || input == item.choice_name)
          {
@@ -384,12 +376,14 @@ void parse_menu_input(mixed input)
             if (functionp(action))
             {
                evaluate(action, input);
-               need_refreshing = 1;
+               need_refreshing = 0;
                if (item.prompt_after_action)
                   prompt_then_return();
                return;
             }
+            TBUG("Goto menu");
             goto_menu(action);
+            TBUG("Been to goto menu");
             return;
          }
       }
@@ -404,7 +398,7 @@ protected
 string get_current_prompt()
 {
    mixed prompt;
-   if (i_simplify())
+   if (frame_simplify())
       return "";
 
    prompt = current_menu.prompt;
@@ -424,7 +418,7 @@ string get_current_prompt()
       foreach (class section section in current_menu.items)
          foreach (item in section.items)
          {
-            if (item.disabled || item.seperator || (item.constraint && !evaluate(item.constraint)))
+            if (item.disabled || (item.constraint && !evaluate(item.constraint)))
                continue;
             if (!c = item.choice_name)
             {
@@ -493,7 +487,7 @@ void goto_previous_menu()
 string generate_section_output(class section *sections, int largest_section, int leftwidth, int rightwidth, int columns)
 {
    string output = repeat_string(" ", (columns * (leftwidth + rightwidth + 4))) + "\n";
-   string format = accent("%" + leftwidth + "s") + (i_simplify() ? ", " : "") + " %-" + rightwidth + "s   ";
+   string format = accent("%" + leftwidth + "s") + (frame_simplify() ? ", " : "") + " %-" + rightwidth + "s   ";
    class menu_item this_item;
    class menu_item empty_item = new_menu_item("", "", " ");
    int counter;
@@ -509,16 +503,11 @@ string generate_section_output(class section *sections, int largest_section, int
             this_item = section.items[i];
          if (this_item.disabled || (this_item.constraint && !evaluate(this_item.constraint)))
             continue;
-         if (this_item.seperator)
-         {
-            output += sprintf("%s", this_item.description);
-            continue;
-         }
          if (!stringp(this_item.choice_name) && strlen(this_item.choice_name))
          {
             if (strlen(this_item.description) > 0)
                output += sprintf(format, ++counter + "",
-                                 i_simplify() ? punctuate(this_item.description) : this_item.description);
+                                 frame_simplify() ? punctuate(this_item.description) : this_item.description);
             current_menu.current_choices += ({sprintf("%d", counter)});
             // Note, this will still get recalculated every time, since
             // we're setting it to an int, and not a string, but that's
@@ -532,7 +521,7 @@ string generate_section_output(class section *sections, int largest_section, int
          else if (strlen(trim(this_item.choice_name)) > 0)
          {
             output += sprintf(format, this_item.choice_name,
-                              i_simplify() ? punctuate(this_item.description) : this_item.description);
+                              frame_simplify() ? punctuate(this_item.description) : this_item.description);
             current_menu.current_choices += ({this_item.choice_name});
             printed_columns++;
          }
@@ -578,20 +567,9 @@ void display_current_menu()
    foreach (class section section in current_menu.items)
       all_items += section.items;
 
-   rightwidth = max(map(filter_array(all_items, (
-                                                    : !(((class menu_item)$1)->seperator)
-                                                    :)),
-                        (
-                            : strlen(((class menu_item)$1)->description)
-                            :)));
+   rightwidth = max(map(all_items, ( : strlen(((class menu_item)$1)->description) :)));
    // This stuff is getting as ugly as Amylaar closures =P
-   leftwidth = max(map(filter_array(all_items, (
-                                                   : stringp(((class menu_item)$1)->choice_name)
-                                                   :)),
-                       (
-                           : strlen(((class menu_item)$1)->choice_name)
-                           :)) +
-                   ({2}));
+   leftwidth = max(map(all_items, ( : strlen(((class menu_item)$1)->choice_name) :)) + ({2}));
 
    largest_section = max(map(current_menu.items, ( : sizeof((class section)$1.items) :)));
 
