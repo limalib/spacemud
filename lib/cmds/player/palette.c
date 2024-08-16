@@ -57,3 +57,10 @@ nomask private void main(string str)
 {
    do_print(0);
 }
+
+void player_menu_entry(string str)
+{
+   bare_init();
+   main(str);
+   done_outputing();
+}
