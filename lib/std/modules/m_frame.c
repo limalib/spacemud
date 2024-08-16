@@ -15,23 +15,26 @@
 // Styles and colours are hardcoded in here, and should be moved to admtool tool
 // or a config file.
 
-#define TRD 0  // Right down ┌
-#define TH 1   // Horisontal ─
-#define THD 2  // Horisontal down ┬
-#define TLD 3  // Left down ┐
-#define TD 4   // Down │
-#define TDR 5  // Down right ├
-#define TX 6   // Cross ┼
-#define TDL 7  // Down left ┤
-#define TRU 8  // Right up └
-#define THU 9  // Horisontal up ┴
-#define TLU 10 // Left up ┘
+#define TRD 0  // ┌ Right down
+#define TH 1   // ─ Horisontal
+#define THD 2  // ┬ Horisontal down
+#define TLD 3  // ┐ Left down
+#define TV 4   // │ Vertical
+#define TVR 5  // ├ Vertical right
+#define TX 6   // ┼ Cross
+#define TVL 7  // ┤ Vertical left
+#define TRU 8  // └ Right up
+#define THU 9  // ┴ Horisontal up
+#define TLU 10 // ┘ Left up
 
 #define FALLBACK_STYLE "ascii"
 #define COL_GRADIENT 0
 #define COL_TITLE 1
 #define COL_ACCENT 2
 #define COL_WARNING 3
+
+// Frame themes are defined in here, and can be edited using 'admtool'.
+#include <frame_themes.h>
 
 private
 nosave mapping styles = (["single":({"┌", "─", "┬", "┐", "│", "├", "┼", "┤", "└", "┴", "┘"}),
@@ -40,18 +43,7 @@ nosave mapping styles = (["single":({"┌", "─", "┬", "┐", "│", "├", "
                            "lines":({"-", "-", "-", "-", " ", " ", "-", " ", "-", "-", "-"}),
                             "none":({" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "})]);
 
-private
-nosave mapping colours = (["fire":({"160,166,172,178,184,190,226,220,214,208,202,196", "208", "015", "197"}),
-                          "steel":({"239,240,241,242,255,237,238,239,240,241", "117", "015", "197"}),
-                          "fairy":({"093,099,105,111,117,123,159,153,147,141,135,129", "175", "015", "197"}),
-                           "cool":({"021,027,033,039,045,051,087,081,075,069,063,057", "159", "015", "197"}),
-                           "pink":({"165,171,177,183,189,195,231,225,219,213,207,201", "231", "193", "197"}),
-                          "blues":({"058,059,060,061,062,063", "105", "229", "197"}),
-                           "dusk":({"130,131,132,133,134,135", "220", "223", "197"}),
-                          "sunny":({"226,227,228,229,230,231", "214", "015", "197"}),
-                           "neon":({"088,089,090,091,092,093", "228", "045", "197"}),
-                         "nature":({"022,028,034,040,046,083,077,071,065,059", "192", "015", "197"}), // Nature
-                           "none":({"", "", "", ""}), ]);                                             // And none
+
 private
 nosave string *bits;
 
@@ -81,6 +73,11 @@ nosave string *sections;
 int colour_strlen(string str)
 {
    return strlen(XTERM256_D->substitute_colour(str, "plain"));
+}
+
+mapping query_themes()
+{
+   return colours;
 }
 
 //: FUNCTION use_colour
@@ -142,10 +139,10 @@ void set_frame_left_header()
    left_header = 1;
 }
 
-//: FUNCTION i_simplify
+//: FUNCTION frame_simplify
 // Returns TRUE if the current user (not the object receiving the message!)
 // has simplify turned on.
-nomask int i_simplify()
+nomask int frame_simplify()
 {
    return get_user_variable("simplify") != 0;
 }
@@ -352,7 +349,7 @@ string *create_section_header()
       // TBUG("Width: " + width + " Len: " + len + " Out len: " + colour_strlen(out));
       if (colour_strlen(out) + len > width)
       {
-         headers += ({out + (first_header ? bits[TLD] : bits[TDL]) + "\n"});
+         headers += ({out + (first_header ? bits[TLD] : bits[TVL]) + "\n"});
          first_header = 0;
          out = 0;
       }
@@ -363,7 +360,7 @@ string *create_section_header()
       if (data[1] == "warning")
          data[1] = "<" + raw_warning() + ">";
       if (!out)
-         out = bits[TDR];
+         out = bits[TVR];
       else
          out += bits[TH];
       out += bits[TH] + sprintf("<bld>%s%s<res> ", data[1], data[0]) +
@@ -376,9 +373,9 @@ string *create_section_header()
    {
       if (sizeof(headers) && colour_strlen(out) < colour_strlen(headers[0]))
          headers +=
-             ({out + repeat_string(bits[TH], colour_strlen(headers[0]) - colour_strlen(out) - 2) + bits[TDL] + "\n"});
+             ({out + repeat_string(bits[TH], colour_strlen(headers[0]) - colour_strlen(out) - 2) + bits[TVL] + "\n"});
       else
-         headers += ({out + (first_header ? bits[TLD] : bits[TDL]) + "\n"});
+         headers += ({out + (first_header ? bits[TLD] : bits[TVL]) + "\n"});
    }
 
    return headers;
@@ -402,10 +399,10 @@ string create_menu_header()
    }
 
    out += bits[TLD] + "\n";
-   out += bits[TRD] + repeat_string(bits[TH], title_margin) + bits[TDL] + repeat_string(" ", text_margin) + h_title +
-          repeat_string(" ", text_margin) + bits[TD] + "\n";
+   out += bits[TRD] + repeat_string(bits[TH], title_margin) + bits[TVL] + repeat_string(" ", text_margin) + h_title +
+          repeat_string(" ", text_margin) + bits[TV] + "\n";
 
-   out += bits[TD] + " " + repeat_string(" ", title_margin - 1) + bits[TRU];
+   out += bits[TV] + " " + repeat_string(" ", title_margin - 1) + bits[TRU];
 
    i = 0;
 
@@ -415,7 +412,7 @@ string create_menu_header()
       i++;
    }
    out += bits[TLU] + "\n";
-   out += bits[TD] + "\n"; // End of Title box section
+   out += bits[TV] + "\n"; // End of Title box section
    return out;
 }
 
@@ -447,14 +444,14 @@ string create_header()
    }
 
    out += bits[TRD] + (add_header ? bits[THD] : "") + repeat_string(bits[TH], title_margin - (add_header ? 2 : 1)) +
-          bits[TDL] + repeat_string(" ", text_margin) + title + repeat_string(" ", text_margin) + bits[TDR] +
+          bits[TVL] + repeat_string(" ", text_margin) + title + repeat_string(" ", text_margin) + bits[TVR] +
           repeat_string(bits[TH], width - header_width - title_margin - (add_header ? 4 : 3)) +
           (add_header ? bits[THD] : "") + bits[TLD] + "\n";
 
    if (!simple_header)
    {
       out +=
-          bits[TD] + (add_header ? bits[TD] : "") + repeat_string(" ", title_margin - (add_header ? 2 : 1)) + bits[TRU];
+          bits[TV] + (add_header ? bits[TV] : "") + repeat_string(" ", title_margin - (add_header ? 2 : 1)) + bits[TRU];
 
       i = 0;
       while (i < header_width)
@@ -463,7 +460,7 @@ string create_header()
          i++;
       }
       out += bits[TLU] + repeat_string(" ", width - header_width - title_margin - (add_header ? 4 : 3)) +
-             (add_header ? bits[TD] : "") + bits[TD] + "\n"; // End of Title box section
+             (add_header ? bits[TV] : "") + bits[TV] + "\n"; // End of Title box section
    }
 
    foreach (string h in headers)
@@ -471,16 +468,16 @@ string create_header()
       int col_lendiff = strlen(h) - colour_strlen(h);
       int content_width = width - 6 + col_lendiff;
       if (title_margin > 0)
-         out += bits[TD] + (add_header && !simple_header ? bits[TD] : " ") + " " +
-                sprintf("%-" + content_width + "." + content_width + "s", h) + " " + (add_header ? bits[TD] : "") +
-                bits[TD] + "\n";
+         out += bits[TV] + (add_header && !simple_header ? bits[TV] : " ") + " " +
+                sprintf("%-" + content_width + "." + content_width + "s", h) + " " + (add_header ? bits[TV] : "") +
+                bits[TV] + "\n";
    }
 
    if (simple_header)
       out += "";
    else if (add_header)
-      out += bits[TD] + (add_header ? bits[TRU] : "") + repeat_string(bits[TH], width - 4) +
-             (add_header ? bits[TLU] : "") + bits[TD] + "\n";
+      out += bits[TV] + (add_header ? bits[TRU] : "") + repeat_string(bits[TH], width - 4) +
+             (add_header ? bits[TLU] : "") + bits[TV] + "\n";
    return out;
 }
 
@@ -491,14 +488,14 @@ string create_footer()
    int i = 0;
    string *footers = explode(footer_content || "", "\n");
 
-   out += bits[TD] + bits[TRD] + repeat_string(bits[TH], (width - 4)) + bits[TLD] + bits[TD] + "\n";
+   out += bits[TV] + bits[TRD] + repeat_string(bits[TH], (width - 4)) + bits[TLD] + bits[TV] + "\n";
 
    foreach (string f in footers)
    {
       int col_lendiff = strlen(f) - colour_strlen(f);
       int content_width = width - 6 + col_lendiff;
-      out += bits[TD] + bits[TD] + " " + sprintf("%-" + content_width + "." + content_width + "s", f) + " " + bits[TD] +
-             bits[TD] + "\n";
+      out += bits[TV] + bits[TV] + " " + sprintf("%-" + content_width + "." + content_width + "s", f) + " " + bits[TV] +
+             bits[TV] + "\n";
    }
 
    out += bits[TRU] + bits[THU] + repeat_string(bits[TH], width - 4) + bits[THU] + bits[TLU] +
@@ -521,8 +518,8 @@ string *create_menu_content()
       {
          if (!len)
             len = colour_strlen(l);
-         out += bits[TD] + l[0.. < 2];
-         out += bits[TD] + "\n";
+         out += bits[TV] + l[0.. < 2];
+         out += bits[TV] + "\n";
       }
       lines += ({out});
    }
@@ -555,8 +552,8 @@ string create_left_header()
 
    // Line 2 - both cases
    if (title)
-      out += repeat_string(" ", max_header_width + 1) + bits[TRD] + repeat_string(bits[TH], text_margin) + bits[TDL] +
-             repeat_string(" ", text_margin) + title + repeat_string(" ", text_margin) + bits[TDR] +
+      out += repeat_string(" ", max_header_width + 1) + bits[TRD] + repeat_string(bits[TH], text_margin) + bits[TVL] +
+             repeat_string(" ", text_margin) + title + repeat_string(" ", text_margin) + bits[TVR] +
              repeat_string(bits[TH], width - max_header_width - 6 - header_width) + bits[TLD] + "\n";
    else
       out += repeat_string(" ", max_header_width + 1) + bits[TRD] +
@@ -564,17 +561,17 @@ string create_left_header()
 
    // Line 3
    if (title)
-      out += bits[TRD] + repeat_string(bits[TH], max_header_width) + bits[TDL] + repeat_string(" ", title_margin - 1) +
+      out += bits[TRD] + repeat_string(bits[TH], max_header_width) + bits[TVL] + repeat_string(" ", title_margin - 1) +
              bits[TRU] + repeat_string(bits[TH], header_width) + bits[TLU] +
-             repeat_string(" ", width - max_header_width - header_width - 6) + bits[TD] + "\n";
+             repeat_string(" ", width - max_header_width - header_width - 6) + bits[TV] + "\n";
    else
    {
       string c = contents[0];
       int col_lendiff = strlen(c) - colour_strlen(c);
       int content_width = width - max_header_width + col_lendiff - 5;
       out += bits[TRD] + repeat_string(bits[TH], max_header_width - 2) + repeat_string(bits[TH], title_margin) +
-             bits[TDL] + " ";
-      out += sprintf("%-" + content_width + "." + content_width + "s", c) + " " + bits[TD] + "\n";
+             bits[TVL] + " ";
+      out += sprintf("%-" + content_width + "." + content_width + "s", c) + " " + bits[TV] + "\n";
       contents = contents[1..];
       content_length = max(({sizeof(headers), sizeof(contents)}));
    }
@@ -590,22 +587,22 @@ string create_left_header()
       content_width = width - max_header_width + col_lendiff - 5;
 
       if (i < sizeof(headers)) // Header content | Stuff |
-         out += bits[TD] + repeat_string(" ", text_margin) + head + "<res>" +
-                repeat_string(" ", max_header_width - text_margin - colour_strlen(head)) + bits[TD] + " ";
+         out += bits[TV] + repeat_string(" ", text_margin) + head + "<res>" +
+                repeat_string(" ", max_header_width - text_margin - colour_strlen(head)) + bits[TV] + " ";
       else if (i == sizeof(headers)) // End of header
-         out += bits[TRU] + repeat_string(bits[TH], max_header_width) + "<res>" + bits[TDL] + " ";
+         out += bits[TRU] + repeat_string(bits[TH], max_header_width) + "<res>" + bits[TVL] + " ";
       else // No header, just spacing.
-         out += repeat_string(" ", max_header_width + 1) + bits[TD] + " ";
+         out += repeat_string(" ", max_header_width + 1) + bits[TV] + " ";
 
       // Content
-      out += sprintf("%-" + content_width + "." + content_width + "s", cont) + " " + bits[TD] + "\n";
+      out += sprintf("%-" + content_width + "." + content_width + "s", cont) + " " + bits[TV] + "\n";
       i++;
    }
 
    if (i <= sizeof(headers))
       out += bits[TRU] + repeat_string(bits[TH], max_header_width) + "<res>" +
              (i == sizeof(contents) ? bits[THU] + repeat_string(bits[TH], width - max_header_width - 3) + bits[TLU]
-                                    : bits[TDL] + repeat_string(" ", width - max_header_width - 3) + bits[TD]) +
+                                    : bits[TVL] + repeat_string(" ", width - max_header_width - 3) + bits[TV]) +
              "\n";
 
    if (i != sizeof(contents) || sizeof(contents) > sizeof(headers))
@@ -625,7 +622,7 @@ string create_content()
    {
       int col_lendiff = strlen(c) - colour_strlen(c);
       int content_width = width - 4 + col_lendiff;
-      out += bits[TD] + " " + sprintf("%-" + content_width + "." + content_width + "s", c) + " " + bits[TD] + "\n";
+      out += bits[TV] + " " + sprintf("%-" + content_width + "." + content_width + "s", c) + " " + bits[TV] + "\n";
    }
    return out;
 }
@@ -689,7 +686,7 @@ string query_frame_warning(string theme)
 
 //: FUNCTION frame_demo_string
 // Returns a simple demo string.
-string frame_demo_string(string theme, int w)
+string frame_demo_string(string style, int w)
 {
    return styles[style][TRD] + styles[style][TH] + styles[style][TH] + styles[style][TH] +
           repeat_string(styles[style][TH], ((w - 10))) + styles[style][THD] + styles[style][TH] + styles[style][TH] +
@@ -718,7 +715,7 @@ string menu_render()
 
    foreach (string h in headers)
    {
-      if (!i_simplify())
+      if (!frame_simplify())
          out += h;
       out += contents[content_count];
       content_count++;
