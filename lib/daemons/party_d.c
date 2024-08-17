@@ -55,9 +55,11 @@ mixed test(string name)
    class party t = parties[name];
 }
 
+//Either the password matches the crypt or the entire crypt is input
 nomask int check_password(string pname, string passwd)
 {
-   return crypt(passwd, ((class party)parties[pname]).password) == ((class party)parties[pname]).password;
+   return crypt(passwd, ((class party)parties[pname]).password) == ((class party)parties[pname]).password ||
+          passwd == ((class party)parties[pname]).password;
 }
 
 nomask int award_experience(object slayer, string name, object *viable, int level)

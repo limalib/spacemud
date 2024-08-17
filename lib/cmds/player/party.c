@@ -15,6 +15,7 @@
 //: PLAYERCOMMAND
 // USAGE
 //    ``party``
+//    ``party accept`` - if you got an invite
 //
 // Starts up the "party" menu system.
 //
@@ -23,7 +24,7 @@
 inherit M_INPUT;
 inherit CMD;
 
-void main()
+void main(string arg)
 {
-   new (PARTY_MENU)->join_party();
+   new (PARTY_MENU)->join_party(arg);
 }

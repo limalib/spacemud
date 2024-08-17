@@ -34,6 +34,8 @@ private
 string party_name;
 private
 object user;
+private
+object *invites = ({});
 
 void who_current()
 {
@@ -209,6 +211,47 @@ void kill_menu_for(string s)
 }
 
 private
+void invite_member(string member)
+{
+   object target = find_body(member);
+   class party party = PARTY_D->query_party(party_name);
+   mapping members = party.members;
+
+   if (lower_case(member) == "q" || member == "")
+   {
+      write("Ok, no invite.");
+      return;
+   }
+
+   if (!member || member == "" || member == "i")
+   {
+      modal_simple(( : invite_member:), "Invite whom? (q to quit): ", 1);
+      return;
+   }
+
+   if (PARTY_D->locate_user(member))
+   {
+      write("Sorry, but " + capitalize(member) + " is already a member of a party.");
+      return;
+   }
+
+   if (!target || !target->is_visible())
+   {
+      write("You can only invite someone who is online.");
+      return;
+   }
+
+   if (target)
+   {
+      tell(target, "%^CHANNEL%^Invite received:%^RESET%^ " + this_body()->query_name() + " has invited you to the '" +
+                       party_name + "' party. Type 'party accept' to accept.");
+      invites += ({target});
+      write(capitalize(member) + " has been invited to " + party_name +
+            ". The invite only lasts as long as you stay in this menu.");
+   }
+}
+
+private
 void kick_member(string member)
 {
    class party party = PARTY_D->query_party(party_name);
@@ -238,7 +281,7 @@ void kick_member(string member)
       write(warning("Invalid entry."));
    }
 
-   if (lower_case(member) == "q" || member=="")
+   if (lower_case(member) == "q" || member == "")
    {
       write("Ok, no kicks.");
       return;
@@ -354,9 +397,93 @@ void confirm_join_party(string owner, string response)
    }
 }
 
-void join_party()
+int is_invited(object player)
+{
+   return member_array(player, invites) != -1 ? party_name : 0;
+}
+
+int is_party_menu()
+{
+   return clonep(this_object());
+}
+
+void simple_join(string party)
+{
+   object *party_invites = filter_array(objects(), ( : $1->is_party_menu() && $1->is_invited(this_body()) :));
+   class party jparty = PARTY_D->query_party(party);
+   string passwd = jparty.password;
+   if (!PARTY_D->add_member(this_body()->query_name(), party, passwd))
+      write("Failed to join somehow, sorry.");
+   else
+   {
+      write("Invite accepted, you joined the " + party + " party.");
+      party_invites->remove_invite(this_body());
+   }
+}
+
+void remove_invite(object body)
+{
+   if (member_array(body, invites) != -1)
+   {
+      invites -= ({body});
+      if (PARTY_D->locate_user(body->query_name()) == party_name)
+         tell(user, body->query_name() + " decided to join your party.");
+      else
+         tell(user, body->query_name() + " decided to join another party.");
+   }
+}
+
+void accept_invite(string party)
+{
+   object *party_invites = filter_array(objects(), ( : $1->is_party_menu() && $1->is_invited(this_body()) :));
+   int count;
+
+   if (stringp(party) && lower_case(party) == "q" || party == "")
+   {
+      write("Ok, not accepting anything right now.");
+      return;
+   }
+
+   if (to_int(party))
+   {
+      int k = to_int(party);
+      if (k >= 1 && k <= sizeof(party_invites))
+         simple_join(sort_array(map(party_invites, ( : $1->is_invited(this_body()) :)), 1)[k - 1]);
+      else
+         write("** Invalid entry, aborting.");
+      return;
+   }
+
+   switch (sizeof(party_invites))
+   {
+   case 2..1000:
+      write("You have <bld>multiple invites<res>. Which party do you want to join?");
+      foreach (string m in sort_array(map(party_invites, ( : $1->is_invited(this_body()) :)), 1))
+      {
+         count++;
+         write("[" + count + "] " + m);
+      }
+      modal_simple(( : accept_invite:), "[1" + (count > 1 ? "-" + count : "") + ",q]: ", 1);
+
+      break;
+   case 1:
+      simple_join(party_invites[0]->is_invited(this_body()));
+      break;
+   default:
+      write("You're not invited to any parties currently. Create your own perhaps? Use 'party' to do so.");
+      break;
+   }
+}
+
+void join_party(string arg)
 {
    string owner = this_body()->query_name();
+
+   if (arg == "accept")
+   {
+      accept_invite(0);
+      return;
+   }
 
    if (!PARTY_D->locate_user(owner))
    {
@@ -391,7 +518,7 @@ void start_menu()
    if (PARTY_D->query_owner(party_name) == user->query_name())
    {
       add_menu_item(party_maint, new_menu_item("Kick member", ( : kick_member:), "k"));
-      add_menu_item(party_maint, new_menu_item("Invite member", ( : party_maint:), "i"));
+      add_menu_item(party_maint, new_menu_item("Invite member", ( : invite_member:), "i"));
       add_menu_item(party_maint, new_menu_item("Change password", ( : change_password:), "p"));
       add_section_item(toplevel, party_maint);
    }
