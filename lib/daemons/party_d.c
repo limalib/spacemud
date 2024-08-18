@@ -55,7 +55,7 @@ mixed test(string name)
    class party t = parties[name];
 }
 
-//Either the password matches the crypt or the entire crypt is input
+// Either the password matches the crypt or the entire crypt is input
 nomask int check_password(string pname, string passwd)
 {
    return crypt(passwd, ((class party)parties[pname]).password) == ((class party)parties[pname]).password ||
@@ -153,12 +153,16 @@ nomask int add_member(string new_member, string pname, string password)
    if (!check_password(pname, password))
       return 0;
 
-   // If the difference in levels between the new member
-   // and any existing member of the party is greater
-   // than DIFF, do not add the new member.
-   if (body->query_level() > ((class party)parties[pname]).min_level + DIFF ||
-       body->query_level() < ((class party)parties[pname]).max_level - DIFF)
-      return 0;
+   /*
+      //Broken right now
+
+      // If the difference in levels between the new member
+      // and any existing member of the party is greater
+      // than DIFF, do not add the new member.
+      if (body->query_level() > ((class party)parties[pname]).min_level + DIFF ||
+          body->query_level() < ((class party)parties[pname]).max_level - DIFF)
+         return 0;
+   */
 
    // Update the new minimum and maximum levels for the party if needed.
    if (body->query_level() > ((class party)parties[pname]).max_level)
@@ -181,15 +185,26 @@ nomask int add_member(string new_member, string pname, string password)
    return 1; // Member has been added
 }
 
+mapping move_access(mapping members, int access)
+{
+   foreach (string m, int a in members)
+   {
+      if (a > access)
+         members[m] = --a;
+   }
+   return members;
+}
+
 nomask int remove_member(string member, string pname)
 {
+
    if (!((class party)parties[pname]).members[member])
-   {
       return 0; // no such member
-   }
    else
    {
       map_delete(((class party)parties[pname]).members, member);
+      ((class party)parties[pname]).members =
+          move_access(((class party)parties[pname]).members, ((class party)parties[pname]).members[member]);
    }
 
    save_me();
