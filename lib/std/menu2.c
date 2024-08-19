@@ -11,7 +11,7 @@
 // This object consists of menus, that hold sections, that hold the menu items.
 // Create the menu, sections and items, and add the sections to the menus,
 // then add the menu items to the appropriate sections.
-// 
+//
 // Sections have colours you can specify via the codes in ``palette``, but you can also
 // use "warning", "accent" and "title" to reuse the theme colours the user has picked
 // if you do not want to specify new section colours that risk not fitting the themes.
@@ -36,6 +36,7 @@ class section
    mixed *items;
    mixed title;
    string colour;
+   int sort;
 }
 
 class menu
@@ -61,8 +62,12 @@ void display_current_menu();
 protected
 void prompt_then_return();
 
+private
 class menu current_menu, previous_menu;
+private
 int need_refreshing;
+private
+mapping section_layout;
 
 protected
 void remove()
@@ -89,7 +94,7 @@ varargs protected class menu new_menu(string title, string prompt, int allow_ent
    return new_menu;
 }
 
-varargs protected class section new_section(string title, string colour)
+varargs protected class section new_section(string title, string colour, int sort)
 {
    class section new_section;
 
@@ -97,6 +102,7 @@ varargs protected class section new_section(string title, string colour)
    new_section.items = ({});
    new_section.title = title;
    new_section.colour = colour;
+   new_section.sort = sort;
 
    return new_section;
 }
@@ -135,15 +141,21 @@ void add_section_item(class menu menu, class section section)
 }
 
 protected
+void remove_section_item(class menu menu, class section section)
+{
+   menu.items -= ({section});
+}
+
+protected
 void add_menu_item(class section section, class menu_item menu_item)
 {
    section.items += ({menu_item});
 }
 
 protected
-void set_menu_items(class menu menu, class menu_item *menu_items)
+void set_menu_items(class menu menu, class section *sections)
 {
-   menu.items = menu_items;
+   menu.items = sections;
 }
 
 protected
@@ -492,17 +504,41 @@ string generate_section_output(class section *sections, int largest_section, int
    class menu_item empty_item = new_menu_item("", "", " ");
    int counter;
 
+   //foreach (class section s in sections)
+   //   TBUG(s.title);
+
    for (int i = 0; i < largest_section; i++)
    {
       int printed_columns = 0;
       foreach (class section section in sections)
       {
+         int picked_col;
+
+         if (section_layout[(string)section.title])
+         {
+            picked_col = section_layout[(string)section.title];
+         }
+         else
+         {
+            section_layout[(string)section.title] = printed_columns;
+            picked_col = printed_columns;
+         }
+
          if (i >= sizeof(section.items))
             this_item = empty_item;
          else
             this_item = section.items[i];
          if (this_item.disabled || (this_item.constraint && !evaluate(this_item.constraint)))
             continue;
+
+         //TBUG("Name: " + this_item.description + " Picked:" + picked_col + " Printed:" + printed_columns);
+
+         //We might need to move columns in.
+         if (picked_col > printed_columns)
+         {
+            output += repeat_string(" ", ((picked_col - printed_columns) * (leftwidth + rightwidth + 4)));
+            printed_columns++;
+         }
          if (!stringp(this_item.choice_name) && strlen(this_item.choice_name))
          {
             if (strlen(this_item.description) > 0)
@@ -536,6 +572,23 @@ string generate_section_output(class section *sections, int largest_section, int
    return output + repeat_string(" ", (columns * (leftwidth + rightwidth + 4))) + "\n";
 }
 
+private
+int section_sort(class section s, class section t)
+{
+   if (s.sort > t.sort)
+      return 1;
+   if (s.sort < t.sort)
+      return -1;
+   if (s.sort == t.sort)
+      return -1;
+}
+
+private
+void reorder_sections(class menu menu)
+{
+   menu.items = sort_array(menu.items, ( : section_sort:), 1);
+}
+
 void display_current_menu()
 {
    int leftwidth;
@@ -545,6 +598,7 @@ void display_current_menu()
    string *output = ({});
    string *tmp;
    class menu_item *all_items = ({});
+   section_layout = ([]);
 
    need_refreshing = 0;
    if (!sizeof(current_menu.items) && !current_menu.no_match_function)
@@ -563,6 +617,8 @@ void display_current_menu()
          current_menu.current_choices += current_menu.items;
       return;
    }
+
+   reorder_sections(current_menu);
 
    foreach (class section section in current_menu.items)
       all_items += section.items;

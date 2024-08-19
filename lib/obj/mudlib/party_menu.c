@@ -36,6 +36,7 @@ private
 object user;
 private
 object *invites = ({});
+int is_lead = 0;
 
 void who_current()
 {
@@ -287,14 +288,11 @@ void kick_member(string member)
       return;
    }
 
-   if (!member || member == "k")
+   write(accent("Who do you want to kick?"));
+   foreach (string m in sort_array(keys(members), 1))
    {
-      write(accent("Who do you want to kick?"));
-      foreach (string m in sort_array(keys(members), 1))
-      {
-         count++;
-         write("[" + count + "] " + m);
-      }
+      count++;
+      write("[" + count + "] " + m);
    }
    modal_simple(( : kick_member:), "[1" + (count > 1 ? "-" + count : "") + ",q]: ", 1);
 }
@@ -496,15 +494,84 @@ void join_party(string arg)
    }
 }
 
+void give_lead(string member)
+{
+   class party party = PARTY_D->query_party(party_name);
+   string c = "";
+   int count = 0;
+   mapping members = party.members;
+
+   // Check if member is a number > 0
+   if (to_int(member))
+   {
+      int k = to_int(member);
+      if (k > 0 && k <= sizeof(sort_array(keys(members), 1)))
+      {
+         string lead = sort_array(keys(members), 1)[k - 1];
+         if (user->query_name() == lead)
+         {
+            write(warning("You are already lead?"));
+            return;
+         }
+         write("Changed lead in " + party_name + " to " + capitalize(lead) + ".");
+         PARTY_D->swap_access(lead, user->query_name(), party_name);
+         remove_section_item(toplevel, party_maint);
+         is_lead = 0;
+         if (find_body(lower_case(lead)))
+            tell(find_body(lower_case(lead)), "You have been made party lead for " + party_name + ".");
+         return;
+      }
+      write(warning("Invalid entry."));
+   }
+
+   if (lower_case(member) == "q" || member == "")
+   {
+      write("Ok, no management changes.");
+      return;
+   }
+
+   write(accent("Who do you want to lead instead of you?"));
+   foreach (string m in sort_array(keys(members), 1))
+   {
+      count++;
+      write("[" + count + "] " + m);
+   }
+   modal_simple(( : give_lead:), "[1" + (count > 1 ? "-" + count : "") + ",q]: ", 1);
+}
+
+private
+void add_lead_menu()
+{
+   add_menu_item(party_maint, new_menu_item("Kick member", ( : kick_member:), "k"));
+   add_menu_item(party_maint, new_menu_item("Invite member", ( : invite_member:), "i"));
+   add_menu_item(party_maint, new_menu_item("Change password", ( : change_password:), "p"));
+   add_menu_item(party_maint, new_menu_item("Give lead", ( : give_lead:), "L"));
+   
+   //Ensure the right order of menus.
+   remove_section_item(toplevel,party_data);
+   add_section_item(toplevel, party_maint);
+   add_section_item(toplevel,party_data);
+   is_lead = 1;
+}
+
+void display_current_menu()
+{
+   if (PARTY_D->query_owner(party_name) == user->query_name() && !is_lead)
+   {
+      add_lead_menu();
+   }
+   ::display_current_menu();
+}
+
 void start_menu()
 {
    user = this_body();
    party_name = PARTY_D->locate_user(user->query_name());
    frame_init_user();
    toplevel = new_menu(party_name + " Party Menu");
-   party_data = new_section("Party Data", "title");
-   party_maint = new_section("Party Admin", "warning");
-   party_menu = new_section("Other", "<081>");
+   party_data = new_section("Party Data", "title",1);
+   party_maint = new_section("Party Admin", "warning",2);
+   party_menu = new_section("Other", "<081>",3);
    empty = new_menu("Empty Menu");
    maint = new_menu(party_name + " Maintenance Menu");
 
@@ -515,16 +582,13 @@ void start_menu()
    add_menu_item(party_data, new_menu_item("Active parties", ( : list_active:), "a"));
    add_menu_item(party_data, new_menu_item("Last ten kills", ( : last_ten_kills:), "l"));
 
-   if (PARTY_D->query_owner(party_name) == user->query_name())
+   if (PARTY_D->query_owner(party_name) == user->query_name() && !is_lead)
    {
-      add_menu_item(party_maint, new_menu_item("Kick member", ( : kick_member:), "k"));
-      add_menu_item(party_maint, new_menu_item("Invite member", ( : invite_member:), "i"));
-      add_menu_item(party_maint, new_menu_item("Change password", ( : change_password:), "p"));
-      add_section_item(toplevel, party_maint);
+      add_lead_menu();
    }
 
    add_section_item(toplevel, party_menu);
-   add_menu_item(party_data, new_menu_item("QUIT party", ( : quit_party:), "x"));
+   add_menu_item(party_menu, new_menu_item("QUIT party", ( : quit_party:), "x"));
    add_menu_item(party_menu, new_menu_item("Help!", ( : party_help:), "h"));
    add_menu_item(party_menu, quit_item);
 
