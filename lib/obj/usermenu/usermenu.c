@@ -246,7 +246,7 @@ private
 string simple_divider(int width)
 {
    string barchar = uses_unicode() ? "─" : "-";
-   if (i_simplify())
+   if (frame_simplify())
       return "";
    return repeat_string(barchar, width);
 }
