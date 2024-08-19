@@ -195,6 +195,20 @@ mapping move_access(mapping members, int access)
    return members;
 }
 
+void swap_access(string member, string member2, string pname)
+{
+   class party party = ((class party)parties[pname]);
+   int a1, a2;
+   a1 = party.members[member];
+   a2 = party.members[member2];
+
+   // Swap the access levels.
+   party.members[member] = a2;
+   party.members[member2] = a1;
+
+   save_me();
+}
+
 nomask int remove_member(string member, string pname)
 {
 
