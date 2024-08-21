@@ -43,7 +43,6 @@ nosave mapping styles = (["single":({"┌", "─", "┬", "┐", "│", "├", "
                            "lines":({"-", "-", "-", "-", " ", " ", "-", " ", "-", "-", "-"}),
                             "none":({" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "})]);
 
-
 private
 nosave string *bits;
 
@@ -635,9 +634,8 @@ string end_frame()
    return out;
 }
 
-varargs private string h_colours(string output, mixed colstring)
+varargs string h_colour_internal(string output, mixed colstring, string frames, int outwidth)
 {
-   string frames = implode(bits, "");
    mixed *pieces = pcre_assoc(output, ({"[" + frames + "]"}), ({1}));
    string *bits = pieces[0];
    string *matches = pieces[1];
@@ -655,12 +653,24 @@ varargs private string h_colours(string output, mixed colstring)
       if (strsrch(bits[i], "\n") != -1)
          position = 0;
 
-      new_out += (matches[i] ? use_colour(colours, position, width) + bits[i] + "<res>" : bits[i]);
+      new_out += (matches[i] ? use_colour(colours, position, outwidth) + bits[i] + "<res>" : bits[i]);
       position += strlen(bits[i]);
       i++;
    }
 
    return new_out;
+}
+
+string colour_string(string str, string theme)
+{
+   return h_colour_internal(str, query_themes()[theme], "a-zA-Z ", strlen(str));
+}
+
+varargs private string h_colours(string output, mixed colstring)
+{
+   string frames = implode(bits, "");
+
+   return h_colour_internal(output, colstring, frames, width);
 }
 
 //: FUNCTION query_frame_title

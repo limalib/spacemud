@@ -258,6 +258,21 @@ int change_access(string pname, string member, int access)
    return 1;
 }
 
+string query_theme(string pname)
+{
+   class party party = (class party)parties[pname];
+
+   return party.theme || "none";
+}
+
+void set_theme(string t, string pname)
+{
+   class party party = (class party)parties[pname];
+
+   party.theme = t;
+   save_me();
+}
+
 nomask string locate_user(string name)
 {
    string *p = keys(parties);
@@ -276,7 +291,7 @@ nomask mapping list_all_parties()
    mapping p = ([]);
    foreach (string name, class party party in parties)
    {
-      p[name] = ({party.total_kills, sizeof(party.members)});
+      p[name] = ({party.total_kills, sizeof(party.members),party.theme});
    }
 
    return p;

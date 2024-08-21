@@ -540,17 +540,67 @@ void give_lead(string member)
 }
 
 private
+void frame_init_user()
+{
+   class party party = PARTY_D->query_party(party_name);
+   ::frame_init_user();
+   TBUG(party.theme);
+   if (party.theme)
+      set_theme(party.theme);
+}
+
+private
+void set_party_theme(string t)
+{
+   string *themes = keys(query_themes());
+   class party party = PARTY_D->query_party(party_name);
+   string c = "";
+   int count = 0;
+
+   // Check if member is a number > 0
+   if (to_int(t))
+   {
+      int k = to_int(t);
+      if (k > 0 && k <= sizeof(sort_array(themes, 1)))
+      {
+         string theme = sort_array(themes, 1)[k - 1];
+         write("Changed theme for " + party_name + " to " + capitalize(theme) + ".");
+         PARTY_D->set_theme(theme, party_name);
+         return;
+      }
+      write(warning("Invalid entry."));
+   }
+
+   if (lower_case(t) == "q" || t == "")
+   {
+      write("Ok, no theme changes.");
+      return;
+   }
+
+   write(accent("The current party theme is: " + PARTY_D->query_theme(party_name)));
+   write(accent("Which theme would you like for the party?"));
+   write("[" + count + "] " + "(No theme - users own theme)");
+   foreach (string m in sort_array(themes, 1))
+   {
+      count++;
+      write("[" + count + "] " + capitalize(m));
+   }
+   modal_simple(( : set_party_theme:), "[0" + (count > 1 ? "-" + count : "") + ",q]: ", 1);
+}
+
+private
 void add_lead_menu()
 {
    add_menu_item(party_maint, new_menu_item("Kick member", ( : kick_member:), "k"));
    add_menu_item(party_maint, new_menu_item("Invite member", ( : invite_member:), "i"));
    add_menu_item(party_maint, new_menu_item("Change password", ( : change_password:), "p"));
    add_menu_item(party_maint, new_menu_item("Give lead", ( : give_lead:), "L"));
-   
-   //Ensure the right order of menus.
-   remove_section_item(toplevel,party_data);
+   add_menu_item(party_maint, new_menu_item("Set party theme", ( : set_party_theme:), "t"));
+
+   // Ensure the right order of menus.
+   remove_section_item(toplevel, party_data);
    add_section_item(toplevel, party_maint);
-   add_section_item(toplevel,party_data);
+   add_section_item(toplevel, party_data);
    is_lead = 1;
 }
 
@@ -569,9 +619,9 @@ void start_menu()
    party_name = PARTY_D->locate_user(user->query_name());
    frame_init_user();
    toplevel = new_menu(party_name + " Party Menu");
-   party_data = new_section("Party Data", "title",1);
-   party_maint = new_section("Party Admin", "warning",2);
-   party_menu = new_section("Other", "<081>",3);
+   party_data = new_section("Party Data", "title", 1);
+   party_maint = new_section("Party Admin", "warning", 2);
+   party_menu = new_section("Other", "<081>", 3);
    empty = new_menu("Empty Menu");
    maint = new_menu(party_name + " Maintenance Menu");
 

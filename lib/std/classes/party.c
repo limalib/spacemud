@@ -15,6 +15,7 @@ class party
    string title;
    string password;
    string description;
+   string theme;
    int min_level;
    int max_level;
    int max_active;
