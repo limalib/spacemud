@@ -75,7 +75,8 @@ void party_maint()
 
 void party_help()
 {
-   display_current_menu();
+   write(accent("Calling 'help parties':"));
+   new (HELPSYS)->begin_help("parties");
    return;
 }
 
@@ -288,7 +289,6 @@ void kick_member(string member)
       return;
    }
 
-   write(accent("Who do you want to kick?"));
    foreach (string m in sort_array(keys(members), 1))
    {
       count++;
