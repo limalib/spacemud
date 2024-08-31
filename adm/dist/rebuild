@@ -41,7 +41,8 @@ rm -rf build
 mkdir build
 cd build
  cmake .. \
-     -DPACKAGE_UIDS=OFF
+     -DPACKAGE_UIDS=OFF \
+     -DPACKAGE_MUDLIB_STATS=OFF
 
 make -j "$(nproc)" install
 
