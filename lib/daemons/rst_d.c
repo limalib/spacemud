@@ -47,19 +47,26 @@ void delete_directory(string directory)
 }
 
 private
-void make_directories()
+int make_directories()
 {
-   /* Assume that if the filesize is -1 that a directory needs to be created */
    string *directories = ({"api", "daemon", "command", "player_command", "module", "mudlib", "verb"});
 
+   /* Assume that if the filesize is -1 that a directory needs to be created */
    if (file_size(RST_DIR) == -1)
-      mkdir(RST_DIR);
+      unguarded(1, (: mkdir, RST_DIR :));
+
+   // Still no success? Then abort here.
+   if (file_size(RST_DIR) == -1)
+      return 0;
+
 
    foreach (string d in directories)
    {
       if (file_size(RST_DIR + "/" + d) == -1)
-         mkdir(RST_DIR + "/" + d);
+         unguarded(1, (: mkdir, RST_DIR+"/"+d :));
    }
+
+   return 1;
 }
 
 //: FUNCTION scan_mudlib
@@ -73,6 +80,14 @@ void scan_mudlib()
    dirs_to_do = ({"/"});
    if (!last_time)
    {
+      delete_directory(RST_DIR);
+      if (!make_directories())
+      {
+         printf("*** Run '@RST_D->complete_rebuild()' as an ADMIN to initiate the autodoc system.\n"
+                "     Your help system will be disabled until then.\n");
+         return;
+      }
+
       make_directories();
    }
    continue_scan();
@@ -458,7 +473,7 @@ void process_file(string fname)
    {
       rm(rstfile);
       write_file(rstfile, rstout);
-      printf("%s written to %s ...\n", fname, rstfile);
+      //printf("%s written to %s ...\n", fname, rstfile);
    }
 }
 
@@ -526,7 +541,7 @@ void continue_scan()
    {
       if (sizeof(dirs_to_do))
       {
-         printf("Scanning %s ...\n", dirs_to_do[0]);
+         printf("RST_D: Scanning %s ...\n", dirs_to_do[0]);
          files = get_dir(dirs_to_do[0], -1);
          foreach (item in files)
          {
@@ -558,9 +573,9 @@ void continue_scan()
       }
       else
       {
-         printf("Done with sub pages.\nWriting indices.\n");
-         write_indices();
-         printf("Done.\n");
+         printf("RST_D: Done with sub pages.\nWriting indices.\n");
+         unguarded(1,(: write_indices:));
+         printf("RST_D: Done.\n");
          last_time = time();
          save_me();
          HELP_D->rebuild_data();
