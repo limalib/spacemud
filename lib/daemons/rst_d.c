@@ -541,7 +541,7 @@ void continue_scan()
    {
       if (sizeof(dirs_to_do))
       {
-         printf("RST_D: Scanning %s ...\n", dirs_to_do[0]);
+         //printf("RST_D: Scanning %s ...\n", dirs_to_do[0]);
          files = get_dir(dirs_to_do[0], -1);
          foreach (item in files)
          {
