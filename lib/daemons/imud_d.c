@@ -253,7 +253,7 @@ void create()
    if (mud_name() != "LIMA" && ADMIN_EMAIL == "billg@microsoft.com")
    {
       write("ERROR:\n"
-            "  The I3 daemon will not load until you set a proper ADMIN_EMAIL\n"
+            "  The IMUD daemon will not load until you set a proper ADMIN_EMAIL\n"
             "  value in /include/config.h. Set this value and do: update `IMUD_D`\n");
       destruct(this_object());
       return;
