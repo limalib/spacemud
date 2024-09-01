@@ -9,7 +9,7 @@
 ###############################################################################
 
 # name of this mud
-name : LIMA
+name : My LIMA MUD
 
 # port number to accept users on
 external_port_1: telnet 7878
