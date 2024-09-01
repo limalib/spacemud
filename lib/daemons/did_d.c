@@ -30,8 +30,8 @@ void set_version(string s)
 private
 string *help_me()
 {
-   return ({"No active mudlib version. Set your first version with:", "  didlog /newversion 1.0.0",
-            "  didlog help (for more)"});
+   return ({"No active mudlib version. Set your first version with:", "  didlog -newversion 0.0.1",
+            "  didlog -help (for more)"});
 }
 
 int someone_did(string str)
