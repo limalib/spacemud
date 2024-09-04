@@ -259,6 +259,9 @@ string query_smell()
    return smell;
 }
 
+//:FUNCTION do_listen
+// Uses write() to return the listen text set with the ``set_listen()``
+// function, otherwise returns "You hear nothing unusual.".
 void do_listen()
 {
    if (listen)
