@@ -79,22 +79,6 @@ mapping stats = ([]);
  * are being used (some of the hooks might time out and remove themselves,
  * etc, but haven't done so yet b/c they haven't been checked in a while)
  */
-private
-int cur_str;
-private
-int cur_agi;
-private
-int cur_int;
-private
-int cur_wil;
-private
-int cur_con;
-private
-int cur_wis;
-private
-int cur_cha;
-private
-int cur_man;
 
 // This is defined in such a way that:
 //
@@ -394,6 +378,14 @@ int query_social_stat()
 ** Must be defined for the mudlib inteface. Put in the stat you want.
 */
 int query_mental_stat()
+{
+   return query_stat("int");
+}
+
+/*
+** Must be defined for the mudlib inteface. Put in the stat you want.
+*/
+int query_reflex_stat()
 {
    return query_stat("int");
 }

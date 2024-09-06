@@ -417,7 +417,7 @@ mixed sum(mixed *numbers...)
          result = to_float(result) + number;
          break;
       default:
-         error("Argument must be an array of int or float: " + typeof(number) + ".\n");
+         error("Argument must be an array of int or float, found type: " + typeof(number) + ".\n");
       }
    }
    return result;
@@ -474,32 +474,6 @@ mixed element_of_weighted(mapping data)
    }
 }
 
-//: FUNCTION min
-// Returns the smallest element of an aggregate type (string, array,
-// or mapping).
-mixed min(mixed f)
-{
-   if (stringp(f))
-      f = explode(f, " ");
-   else if (mapp(f))
-      f = keys(f);
-
-   return sort_array(f, 1)[0];
-}
-
-//: FUNCTION max
-// Returns the largest element of a structure that is a string,
-// array or mapping.
-mixed max(mixed f)
-{
-   if (stringp(f))
-      f = explode(f, " ");
-   else if (mapp(f))
-      f = keys(f);
-
-   return sort_array(f, -1)[0];
-}
-
 //: FUNCTION clamp
 // Take a value and makes sure it is between the low and high parameters.
 int clamp(int x, int low, int high)
@@ -510,7 +484,6 @@ int clamp(int x, int low, int high)
 //: FUNCTION flatten_array
 // Takes an array that may contain arrays, and reduces all
 // arrays so that the result is a one dimensional array
-
 mixed flatten_array(mixed arr)
 {
    int i = 0;

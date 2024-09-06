@@ -1,51 +1,7 @@
 /* Do not remove the headers from this file! see /USAGE for more info. */
 
 //: MODULE
-// m_bodystats_lima.c -- body statistics (characteristics)
-//
-// This module should be inherited into anything requiring physical
-// statistics/characteristics.  Typically, this will be used by a
-// player's body, or an NPC.
-//
-// Stat values have the range: [0,100].  Typical values:
-//
-//	10	Joe Human
-//	20	Newbie Hero (average value at character creation time)
-//	50	Mid-level experience
-//	80	Master/high-level
-//	90	History will remember you
-//	95	Frightening
-//	100	Pure god-like status
-//
-// Statistics have a number of basic values which are "rolled" at
-// character creation time.  These differentiate starting characters
-// from one another.
-//
-//	Strength:	physical stature, power, brute force
-//		Weakling vs. strong/powerful
-//
-//	Agility:	body control, speed, flexibility
-//		Uncoordinated vs. excellent control
-//
-//	Intelligence:	inherent capability for learning
-//		Dumb vs. smart/capable
-//
-//	Willpower:	drive, stamina
-//		Unmotivated vs. driven/fanatical
-//
-// A good number of statistics are derived from the base statistics.
-//
-//	Constitution:	physical/mental stamina, sturdiness
-//		Elf vs. dwarf
-//
-//	Wisdom:		collected knowledge
-//		Naive vs. wise
-//
-//	Charisma:	natural attraction, leadership, persuasion
-//		Nobody vs. great leader/speaker
-//
-//  Mana:   intellectual capacity, magic ability, reflex
-//      Distraught vs. Contemplative Guru
+// m_bodystats_dnd.c -- body statistics (characteristics)
 //
 // .. TAGS: RST
 
@@ -54,67 +10,20 @@
 #include <hooks.h>
 #include <stats.h>
 
+
+//Define this to use "Roll 4d6 drop lowest". If not defined, we use old school 3d6.
+#define USE_4D6DL
+
 private
 inherit CLASS_STATMODS;
 
 mixed call_hooks(string, int);
-#ifdef USE_SKILLS
-int aggregate_skill(string skill);
-#endif
-void recompute_derived();
 void refresh_stats();
 int skill_stat_sum(string stat);
 
 private
 mapping stats = ([]);
 
-/* Because of the complexity of the system, a bonus to strength affects
- * str as well as con and wis and cha.  To avoid having to recall all
- * the hooks for all the base stats every time one of the derived stats
- * is queried, we cache the bonus here, reducing the number of hook
- * calls from O(N^2) in stats to O(N).  One should make sure refresh_stats()
- * gets called occasionally; it gets called automatically once a round
- * during combat, but if you are using stats in a non-combat setting you
- * might want to manually call it to make sure the latest modifications
- * are being used (some of the hooks might time out and remove themselves,
- * etc, but haven't done so yet b/c they haven't been checked in a while)
- */
-private
-int cur_str;
-private
-int cur_agi;
-private
-int cur_int;
-private
-int cur_wil;
-private
-int cur_con;
-private
-int cur_wis;
-private
-int cur_cha;
-private
-int cur_man;
-
-// This is defined in such a way that:
-//
-// derived_stat[i] = trans_matrix[i][j] * base_stat[j]
-//                   + constant_vector[i] + skill contribution
-//
-// where there is an implied sum over j
-//
-nosave private mixed *trans_matrix;
-nosave private int *constant_vector;
-
-/*
-** Base statistics
-**
-** query_xxx_pure() returns the "pure" unadulterated statistic.  These
-**   values are typically never used.
-**
-** query_xxx() returns the statistic, adjusted for all additional factors
-**   such as temporary boosts, detriments, etc.
-*/
 nomask int query_stat_pure(string stat)
 {
    return stats["stat_" + stat];
@@ -122,21 +31,12 @@ nomask int query_stat_pure(string stat)
 
 nomask int query_stat(string stat)
 {
-   switch (stat)
-   {
-   case "wis":
-   case "cha":
-   case "man":
-      return stats["cur_" + stat] + skill_stat_sum(stat);
-   }
-
    return stats["cur_" + stat];
 }
 
 void set_mod_stat(string stat, int s)
 {
    stats["mod_" + stat] = s;
-   recompute_derived();
 }
 
 int query_mod_stat(string stat)
@@ -147,33 +47,14 @@ int query_mod_stat(string stat)
 void inc_mod_stat(string stat)
 {
    stats["mod_" + stat]++;
-   recompute_derived();
 }
 
 int spare_points()
 {
-   int total_pts = this_object()->query_level() * STAT_PTS_PER_LEVEL;
-   total_pts -= stats["mod_str"] + stats["mod_agi"] + stats["mod_int"] + stats["mod_wil"];
+   int total_pts = (this_object()->query_level() / 4) * 2;
+   total_pts -=
+       stats["mod_str"] + stats["mod_dex"] + stats["mod_con"] + stats["mod_int"] + stats["mod_wis"] + stats["mod_cha"];
    return total_pts;
-}
-
-int stat_component(int STAT, int PART)
-{
-   int stat_int = 0;
-   int adj_str, adj_agi, adj_int, adj_wil;
-   int ccur_str, ccur_agi, ccur_int, ccur_wil;
-   int *stats_ar;
-
-   ccur_str = stats["stat_str"] + stats["mod_str"] + (adj_str = call_hooks("str_bonus", HOOK_SUM));
-   ccur_agi = stats["stat_agi"] + stats["mod_agi"] + (adj_agi = call_hooks("agi_bonus", HOOK_SUM));
-   ccur_int = stats["stat_int"] + stats["mod_int"] + (adj_int = call_hooks("int_bonus", HOOK_SUM));
-   ccur_wil = stats["stat_wil"] + stats["mod_wil"] + (adj_wil = call_hooks("wil_bonus", HOOK_SUM));
-   stats_ar = ({ccur_str, ccur_agi, ccur_int, ccur_wil});
-
-   // Need to /4 the constant_vector to not add the bonus 4 times.
-   stat_int = (constant_vector[STAT] * 10000 / 4 + trans_matrix[STAT][PART] * stats_ar[PART] + 5000) / 10000;
-
-   return stat_int;
 }
 
 /*
@@ -185,93 +66,19 @@ int stat_component(int STAT, int PART)
 // setting, you might want to call this first.
 void refresh_stats()
 {
-   //: HOOK str_bonus
-   // Used to modify strength
-   //: HOOK agi_bonus
-   // Used to modify agility
-   //: HOOK int_bonus
-   // Used to modify intelligence
-   //: HOOK wil_bonus
-   // Used to modify willpower
-   int adj_str, adj_agi, adj_int, adj_wil;
+   int adj_str, adj_dex, adj_con, adj_int, adj_wis, adj_cha;
 
    stats["cur_str"] = stats["stat_str"] + stats["mod_str"] + (adj_str = call_hooks("str_bonus", HOOK_SUM));
-   stats["cur_agi"] = stats["stat_agi"] + stats["mod_agi"] + (adj_agi = call_hooks("agi_bonus", HOOK_SUM));
+   stats["cur_dex"] = stats["stat_dex"] + stats["mod_dex"] + (adj_dex = call_hooks("dex_bonus", HOOK_SUM));
    stats["cur_int"] = stats["stat_int"] + stats["mod_int"] + (adj_int = call_hooks("int_bonus", HOOK_SUM));
-   stats["cur_wil"] = stats["stat_wil"] + stats["mod_wil"] + (adj_wil = call_hooks("wil_bonus", HOOK_SUM));
-
-   // optimize common case
-   if (!(adj_str || adj_agi || adj_int || adj_wil))
-   {
-      stats["cur_con"] = stats["stat_con"];
-      stats["cur_wis"] = stats["stat_wis"];
-      stats["cur_cha"] = stats["stat_cha"];
-      stats["cur_man"] = stats["stat_man"];
-      return;
-   }
-
-   stats["cur_con"] = stats["stat_con"] + (trans_matrix[CON][STR] * adj_str + trans_matrix[CON][AGI] * adj_agi +
-                                           trans_matrix[CON][INT] * adj_int + trans_matrix[CON][WIL] * adj_wil + 5000) /
-                                              10000;
-   stats["cur_wis"] = stats["stat_wis"] + (trans_matrix[WIS][STR] * adj_str + trans_matrix[WIS][AGI] * adj_agi +
-                                           trans_matrix[WIS][INT] * adj_int + trans_matrix[WIS][WIL] * adj_wil + 5000) /
-                                              10000;
-   stats["cur_cha"] = stats["stat_cha"] + (trans_matrix[CHA][STR] * adj_str + trans_matrix[CHA][AGI] * adj_agi +
-                                           trans_matrix[CHA][INT] * adj_int + trans_matrix[CHA][WIL] * adj_wil + 5000) /
-                                              10000;
-   stats["cur_man"] = stats["stat_man"] + (trans_matrix[MAN][STR] * adj_str + trans_matrix[MAN][AGI] * adj_agi +
-                                           trans_matrix[MAN][INT] * adj_int + trans_matrix[MAN][WIL] * adj_wil + 5000) /
-                                              10000;
-}
-
-void recompute_derived()
-{
-   stats["stat_con"] = (constant_vector[CON] * 10000 + trans_matrix[CON][STR] * (stats["stat_str"] + stats["mod_str"]) +
-                        trans_matrix[CON][AGI] * (stats["stat_agi"] + stats["mod_agi"]) +
-                        trans_matrix[CON][INT] * (stats["stat_int"] + stats["mod_int"]) +
-                        trans_matrix[CON][WIL] * (stats["stat_wil"] + stats["mod_wil"]) + 5000) /
-                       10000;
-   stats["stat_wis"] = (constant_vector[WIS] * 10000 + trans_matrix[WIS][STR] * (stats["stat_str"] + stats["mod_str"]) +
-                        trans_matrix[WIS][AGI] * (stats["stat_agi"] + stats["mod_agi"]) +
-                        trans_matrix[WIS][INT] * (stats["stat_int"] + stats["mod_int"]) +
-                        trans_matrix[WIS][WIL] * (stats["stat_wil"] + stats["mod_wil"]) + 5000) /
-                       10000;
-   stats["stat_cha"] = (constant_vector[CHA] * 10000 + trans_matrix[CHA][STR] * (stats["stat_str"] + stats["mod_str"]) +
-                        trans_matrix[CHA][AGI] * (stats["stat_agi"] + stats["mod_agi"]) +
-                        trans_matrix[CHA][INT] * (stats["stat_int"] + stats["mod_int"]) +
-                        trans_matrix[CHA][WIL] * (stats["stat_wil"] + stats["mod_wil"]) + 5000) /
-                       10000;
-   stats["stat_man"] = (constant_vector[MAN] * 10000 + trans_matrix[MAN][STR] * (stats["stat_str"] + stats["mod_str"]) +
-                        trans_matrix[MAN][AGI] * (stats["stat_agi"] + stats["mod_agi"]) +
-                        trans_matrix[MAN][INT] * (stats["stat_int"] + stats["mod_int"]) +
-                        trans_matrix[MAN][WIL] * (stats["stat_wil"] + stats["mod_wil"]) + 5000) /
-                       10000;
-   refresh_stats();
+   stats["cur_wis"] = stats["stat_wis"] + stats["mod_wis"] + (adj_wis = call_hooks("wil_bonus", HOOK_SUM));
+   stats["cur_con"] = stats["stat_con"] + stats["mod_con"] + (adj_con = call_hooks("wil_bonus", HOOK_SUM));
+   stats["cur_cha"] = stats["stat_cha"] + stats["mod_cha"] + (adj_cha = call_hooks("wil_bonus", HOOK_SUM));
 }
 
 nomask void set_stat(string stat, int c)
 {
    stats["stat_" + stat] = c;
-   recompute_derived();
-}
-
-int skill_stat_sum(string stat)
-{
-#ifndef USE_SKILLS
-   return 10;
-#endif
-
-   switch (stat)
-   {
-   case "wis":
-      return to_int(51 * (aggregate_skill("misc/life/knowledge") / 10000.0));
-   case "cha":
-      return to_int(44 * (aggregate_skill("misc/life/converse") / 10000.0));
-   case "man":
-      return to_int(48 * (aggregate_skill("magic/arcane/knowledge") / 10000.0));
-   }
-
-   return 10;
 }
 
 /*
@@ -288,38 +95,42 @@ class stat_roll_mods query_roll_mods()
    return new (class stat_roll_mods);
 }
 
-mixed *query_transformation_matrix()
+private
+int roll_dice()
 {
-   // should be overloaded
-   return ({allocate(4), allocate(4), allocate(4), allocate(4)});
-}
+   int *total = ({});
+   int min;
 
-int *query_constant_vector()
-{
-   // should be overloaded
-   return allocate(4);
+   for (int i = 0; i < 4; i++)
+      total += ({random(6) + 1});
+   min = min(total);
+   return ((int)sum(total...)) - min;
 }
 
 private
-nomask int roll_stat(int adjust, int range)
+nomask int roll_stat()
 {
-   if (!range)
-      range = DEFAULT_RANGE;
-
-   return STAT_BASE_VALUE + adjust + random(range) - (range + 1) / 2;
+#ifdef USE_4D6DL
+   return roll_dice();
+#else
+   return random(6) + random(6) + random(6) + 3;
+#endif
 }
 
 int max_stat()
 {
-   return max(({stats["stat_str"], stats["stat_agi"], stats["stat_int"], stats["stat_wil"]}));
+   return max(({stats["stat_str"], stats["stat_dex"], stats["stat_int"], stats["stat_wis"], stats["stat_con"],
+                stats["stat_cha"]}));
 }
 
 void reset_stat_increases()
 {
    stats["mod_str"] = 0;
-   stats["mod_agi"] = 0;
+   stats["mod_dex"] = 0;
+   stats["mod_con"] = 0;
    stats["mod_int"] = 0;
-   stats["mod_wil"] = 0;
+   stats["mod_wis"] = 0;
+   stats["mod_cha"] = 0;
    refresh_stats();
 }
 
@@ -335,18 +146,16 @@ nomask void init_stats()
    if ( stat_str && !check_previous_privilege(1) )
    error("cannot reinitialize statistics\n");
 */
-   mods = query_roll_mods();
-   if (mods.str_adjust + mods.agi_adjust + mods.int_adjust + mods.wil_adjust != 0)
-      error("illegal stat adjustment values\n");
 
-   stats["stat_str"] = roll_stat(mods.str_adjust, mods.str_range);
-   stats["stat_agi"] = roll_stat(mods.agi_adjust, mods.agi_range);
-   stats["stat_int"] = roll_stat(mods.int_adjust, mods.int_range);
-   stats["stat_wil"] = roll_stat(mods.wil_adjust, mods.wil_range);
+   stats["stat_str"] = roll_stat();
+   stats["stat_dex"] = roll_stat();
+   stats["stat_con"] = roll_stat();
+   stats["stat_int"] = roll_stat();
+   stats["stat_wis"] = roll_stat();
+   stats["stat_cha"] = roll_stat();
 
    reset_stat_increases();
 
-   recompute_derived();
    refresh_stats();
 }
 
@@ -355,7 +164,7 @@ nomask void init_stats()
 */
 int query_carrying_stat()
 {
-   return query_stat("con");
+   return query_stat("str");
 }
 
 /*
@@ -379,7 +188,7 @@ int query_physical_dmg_stat()
 */
 int query_agility_stat()
 {
-   return query_stat("agi");
+   return query_stat("dex");
 }
 
 /*
@@ -398,9 +207,18 @@ int query_mental_stat()
    return query_stat("int");
 }
 
+/*
+** Must be defined for the mudlib inteface. Put in the stat you want.
+*/
+int query_reflex_stat()
+{
+   return query_stat("int");
+}
+
 mapping stat_abrev()
 {
-   return (["strength":"str", "agility":"agi", "intelligence":"int", "willpower":"wil"]);
+   return (["strength":"str",
+           "dexterity":"dex", "intelligence":"int", "wisdom":"wis", "constitution":"con", "charisma":"cha", ]);
 }
 
 int colour_strlen(string str)
@@ -423,19 +241,23 @@ string pretty_bonus(int b)
    return out;
 }
 
+string dnd_stat_mod(string stat)
+{
+   int mod = stats["cur_" + stat] / 2 - 5;
+   return mod > -1 ? "+" + mod : "" + mod;
+}
+
 string show_stats()
 {
-   return sprintf("BASE SCORES: Str %-4d%s  Agi %-4d%s  Int %-4d%s  Wil  %-4d%s\n" +
-                      "DERIVED    : Con %-4d%s  Wis %-4d%s  Cha %-4d%s  Mana %-4d%s\n",
-                  query_stat("str"), (pretty_bonus(query_stat("str") - query_stat_pure("str"))), query_stat("agi"),
-                  (pretty_bonus(query_stat("agi") - query_stat_pure("agi"))), query_stat("int"),
-                  (pretty_bonus(query_stat("int") - query_stat_pure("int"))), query_stat("wil"),
-                  (pretty_bonus(query_stat("wil") - query_stat_pure("wil"))), query_stat("con"),
-                  (pretty_bonus(query_stat("con") - query_stat_pure("con"))), query_stat("wis"),
-                  (pretty_bonus(query_stat("wis") - query_stat_pure("wis"))), query_stat("cha"),
-                  (pretty_bonus(query_stat("cha") - query_stat_pure("cha"))), query_stat("man"),
-                  (pretty_bonus(query_stat("man") - query_stat_pure("man")))) +
-          "\n";
+   return sprintf(
+       "    <bld>Strength<res> %2d (%2s)   <bld>Dexterity<res> %2d (%2s)   <bld>Constitution<res> %2d (%2s)\n" +      //
+       "<bld>Intelligence<res> %2d (%2s)      <bld>Wisdom<res> %2d (%2s)       <bld>Charisma<res> %2d (%2s)\n\n", //
+       query_stat("str"), dnd_stat_mod("str"),                                                                    //
+       query_stat("dex"), dnd_stat_mod("dex"),                                                                    //
+       query_stat("con"), dnd_stat_mod("con"),                                                                    //
+       query_stat("int"), dnd_stat_mod("int"),                                                                    //
+       query_stat("wis"), dnd_stat_mod("wis"),                                                                    //
+       query_stat("cha"), dnd_stat_mod("cha"), );
 }
 
 /*
@@ -443,6 +265,4 @@ string show_stats()
 */
 void internal_setup(mixed args...)
 {
-   trans_matrix = query_transformation_matrix();
-   constant_vector = query_constant_vector();
 }

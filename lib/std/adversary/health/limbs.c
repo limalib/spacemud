@@ -373,7 +373,7 @@ int query_reflex()
 // adversary.
 int max_reflex()
 {
-   return to_int((this_object()->query_mental_stat() || 1) * (1 + (query_level() / 10.0)));
+   return to_int((this_object()->query_reflex_stat() || 1) * (1 + (query_level() / 10.0)));
 }
 
 //: FUNCTION set_reflex
