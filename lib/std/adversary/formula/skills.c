@@ -148,7 +148,7 @@ int disarm_chance(object target)
    // Calculate anti_disarm chances from the target + her weapon.
    int disarm_prevention = (target ? target->query_anti_disarm() : 0) +
                            (target->query_weapon() ? target->query_weapon()->query_anti_disarm() : 0) +
-                           ((target->query_int() / DISARM_STAT_IMPACT));
+                           ((target->query_mental_stat() / DISARM_STAT_IMPACT));
    int train_limit;
 
    if (target->should_cap_skill("combat/defense/disarm"))

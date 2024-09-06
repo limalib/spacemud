@@ -373,7 +373,7 @@ int query_reflex()
 // adversary.
 int max_reflex()
 {
-   return to_int((this_object()->query_int() || 1) * (1 + (query_level() / 10.0)));
+   return to_int((this_object()->query_mental_stat() || 1) * (1 + (query_level() / 10.0)));
 }
 
 //: FUNCTION set_reflex
@@ -790,7 +790,7 @@ void update_health()
    {
       foreach (string limb in keys(health))
          heal_limb(limb, fuzzy_divide((time() - health_time) * heal_rate, 3000));
-      restore_reflex(fuzzy_divide((time() - health_time) * (reflex_rate + this_object()->query_int()), 2000));
+      restore_reflex(fuzzy_divide((time() - health_time) * (reflex_rate + this_object()->query_mental_stat()), 2000));
       health_time = time();
    }
 }

@@ -390,6 +390,14 @@ int query_social_stat()
    return query_stat("cha");
 }
 
+/*
+** Must be defined for the mudlib inteface. Put in the stat you want.
+*/
+int query_mental_stat()
+{
+   return query_stat("int");
+}
+
 mapping stat_abrev()
 {
    return (["strength":"str", "agility":"agi", "intelligence":"int", "willpower":"wil"]);
