@@ -216,8 +216,11 @@ void main(mixed *args)
    content = score_cmd(body, width);
 
    num_cur = sizeof(keys(body->query_money() || ([])));
-   set_frame_header(" \nExp\n\n\nMoney" + repeat_string("\n", num_cur || 1) + "\nStats"+
-      repeat_string("\n",sizeof(explode(this_body()->show_stats(),"\n")))+"\n\nOther\n\n" +
+   set_frame_header(" \nExp\n\n\nMoney" + repeat_string("\n", num_cur || 1) +
+                    /* This line dynamically figures out height of stats section */
+                    "\nStats" + repeat_string("\n", sizeof(explode(this_body()->show_stats(), "\n"))) +
+                    /* ... */
+                    "\n\nOther\n\n" +
 #ifdef USE_KARMA
                     "Karma\n\n" +
 #endif
