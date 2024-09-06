@@ -35,7 +35,7 @@ string currency; // Loaded during create()
 private
 int stat_cost = 10; // Overridden in create()
 private
-mapping stat_abrevs = (["strength":"str", "agility":"agi", "intelligence":"int", "willpower":"wil"]);
+mapping stat_abrevs;
 
 void set_trainer_msgs(mapping msgs)
 {
@@ -142,12 +142,7 @@ varargs int stat_train_cost(string statstr)
    if (statstr && strlen(statstr))
       stat = call_other(this_body(), "query_" + stat_abrevs[statstr]);
    else
-      stat = max(({
-          this_body()->query_str(),
-          this_body()->query_agi(),
-          this_body()->query_int(),
-          this_body()->query_wil(),
-      }));
+      stat = this_body()->max_stat();
    cost = cost * (stat + 1);
 #endif
 
@@ -163,7 +158,7 @@ void train_stat(string s)
    if (undefinedp(stat_abrevs[s]))
       error("Unknown stat '" + s + "'.");
 
-   // No spare points, end it here.
+   // No spare points, end it here. = this_body()->stat_abrevs();
    if (!b->spare_points())
    {
       targetted_action(trainer_msgs["no_stat_pts_msg"], b);
@@ -190,6 +185,7 @@ void train_stat(string s)
 
 void begin_conversation()
 {
+   stat_abrevs = this_body()->stat_abrevs();
    if (sizeof(stats_we_train))
    {
       int train_cost;

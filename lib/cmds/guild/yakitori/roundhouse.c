@@ -22,7 +22,7 @@ void setup()
 
 int special_check(object attacker, object target)
 {
-   if (attacker->query_dex() < 20)
+   if (attacker->query_agility_stat() < 20)
    {
       write("You need a Dexterity score of at least 20.\n");
       return 0;

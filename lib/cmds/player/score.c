@@ -26,37 +26,11 @@ inherit M_FRAME;
 
 #define FC "<bld>%-10.10s<res>"
 
-// Always returns a strlen 6.
-string pretty_bonus(int b)
-{
-   string out = "      ";
-   if (b > 0)
-      out = "(<002>+" + b + "<res>)";
-   else if (b < 0)
-      out = "(<001>" + b + "<res>)";
-
-   if (colour_strlen(out) < 6)
-      out += repeat_string(" ", 6 - colour_strlen(out));
-
-   return out;
-}
-
 private
 string stats_string(object body, int width)
 {
    string content = "";
-   content = sprintf("BASE SCORES: Str %-4d%s  Agi %-4d%s  Int %-4d%s  Wil  %-4d%s\n" +
-                         "DERIVED    : Con %-4d%s  Wis %-4d%s  Cha %-4d%s  Mana %-4d%s\n",
-                     body->query_str(), (pretty_bonus(body->query_str() - body->query_str_pure())), body->query_agi(),
-                     (pretty_bonus(body->query_agi() - body->query_agi_pure())), body->query_int(),
-                     (pretty_bonus(body->query_int() - body->query_int_pure())), body->query_wil(),
-                     (pretty_bonus(body->query_wil() - body->query_wil_pure())), body->query_con(),
-                     (pretty_bonus(body->query_con() - body->query_con_pure())), body->query_wis(),
-                     (pretty_bonus(body->query_wis() - body->query_wis_pure())), body->query_cha(),
-                     (pretty_bonus(body->query_cha() - body->query_cha_pure())), body->query_man(),
-                     (pretty_bonus(body->query_man() - body->query_man_pure()))) +
-             "\n";
-
+   content = body->show_stats();
    content += "Spare stat points: " + body->spare_points() + "\n\n";
    content += sprintf("XP Buff: %-10.10s  Party: %s\n\n",
                       (body->query_guild_xp_buff() ? body->query_guild_xp_buff() + "%" : "None"),

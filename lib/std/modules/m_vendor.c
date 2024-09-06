@@ -370,7 +370,7 @@ void buy_object(object ob)
 
    if (this_body()->test_skill("misc/life/haggle", to_int(cost), train_limit))
    {
-      int increase = to_int(this_body()->query_cha() * CHA_MULT * cost / 100);
+      int increase = to_int(this_body()->query_social_stat() * CHA_MULT * cost / 100);
       // TBUG("Selling " + ob->the_short() + " for " + cost + " increased by " + increase);
       cost += increase;
       money = MONEY_D->calculate_denominations(cost, currency_type);
@@ -578,7 +578,7 @@ int sell_object(object ob, int value)
 
    if (this_body()->test_skill("misc/life/haggle", to_int(cost), train_limit))
    {
-      int decrease = to_int(this_body()->query_cha() * CHA_MULT_SELL * cost / 100);
+      int decrease = to_int(this_body()->query_social_stat() * CHA_MULT_SELL * cost / 100);
       // TBUG("Buying " + ob->the_short() + " for " + cost + " decreased by " + decrease);
       cost -= decrease;
       money = MONEY_D->calculate_denominations(decrease, currency_type);

@@ -48,8 +48,9 @@ int chance_to_hit(object weapon, object target)
 {
    string attack_skill = weapon ? weapon->query_skill_used() : "combat/melee/unarmed";
    string defend_skill = target->query_defend_skill_used();
-   int skill_contrib = strsrch(attack_skill, "combat/guns") != -1 ? (this_object()->query_dex() / TO_HIT_STAT_IMPACT)
-                                                                  : (this_object()->query_str() / TO_HIT_STAT_IMPACT);
+   int skill_contrib = strsrch(attack_skill, "combat/guns") != -1
+                           ? (this_object()->query_agility_stat() / TO_HIT_STAT_IMPACT)
+                           : (this_object()->query_physical_dmg_stat() / TO_HIT_STAT_IMPACT);
    int attack_value;
    int defend_value;
    int attack_mod = 1;
@@ -170,8 +171,9 @@ int disarm_chance(object target)
 int calculate_damage(object weapon, object target)
 {
    string attack_skill = weapon ? weapon->query_skill_used() : "combat/melee/unarmed";
-   int skill_contrib = strsrch(attack_skill, "combat/guns") != -1 ? (this_object()->query_dex() / DAMAGE_STAT_IMPACT)
-                                                                  : (this_object()->query_str() / DAMAGE_STAT_IMPACT);
+   int skill_contrib = strsrch(attack_skill, "combat/guns") != -1
+                           ? (this_object()->query_agility_stat() / DAMAGE_STAT_IMPACT)
+                           : (this_object()->query_physical_dmg_stat() / DAMAGE_STAT_IMPACT);
 
    // If the weapon is set to restricted (happens when wielded in /std/adversary/wield/limbs)
    // we reduce the damage by 90% (you suck!).
