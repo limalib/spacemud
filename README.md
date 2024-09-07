@@ -9,11 +9,11 @@ Please see https://limamudlib.readthedocs.io/
 
 # How to test and contribute
 ```
-#Stable 
-git clone --recurse-submodules https://github.com/fluffos/lima
+#Somewhat old and outdated
+#git clone --recurse-submodules https://github.com/fluffos/lima
 
-#or use (for development)
-#git clone --recurse-submodules https://github.com/tsathoqqua/lima
+#For a more stable experience, try:
+git clone --recurse-submodules https://github.com/tsathoqqua/lima
 
 cd lima/adm/dist
 ./rebuild
