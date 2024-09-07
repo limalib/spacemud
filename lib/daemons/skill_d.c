@@ -4,8 +4,25 @@
 #include <config/skills.h>
 #include <security.h>
 
+//: MODULE
+// This daemon keeps track of valid skills, registers new skills, and removes unwanted
+// skills. It also creates percentages for skills, calculates skill ranks for players
+// and monsters (Wait, skill ranks for monsters? Yes, you can use the ``skills`` command
+// to see which skills your monsters have.)
+//
+// A couple of useful commands:
+//
+//    - Dump current skills to config file: ``@SKILL_D->dump_skills_to_file()``
+//    - Load skills from config file: ``@SKILL_D->init_skills()``
+//
+// This might eventually get an admtool interface.
+//
+// .. TAGS: RST
+
 inherit M_DAEMON_DATA;
 inherit CLASS_SKILL;
+
+#define SKILL_FLAT_FILE "/data/config/skill-tree"
 
 /*
 ** Keep the list of the available skills.
@@ -201,6 +218,43 @@ string skill_rank_simple(object player, string skill_name)
    return name;
 }
 
+void init_skills()
+{
+   string *config = explode(read_file(SKILL_FLAT_FILE), "\n");
+   skills = ([]);
+
+   foreach (string line in config)
+   {
+      if (line[0] == '#')
+         continue;
+      register_skill(line);
+   }
+   write(SKILL_FLAT_FILE + " loaded.");
+}
+
+void dump_skills_to_file()
+{
+   string section;
+   string out =
+       "# Skill tree for the SKILL_D\n"
+       "# Use @SKILL_D->dump_skills_to_file() to write skills to this file\n"
+       "# Use @SKILL_D->init_skills() to read skills from this file - this will remove all old skills.\n"
+       "# The values after the skill names are currently unused, but may be used later. Keep them at 1 for now.\n";
+   foreach (string skill in sort_array(keys(skills), 1))
+   {
+      string root = explode(skill, "/")[0];
+      if (root != section)
+      {
+         section = root;
+         out += "\n# " + capitalize(root) + " section\n";
+      }
+      out += skill + ":" + (skills[skill] ? "1 " : "0") + "\n";
+   }
+
+   unguarded(1, ( : write_file, SKILL_FLAT_FILE, out, 1 :));
+   write("Skills dumped to " + SKILL_FLAT_FILE + ".");
+}
+
 int percent_for_next_rank(object player, string skill_name)
 {
    class skill skill;
@@ -230,6 +284,7 @@ int monster_percent_for_next_rank(object mob, string skill_name)
 void create()
 {
    ::create(); // Restore values from .o file
+   set_privilege(PRIV_REQUIRED);
    if (MAX_SKILL_VALUE != 10000)
    {
       float factor = (MAX_SKILL_VALUE * 1.0) / 10000;
