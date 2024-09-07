@@ -71,10 +71,10 @@ void create()
                                                 "Mudlib:daemons",
                                                 "Mudlib:objects",
                                             }),
-                                     ":wizcmds":({}), ":config":({}), ":daemons":({}), ":objects":({}), ":WWW":({}),
-                                        ":help":({
-                                                    "Mudlib:daemons",
-                                                }),
+                                     ":wizcmds":({}), ":config":({"Mudlib:daemons"}), ":daemons":({}), ":objects":({}),
+                                         ":WWW":({}), ":help":({
+                                                                  "Mudlib:daemons",
+                                                              }),
                                              "":({}), ":verbs":({}), ":std":({}), ":plyrcmds":({}), ":":({}), ]),
                "Admin-channels":(["":({}), ":":({}), ]), "Std":(["":({}), ":":({}), ]),
                       "@secure":(["":({}), ":":({}), ]), "Lpscript":(["":({}), ":":({}), ]), ]);
@@ -83,7 +83,7 @@ void create()
                                  (["mail":({
                                               "@secure",
                                               0,
-                                          }),
+                                          }), 
                                      "wshells":({
                                                    "@secure",
                                                    0,
@@ -871,7 +871,7 @@ nomask varargs int check_privilege(mixed prot, int ignore)
       if (function_exists("query_privilege", ob) != M_ACCESS)
       {
          string temp, temp2;
-         if (sscanf(file_name(ob), WIZ_DIR+"/%s/%s", temp, temp2) == 2)
+         if (sscanf(file_name(ob), WIZ_DIR + "/%s/%s", temp, temp2) == 2)
          {
             return higher_privilege(temp + ":", prot);
          }
