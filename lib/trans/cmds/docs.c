@@ -89,6 +89,11 @@ void main(mixed arg)
    rst_files = sizeof(filter_array(help_pages, ( : $1[ < 4..] == ".rst" :)));
    md_files = sizeof(filter_array(help_pages, ( : $1[ < 3..] == ".md" :)));
    other_files = sizeof(help_pages) - md_files - rst_files;
+
+   if (mud_name() != "LIMA")
+      write("<220>NOTICE: This command is mostly meant for the ongoing documentation project at LIMA mud.\n"
+            "        Once done this command will disappear again. But at least you can see our progress.<res>\n\n");
+
    write("                           Rst files: " + rst_files + "    MD files: " + md_files +
          "    Other files: " + other_files + "\n");
 
@@ -109,4 +114,6 @@ void main(mixed arg)
          write("  - " + f);
       }
    }
+   write("\n\nOther options:\n\tdocs playerdoc - updates " + COMMANDS_HELP +
+         "\n\tdocs refresh - forces HELP_D to update documents.\n\n");
 }
