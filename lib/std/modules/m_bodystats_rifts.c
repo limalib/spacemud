@@ -3,16 +3,14 @@
 //: MODULE
 // m_bodystats_rifts.c -- body statistics (characteristics)
 //
+// Very rough version 0.1 by Tsath 2024.
+//
 // .. TAGS: RST
 
 #include <classes.h>
 #include <config/stats.h>
 #include <hooks.h>
 #include <stats.h>
-
-
-//Define this to use "Roll 4d6 drop lowest". If not defined, we use old school 3d6.
-#define USE_4D6DL
 
 private
 inherit CLASS_STATMODS;
@@ -52,8 +50,8 @@ void inc_mod_stat(string stat)
 int spare_points()
 {
    int total_pts = (this_object()->query_level() / 4) * 2;
-   total_pts -=
-       stats["mod_str"] + stats["mod_dex"] + stats["mod_con"] + stats["mod_int"] + stats["mod_wis"] + stats["mod_cha"];
+   total_pts -= stats["mod_iq"] + stats["mod_me"] + stats["mod_ma"] + stats["mod_ps"] + stats["mod_pp"] +
+                stats["mod_pe"] + stats["mod_pb"] + stats["mod_spd"];
    return total_pts;
 }
 
@@ -66,14 +64,16 @@ int spare_points()
 // setting, you might want to call this first.
 void refresh_stats()
 {
-   int adj_str, adj_dex, adj_con, adj_int, adj_wis, adj_cha;
+   int adj_iq, adj_me, adj_ma, adj_ps, adj_pp, adj_pe, adj_pb, adj_spd;
 
-   stats["cur_str"] = stats["stat_str"] + stats["mod_str"] + (adj_str = call_hooks("str_bonus", HOOK_SUM));
-   stats["cur_dex"] = stats["stat_dex"] + stats["mod_dex"] + (adj_dex = call_hooks("dex_bonus", HOOK_SUM));
-   stats["cur_int"] = stats["stat_int"] + stats["mod_int"] + (adj_int = call_hooks("int_bonus", HOOK_SUM));
-   stats["cur_wis"] = stats["stat_wis"] + stats["mod_wis"] + (adj_wis = call_hooks("wil_bonus", HOOK_SUM));
-   stats["cur_con"] = stats["stat_con"] + stats["mod_con"] + (adj_con = call_hooks("wil_bonus", HOOK_SUM));
-   stats["cur_cha"] = stats["stat_cha"] + stats["mod_cha"] + (adj_cha = call_hooks("wil_bonus", HOOK_SUM));
+   stats["cur_iq"] = stats["stat_iq"] + stats["mod_iq"] + (adj_iq = call_hooks("str_bonus", HOOK_SUM));
+   stats["cur_me"] = stats["stat_me"] + stats["mod_me"] + (adj_me = call_hooks("dex_bonus", HOOK_SUM));
+   stats["cur_ps"] = stats["stat_ps"] + stats["mod_ps"] + (adj_ps = call_hooks("int_bonus", HOOK_SUM));
+   stats["cur_pp"] = stats["stat_pp"] + stats["mod_pp"] + (adj_pp = call_hooks("wil_bonus", HOOK_SUM));
+   stats["cur_ma"] = stats["stat_ma"] + stats["mod_ma"] + (adj_ma = call_hooks("wil_bonus", HOOK_SUM));
+   stats["cur_pe"] = stats["stat_pe"] + stats["mod_pe"] + (adj_pe = call_hooks("wil_bonus", HOOK_SUM));
+   stats["cur_pb"] = stats["stat_pb"] + stats["mod_pb"] + (adj_pb = call_hooks("wil_bonus", HOOK_SUM));
+   stats["cur_spd"] = stats["stat_spd"] + stats["mod_spd"] + (adj_spd = call_hooks("wil_bonus", HOOK_SUM));
 }
 
 nomask void set_stat(string stat, int c)
@@ -96,41 +96,38 @@ class stat_roll_mods query_roll_mods()
 }
 
 private
-int roll_dice()
+int exceptional()
 {
-   int *total = ({});
-   int min;
-
-   for (int i = 0; i < 4; i++)
-      total += ({random(6) + 1});
-   min = min(total);
-   return ((int)sum(total...)) - min;
+   int r = random(6) + 1;
+   return r + (r == 6 ? exceptional() : 0);
 }
 
 private
 nomask int roll_stat()
 {
-#ifdef USE_4D6DL
-   return roll_dice();
-#else
-   return random(6) + random(6) + random(6) + 3;
-#endif
+   int base = random(6) + random(6) + random(6) + 3;
+   if (base > 15)
+      return base + exceptional();
+   else
+      return base;
 }
 
 int max_stat()
 {
-   return max(({stats["stat_str"], stats["stat_dex"], stats["stat_int"], stats["stat_wis"], stats["stat_con"],
-                stats["stat_cha"]}));
+   return max(({stats["stat_iq"], stats["stat_me"], stats["stat_ps"], stats["stat_pp"], stats["stat_ma"],
+                stats["stat_pe"], stats["stat_pb"], stats["stat_spd"]}));
 }
 
 void reset_stat_increases()
 {
-   stats["mod_str"] = 0;
-   stats["mod_dex"] = 0;
-   stats["mod_con"] = 0;
-   stats["mod_int"] = 0;
-   stats["mod_wis"] = 0;
-   stats["mod_cha"] = 0;
+   stats["mod_iq"] = 0;
+   stats["mod_me"] = 0;
+   stats["mod_ma"] = 0;
+   stats["mod_ps"] = 0;
+   stats["mod_pp"] = 0;
+   stats["mod_pe"] = 0;
+   stats["mod_pb"] = 0;
+   stats["mod_spd"] = 0;
    refresh_stats();
 }
 
@@ -141,21 +138,24 @@ void reset_stat_increases()
 nomask void init_stats()
 {
    class stat_roll_mods mods;
-
+   stats = ([]);
    /*
-   if ( stat_str && !check_previous_privilege(1) )
+   if ( stat_iq && !check_previous_privilege(1) )
    error("cannot reinitialize statistics\n");
 */
 
-   stats["stat_str"] = roll_stat();
-   stats["stat_dex"] = roll_stat();
-   stats["stat_con"] = roll_stat();
-   stats["stat_int"] = roll_stat();
-   stats["stat_wis"] = roll_stat();
-   stats["stat_cha"] = roll_stat();
+   stats["stat_iq"] = roll_stat();
+   stats["stat_me"] = roll_stat();
+   stats["stat_ma"] = roll_stat();
+   stats["stat_ps"] = roll_stat();
+   stats["stat_pp"] = roll_stat();
+   stats["stat_pe"] = roll_stat();
+   stats["stat_pb"] = roll_stat();
+   stats["stat_spd"] = roll_stat();
 
    reset_stat_increases();
 
+   TBUG(stats);
    refresh_stats();
 }
 
@@ -164,7 +164,7 @@ nomask void init_stats()
 */
 int query_carrying_stat()
 {
-   return query_stat("str");
+   return query_stat("ps");
 }
 
 /*
@@ -172,7 +172,7 @@ int query_carrying_stat()
 */
 int query_health_stat()
 {
-   return query_stat("con");
+   return query_stat("pe");
 }
 
 /*
@@ -180,7 +180,7 @@ int query_health_stat()
 */
 int query_physical_dmg_stat()
 {
-   return query_stat("str");
+   return query_stat("ps");
 }
 
 /*
@@ -188,7 +188,7 @@ int query_physical_dmg_stat()
 */
 int query_agility_stat()
 {
-   return query_stat("dex");
+   return query_stat("pp");
 }
 
 /*
@@ -196,7 +196,7 @@ int query_agility_stat()
 */
 int query_social_stat()
 {
-   return query_stat("cha");
+   return query_stat("pb");
 }
 
 /*
@@ -204,7 +204,7 @@ int query_social_stat()
 */
 int query_mental_stat()
 {
-   return query_stat("int");
+   return query_stat("iq");
 }
 
 /*
@@ -212,13 +212,15 @@ int query_mental_stat()
 */
 int query_reflex_stat()
 {
-   return query_stat("int");
+   return query_stat("pp");
 }
 
 mapping stat_abrev()
 {
-   return (["strength":"str",
-           "dexterity":"dex", "intelligence":"int", "wisdom":"wis", "constitution":"con", "charisma":"cha", ]);
+   return (["Intelligence Quotient (I.Q.)":"iq",
+                 "Mental Endurance (M.E.)":"me", "Mental Affinity (M.A.)":"ma", "Physical Strength (P.S.)":"ps",
+                 "Physical Prowess (P.P.)":"pp", "Physical Endurance (P.E.)":"pe", "Physical Beauty (P.B.)":"pb",
+                             "Speed (Spd)":"spd"]);
 }
 
 int colour_strlen(string str)
@@ -241,23 +243,19 @@ string pretty_bonus(int b)
    return out;
 }
 
-string dnd_stat_mod(string stat)
-{
-   int mod = stats["cur_" + stat] / 2 - 5;
-   return mod > -1 ? "+" + mod : "" + mod;
-}
-
 string show_stats()
 {
-   return sprintf(
-       "    <bld>Strength<res> %2d (%2s)   <bld>Dexterity<res> %2d (%2s)   <bld>Constitution<res> %2d (%2s)\n" +      //
-       "<bld>Intelligence<res> %2d (%2s)      <bld>Wisdom<res> %2d (%2s)       <bld>Charisma<res> %2d (%2s)\n\n", //
-       query_stat("str"), dnd_stat_mod("str"),                                                                    //
-       query_stat("dex"), dnd_stat_mod("dex"),                                                                    //
-       query_stat("con"), dnd_stat_mod("con"),                                                                    //
-       query_stat("int"), dnd_stat_mod("int"),                                                                    //
-       query_stat("wis"), dnd_stat_mod("wis"),                                                                    //
-       query_stat("cha"), dnd_stat_mod("cha"), );
+   return sprintf("<bld>I.Q.<res> %2d    <bld>M.E.<res> %2d    <bld>M.A.<res> %2d    <bld>P.S.<res> %2d \n" +      //
+                      "<bld>P.P.<res> %2d    <bld>P.E.<res> %2d    <bld>P.B.<res> %2d    <bld>Spd.<res> %2d \n\n", //
+                  query_stat("iq"),                                                                                //
+                  query_stat("me"),                                                                                //
+                  query_stat("ma"),                                                                                //
+                  query_stat("ps"),                                                                                //
+                  query_stat("pp"),                                                                                //
+                  query_stat("pe"),                                                                                //
+                  query_stat("pb"),                                                                                //
+                  query_stat("spd"),                                                                               //
+   );
 }
 
 /*
