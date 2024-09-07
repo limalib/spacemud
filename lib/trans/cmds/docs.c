@@ -3,6 +3,10 @@
 // Tsath 2024
 
 //: COMMAND
+// Documentation command mostly used internally for LIMA to help figure out
+// which documentation has been updated. May not be particularly useful for
+// your MUD.
+//
 // USAGE
 //   |  ``docs``            - show status of RST compliant documentation
 //   |  ``docs <topic>``    - show next 10 files to be done in this topic
