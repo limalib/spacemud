@@ -51,6 +51,11 @@ nosave mixed skill_titles = ({"",   "1",  "2",  "3",  "4",  "5",  "6",  "7",  "8
 
 #define PRIV_REQUIRED "Mudlib:daemons"
 
+//:FUNCTION register_skill
+// Register a new skill with the daemon. This function needs
+// the Mudlib:daemons privilege.
+// Example:
+//     register_skill("combat/melee/grenade");
 string *register_skill(string skill)
 {
    string *parts;
@@ -81,6 +86,11 @@ string *register_skill(string skill)
    return filter(result, ( : $1:));
 }
 
+//:FUNCTION remove_skill
+// Removes a skill from the daemon. This function needs
+// the Mudlib:daemons privilege.
+// Example:
+//     remove_skill("combat/melee/grenade");
 string *remove_skill(string skill)
 {
    string *result = ({skill});
@@ -108,16 +118,23 @@ string *remove_skill(string skill)
    return result;
 }
 
+//:FUNCTION query_skills
+// Returns a string array of all the skills in the daemon.
 string *query_skills()
 {
    return sort_array(keys(skills), 1);
 }
 
+//:FUNCTION valid_skill
+// Check if argument is a valid skill or not.
 int valid_skill(string s)
 {
    return member_array(s, query_skills()) != -1;
 }
 
+//:FUNCTION pts_for_rank
+// Returns the skill points needed to achieve a specific rank. This is the reverse of the
+// ``skill_title_from_pts(int skill_pts)`` method.
 int pts_for_rank(int rank)
 {
    rank--;
@@ -126,6 +143,10 @@ int pts_for_rank(int rank)
    return skill_ranks[rank];
 }
 
+//:FUNCTION skill_title_from_pts
+// Returns which skill rank you should have if you have ``skill_pts``
+// number of points in your skill. This is the reverse of the
+// ``pts_for_rank(int rank)`` method.
 int skill_title_from_pts(int skill_pts)
 {
    int rank = 0;
@@ -137,6 +158,9 @@ int skill_title_from_pts(int skill_pts)
    return skill_titles[rank];
 }
 
+//:FUNCTION rank_name_from_pts
+// Returns the rank from a given set of ``skill_pts``.
+// This function is similar to the ``skill_title_from_pts`` method.
 int rank_name_from_pts(int skill_pts)
 {
    int rank = 0;
@@ -148,6 +172,9 @@ int rank_name_from_pts(int skill_pts)
    return rank;
 }
 
+//:FUNCTION skill_rank
+// Returns the skill rank for a player of a specific 
+// skill.
 int skill_rank(object player, string skill_name)
 {
    class skill skill;
@@ -163,6 +190,10 @@ int skill_rank(object player, string skill_name)
    return rank;
 }
 
+//:FUNCTION skill_rank
+// Returns the skill rank for a monster of a specific 
+// skill. Monsters have a simpler skill structure, so
+// they are handled separately.
 int monster_skill_rank(object player, string skill_name)
 {
    int skill_pts;
@@ -178,22 +209,41 @@ int monster_skill_rank(object player, string skill_name)
    return rank;
 }
 
+//:FUNCTION titles
+// Returns the titles of all the ranks.
 mixed titles()
 {
    return skill_titles;
 }
 
+//:FUNCTION ranks
+// Returns the ranks (thresholds) of skill points you have
+// to hit to gain a new skill rank.
 mixed ranks()
 {
    return skill_ranks;
 }
 
+//:FUNCTION skill_req_pretty
+// Returns a string that clearly communicates a skill name
+// and a rank in the current rank scheme defined in <config/skills.h>.
+//
+//     @SKILL_D->skill_req_pretty("/combat/sword",12) --> "Sword [XII]"
+//
+// This is used in M_DAMAGE_SOURCE to tell players about skill restrictions
+// to weapons.
 string skill_req_pretty(string skill_name, int rank)
 {
    string name = explode(skill_name, "/")[ < 1];
    return capitalize(name) + (rank > 0 ? " [" + skill_titles[rank] + "]" : "");
 }
 
+//:FUNCTION skill_rank_pretty
+// Returns a string that clearly communicates a skill name
+// and a rank in the current rank scheme defined in <config/skills.h>.
+//
+//     @SKILL_D->skill_rank_pretty(.me,"combat/melee/blade")--> "Blade [2]"
+//
 string skill_rank_pretty(object player, string skill_name)
 {
    int level = sizeof(explode(skill_name, "/"));
@@ -202,6 +252,8 @@ string skill_rank_pretty(object player, string skill_name)
    return capitalize(name) + (rank > 0 ? " [" + skill_titles[rank] + "]" : "");
 }
 
+//:FUNCTION monster_skill_rank_pretty
+// Same as ``skill_rank_pretty()`` but for monsters.
 string monster_skill_rank_pretty(object mob, string skill_name)
 {
    int level = sizeof(explode(skill_name, "/"));
@@ -210,6 +262,9 @@ string monster_skill_rank_pretty(object mob, string skill_name)
    return capitalize(name) + (rank > 0 ? " [" + skill_titles[rank] + "]" : "");
 }
 
+//:FUNCTION skill_rank_simple
+// Returns a simplestring that clearly communicates a skill name
+// and a rank. This is default output for screen readers.
 string skill_rank_simple(object player, string skill_name)
 {
    int rank = skill_rank(player, skill_name);
@@ -218,6 +273,8 @@ string skill_rank_simple(object player, string skill_name)
    return name;
 }
 
+//:FUNCTION init_skills
+// Load /data/config/skill-tree as new skill configuration.
 void init_skills()
 {
    string *config = explode(read_file(SKILL_FLAT_FILE), "\n");
@@ -232,6 +289,8 @@ void init_skills()
    write(SKILL_FLAT_FILE + " loaded.");
 }
 
+//:FUNCTION init_skills
+// Dump all skills to /data/config/skill-tree.
 void dump_skills_to_file()
 {
    string section;
@@ -255,6 +314,8 @@ void dump_skills_to_file()
    write("Skills dumped to " + SKILL_FLAT_FILE + ".");
 }
 
+//:FUNCTION percent_for_next_rank
+// Returns the percent until the player hits the next skill rank.
 int percent_for_next_rank(object player, string skill_name)
 {
    class skill skill;
@@ -267,6 +328,8 @@ int percent_for_next_rank(object player, string skill_name)
    return (skill->skill_points - (rank == 0 ? 0 : skill_ranks[rank - 1])) * 100 / next_rank;
 }
 
+//:FUNCTION monster_percent_for_next_rank
+// Returns the percent until the monster hits the next skill rank.
 int monster_percent_for_next_rank(object mob, string skill_name)
 {
    int skill_pts;
