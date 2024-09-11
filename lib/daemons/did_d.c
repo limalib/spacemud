@@ -119,7 +119,7 @@ string *dump_entries()
 
 string *versions()
 {
-   return keys(did);
+   return keys(did) - ({0});
 }
 
 varargs void dump_did_info(int after, string *header, string pattern, function continuation)
