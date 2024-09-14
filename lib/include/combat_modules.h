@@ -132,14 +132,14 @@
 ** changing some of them later on can, and probably will,
 ** screw up your user data files.
 */
-#define DEATH_STYLE       DEATH_CORPSES
-#define HEALTH_STYLE      HEALTH_LIMBS
-#define WIELD_STYLE       WIELD_LIMBS
+#define DEATH_STYLE        DEATH_CORPSES
+#define HEALTH_STYLE       HEALTH_LIMBS
+#define WIELD_STYLE        WIELD_LIMBS
 #define ARMOUR_STYLE       ARMOUR_LIMBS
-#define PULSE_STYLE       PULSE_HEART_BEAT
-#define BLOW_STYLE        BLOW_TYPES
-#define FORMULA_STYLE     FORMULA_SKILLS
-#define ADVANCEMENT_STYLE ADVANCEMENT_SIMPLE
+#define PULSE_STYLE        PULSE_HEART_BEAT
+#define BLOW_STYLE         BLOW_TYPES
+#define FORMULA_STYLE      FORMULA_SKILLS
+#define ADVANCEMENT_STYLE  ADVANCEMENT_SIMPLE
 #define USE_KARMA
 
 /* #define or #undef these. Modify them without fear of messing anything
