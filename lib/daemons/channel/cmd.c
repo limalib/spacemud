@@ -115,6 +115,16 @@ varargs nomask void cmd_channel(string channel_name, string arg, int channel_typ
             printf("  --> only wizards may tune in\n");
             break;
 
+         case "restricted":
+            if (!wizardp(user))
+            {
+               printf("Only wizards can create restricted channels.\n");
+               return;
+            }
+            set_flags(channel_name, CHANNEL_RESTRICTED);
+            printf("  --> restricted channel set\n");
+            break;
+
          case "permanent":
             /* ### need better security? */
             if (!adminp(user))
@@ -159,6 +169,11 @@ varargs nomask void cmd_channel(string channel_name, string arg, int channel_typ
       {
          /* enforce the channel restrictions now */
          /* ### not super secure, but screw it :-) */
+         if ((ci.flags & CHANNEL_RESTRICTED) && !wizardp(user))
+         {
+            printf("Sorry, but '%s' is restricted.\n", user_channel_name);
+            return;
+         }
          if ((ci.flags & CHANNEL_WIZ_ONLY) && !wizardp(user))
          {
             printf("Sorry, but '%s' is for wizards only.\n", user_channel_name);

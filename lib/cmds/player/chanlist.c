@@ -31,6 +31,9 @@ nomask string fmt_imud_channel(string channel_name, mixed *channel_data)
    string type;
    string *valid_types = ({"unrestricted", "restricted", "filtered"});
 
+   if (!channel_name || strlen(trim(channel_name)) == 0)
+      return "";
+
    if (!intp(channel_data[1]))
       type = save_variable(channel_data[1]);
    else
@@ -48,12 +51,13 @@ void main(string arg)
    mapping chanlist;
 
    string *all_chan = CHANNEL_D->query_channels();
+   string *restricted_chan = filter(all_chan, ( : CHANNEL_D->query_flags($1) & CHANNEL_RESTRICTED:));
    string *wiz_chan = filter(all_chan, ( : CHANNEL_D->query_flags($1) & CHANNEL_WIZ_ONLY:));
    string *admin_chan = filter(all_chan, ( : CHANNEL_D->query_flags($1) & CHANNEL_ADMIN_ONLY:));
    string *imud_chan = filter(all_chan, ( : $1[0..4] == "imud_" :));
-   string *player_chan = all_chan - wiz_chan - admin_chan - imud_chan;
+   string *player_chan = all_chan - wiz_chan - admin_chan - imud_chan - restricted_chan;
 
-   s = "Listing of available channels\n-----------------------------\n";
+   s = "Listing of public channels\n--------------------------\n";
 
    foreach (string chan in player_chan)
       s += sprintf("%-20s Local\n", chan);
@@ -62,6 +66,8 @@ void main(string arg)
    {
       foreach (string chan in wiz_chan)
          s += sprintf("%-20s Wizard\n", chan);
+      foreach (string chan in restricted_chan)
+         s += sprintf("%-20s Restricted\n", chan);
    }
 
    if (adminp(this_user()))
@@ -79,7 +85,8 @@ void main(string arg)
       if (find_object(IMUD_D))
       {
          catch (chanlist = IMUD_D->query_chanlist());
-         s += "Other subscribable intermud channels :\n";
+         s += "\nOther subscribable intermud channels\n"
+              "------------------------------------\n";
          s += implode(({""}) + sort_array(keys(chanlist) - imud_chan, 1),
                       (
                           : $1 + fmt_imud_channel($2, $(chanlist)[$2])
