@@ -38,10 +38,13 @@ void hook_func()
    }
 }
 
+// Verb interaction. This tells the parser that this object can
+// be "tune OBJ to WRD WRD", i.e. "tune radio to channel 50".
 mixed direct_tune_obj_to_wrd_wrd()
 {
+   // If we do not hold the radio, we cannot tune it, so refuse.
    if (environment() != this_body())
-      return 0;
+      return "#That is not your radio.";
    return 1;
 }
 
@@ -71,12 +74,14 @@ void do_tune_to(string wrd1, string wrd2)
    CHANNEL_D->cmd_channel("c" + channel, "/new on restricted", CHANNEL_RESTRICTED);
 }
 
+// Show some extra information to the players, is the radio on, off, which channel.
 string get_extra_long()
 {
    return "It seems to be " + (channel ? "tuned to channel <010>c" + channel + "<res> right now" : "off") +
           ". It can probably be tuned to different stations, as it goes from 1-" + MAX_CHANNELS + ".";
 }
 
+// Setup the radio object.
 void setup()
 {
    string adv = choice(adverbs);
@@ -84,5 +89,6 @@ void setup()
    add_adj(adv); // Pick a random adverb for our radio.
    set_weight(0.5);
    set_long("A hand-held, portable, two-way " + adv + " radio transceiver with a station selector.");
+   // This adds a hook for if the radio is dropped or given (is moved)
    add_hook("move", ( : hook_func:));
 }
