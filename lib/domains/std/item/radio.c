@@ -26,10 +26,10 @@ int prev_channel;
 // Handle when the radio is dropped or transferred between people.
 void hook_func()
 {
-   // Tune new body into channel
-   if (this_body() == environment() && environment()->is_body())
-      CHANNEL_D->cmd_channel("c" + channel, "/new on restricted", CHANNEL_RESTRICTED);
-   else
+   if (!channel)
+      return;
+
+   if (!environment()->is_body())
    {
       this_body()->simple_action("$N $vturn off the $o.", this_object());
       channel = 0;
