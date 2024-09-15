@@ -38,6 +38,7 @@ void print_mod_info(string channel_name);
 ** channel_type is:
 **	0 normal
 **	1 intermud
+** 2 restricted
 */
 varargs nomask void cmd_channel(string channel_name, string arg, int channel_type)
 {
@@ -50,7 +51,7 @@ varargs nomask void cmd_channel(string channel_name, string arg, int channel_typ
    listening = member_array(channel_name, user->query_channel_list()) != -1;
    user_channel_name = user_channel_name(channel_name);
 
-   if (!arg || arg == "")
+   if (channel_type != CHANNEL_RESTRICTED && (!arg || arg == ""))
    {
       if (listening)
       {
@@ -59,7 +60,8 @@ varargs nomask void cmd_channel(string channel_name, string arg, int channel_typ
       }
       else
       {
-         printf("You are not listening to '%s'.\n", user_channel_name);
+         if (channel_type != CHANNEL_RESTRICTED)
+            printf("You are not listening to '%s'.\n", user_channel_name);
       }
 
       return;
@@ -72,14 +74,16 @@ varargs nomask void cmd_channel(string channel_name, string arg, int channel_typ
       if (ci)
       {
          if (sizeof(options))
-            printf("'%s' already exists; modifying options...\n", user_channel_name);
-         else
-            printf("'%s' already exists.\n", user_channel_name);
+            if (channel_type != CHANNEL_RESTRICTED)
+               printf("'%s' already exists; modifying options...\n", user_channel_name);
+            else if (channel_type != CHANNEL_RESTRICTED)
+               printf("'%s' already exists.\n", user_channel_name);
       }
       else
       {
          create_channel(channel_name);
-         printf("'%s' has been created.\n", user_channel_name);
+         if (channel_type != CHANNEL_RESTRICTED)
+            printf("'%s' has been created.\n", user_channel_name);
       }
 
       ci = query_channel_info(channel_name);
@@ -116,13 +120,14 @@ varargs nomask void cmd_channel(string channel_name, string arg, int channel_typ
             break;
 
          case "restricted":
-            if (!wizardp(user))
+            if (!wizardp(user) && channel_type != CHANNEL_RESTRICTED)
             {
                printf("Only wizards can create restricted channels.\n");
                return;
             }
             set_flags(channel_name, CHANNEL_RESTRICTED);
-            printf("  --> restricted channel set\n");
+            if (channel_type != CHANNEL_RESTRICTED)
+               printf("  --> restricted channel set\n");
             break;
 
          case "permanent":
@@ -145,7 +150,8 @@ varargs nomask void cmd_channel(string channel_name, string arg, int channel_typ
                return;
             }
             set_permanent(channel_name, 0);
-            printf("  --> the channel may now go away\n");
+            if (channel_type != CHANNEL_RESTRICTED)
+               printf("  --> the channel may now go away\n");
             test_for_purge(channel_name);
             break;
          }
@@ -169,7 +175,7 @@ varargs nomask void cmd_channel(string channel_name, string arg, int channel_typ
       {
          /* enforce the channel restrictions now */
          /* ### not super secure, but screw it :-) */
-         if ((ci.flags & CHANNEL_RESTRICTED) && !wizardp(user))
+         if (channel_type != CHANNEL_RESTRICTED && (ci.flags & CHANNEL_RESTRICTED) && !wizardp(user))
          {
             printf("Sorry, but '%s' is restricted.\n", user_channel_name);
             return;
@@ -199,7 +205,8 @@ varargs nomask void cmd_channel(string channel_name, string arg, int channel_typ
    */
    if (!listening)
    {
-      printf("You are not listening to %s.\n", channel_name);
+      if (channel_type != CHANNEL_RESTRICTED)
+         printf("You are not listening to %s.\n", channel_name);
       return;
    }
 
@@ -208,7 +215,8 @@ varargs nomask void cmd_channel(string channel_name, string arg, int channel_typ
    if (arg == "/off")
    {
       user->remove_channel(channel_name);
-      printf("You are no longer listening to '%s'.\n", user_channel_name);
+      if (channel_type != CHANNEL_RESTRICTED)
+         printf("You are no longer listening to '%s'.\n", user_channel_name);
 
       moderation_signoff(channel_name);
    }
