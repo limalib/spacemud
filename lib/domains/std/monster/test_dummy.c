@@ -24,7 +24,7 @@ void setup()
 
 string query_name()
 {
-    return "test dummy";
+   return "test dummy";
 }
 
 void tell_target(string s)
@@ -39,8 +39,8 @@ int do_damage_event(class event_info evt)
 {
    if (arrayp(evt->data))
    {
-      tell_target("Incoming %^YELLOW%^" + format_list(evt->data[0]) + "%^RESET%^ dmg on " + evt->target_extra + " " +
-                  evt->data[1]);
+      tell_target("Incoming %^YELLOW%^" + format_list(evt->data[0]) + "%^RESET%^ dmg (" + evt->data[1] + " hp) on " +
+                  evt->target_extra + " limb");
    }
    return ::do_damage_event(evt);
 }
@@ -77,7 +77,7 @@ void disarm(object w)
 
 varargs int hurt_us(int x, string limb)
 {
-   tell_target("" + x + " HP damage on " + limb);
+   // tell_target("" + x + " HP damage on " + limb);
 }
 
 void take_a_swing(object t)
