@@ -247,7 +247,7 @@
 
 /* The administrator(s)' email address(es).
  * NOTE: This is required to be changed in order to have a working
- * I3 system. Must be changed for anything to work!
+ * I3/IMUD_D system. Must be changed for anything to work!
  */
 #define ADMIN_EMAIL "billg@microsoft.com"
 
