@@ -1,7 +1,5 @@
 /* Do not remove the headers from this file! see /USAGE for more info. */
 
-/* $Id: bank_accountant.c,v 1.5 1998/02/04 23:35:16 monica Exp $ */
-
 inherit ADVERSARY;
 inherit M_ACCOUNTANT;
 

@@ -53,17 +53,16 @@ int make_directories()
 
    /* Assume that if the filesize is -1 that a directory needs to be created */
    if (file_size(RST_DIR) == -1)
-      unguarded(1, (: mkdir, RST_DIR :));
+      unguarded(1, ( : mkdir, RST_DIR:));
 
    // Still no success? Then abort here.
    if (file_size(RST_DIR) == -1)
       return 0;
 
-
    foreach (string d in directories)
    {
       if (file_size(RST_DIR + "/" + d) == -1)
-         unguarded(1, (: mkdir, RST_DIR+"/"+d :));
+         unguarded(1, ( : mkdir, RST_DIR + "/" + d:));
    }
 
    return 1;
@@ -106,7 +105,7 @@ private:
 // ---------------------------------------------------------------------
 
 nosave private string *filtered_dirs =
-    ({"/data/", "/ftp/", "/help/", "/include/", "/log/", "/open/", "/tmp/", "/user/", WIZ_DIR+"/", "/contrib/"});
+    ({"/data/", "/ftp/", "/help/", "/include/", "/log/", "/open/", "/tmp/", "/user/", WIZ_DIR + "/", "/contrib/"});
 
 string *mod_name(string file)
 {
@@ -183,24 +182,23 @@ string command_link(string cmd, string type, int same_level)
    string name;
    // For API's, do "simul_efun: misc" and "user: misc".
    if (type == "api" || type == "mudlib")
-      return "`" + replace_string(cmd, "-", ": ") + " <" + (same_level ? "" : type + "/") + cmd + ".html>`_";
+      return ":doc:`" + replace_string(cmd, "-", ": ") + " <" + (same_level ? "" : type + "/") + cmd + ">`";
 
    // Prettier names for daemons, e.g. Daemon: foo_d
    if (type == "daemon")
-      return "`Daemon: " + replace_string(cmd, "daemons-", "") + " <" + (same_level ? "" : "daemon/") + cmd +
-             ".html>`_";
+      return ":doc:`Daemon: " + replace_string(cmd, "daemons-", "") + " <" + (same_level ? "" : "daemon/") + cmd + ">`";
 
    // For all others use just the last part of the filename
    name = implode(explode(cmd, "-")[1..], "");
 
    if (type == "player command")
-      return "`" + cmd + " <" + (same_level ? "" : "player_command/") + cmd + ".html>`_";
+      return ":doc:`" + cmd + " <" + (same_level ? "" : "player_command/") + cmd + ">`";
    if (type == "verb")
-      return "`" + cmd + " <" + (same_level ? "" : "verb/") + cmd + ".html>`_";
+      return ":doc:`" + cmd + " <" + (same_level ? "" : "verb/") + cmd + ">`";
    if (type == "command")
-      return "`Command: " + cmd + " <" + (same_level ? "" : "command/") + cmd + ".html>`_";
+      return ":doc:`Command: " + cmd + " <" + (same_level ? "" : "command/") + cmd + ">`";
    if (type == "module")
-      return "`Module: " + name + " <" + (same_level ? "" : "module/") + cmd + ".html>`_";
+      return ":doc:`Module: " + name + " <" + (same_level ? "" : "module/") + cmd + ">`";
 }
 
 void process_file(string fname)
@@ -473,7 +471,7 @@ void process_file(string fname)
    {
       rm(rstfile);
       write_file(rstfile, rstout);
-      //printf("%s written to %s ...\n", fname, rstfile);
+      // printf("%s written to %s ...\n", fname, rstfile);
    }
 }
 
@@ -541,7 +539,7 @@ void continue_scan()
    {
       if (sizeof(dirs_to_do))
       {
-         //printf("RST_D: Scanning %s ...\n", dirs_to_do[0]);
+         // printf("RST_D: Scanning %s ...\n", dirs_to_do[0]);
          files = get_dir(dirs_to_do[0], -1);
          foreach (item in files)
          {
@@ -574,7 +572,7 @@ void continue_scan()
       else
       {
          printf("RST_D: Done with sub pages.\nWriting indices.\n");
-         unguarded(1,(: write_indices:));
+         unguarded(1, ( : write_indices:));
          printf("RST_D: Done.\n");
          last_time = time();
          save_me();
