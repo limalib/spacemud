@@ -239,6 +239,14 @@
 /* Max file size for editing etc (eg "ulimit -H -d 1200") */
 #define MAX_FILE_SIZE 1000000
 
+/* Delay factor for DAEMON call_outs(). 
+ * Some daemons may be a bit too greedy for your machine causing:
+ * "Too long evaluation. Execution aborted."
+ * If you are getting these increase this number to 5, or 10.
+ * Otherwise, enjoy your powerful machine, and keep it at 1.
+ */
+#define TOO_GREEDY_DAEMONS 1
+
 /* The status of your game */
 #define lib_status() "mudlib development"
 

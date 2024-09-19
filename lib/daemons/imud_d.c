@@ -236,7 +236,7 @@ nomask void reconnect()
                          0, /* other_data */
                      }));
    }
-   call_out("relisten_all_channels", 5);
+   call_out("relisten_all_channels", 5 * TOO_GREEDY_DAEMONS);
 }
 
 void create()

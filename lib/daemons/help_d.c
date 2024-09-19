@@ -140,7 +140,7 @@ void process_file(string path, string file)
    {
       pathname += "/";
       /* Ack. Avoid execution cost errors. */
-      call_out(( : process_dir:), 1, pathname);
+      call_out(( : process_dir:), (1 * TOO_GREEDY_DAEMONS), pathname);
       ++pending_count;
    }
 

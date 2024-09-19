@@ -580,7 +580,7 @@ void continue_scan()
          return;
       }
    }
-   call_out(( : continue_scan:), 1);
+   call_out(( : continue_scan:), (1*TOO_GREEDY_DAEMONS));
 }
 
 void do_sweep()
