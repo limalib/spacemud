@@ -25,6 +25,7 @@ void set_version(string s)
 {
    version = s;
    did[s] = ({});
+   save_me();
 }
 
 private
