@@ -235,6 +235,10 @@ string slider_colours_sum(int value, mapping colours, int width)
       x_char = "X";
       line_char = "-";
    }
+   
+   //We got some bad input, to avoid div/0, we return here.
+   if (max==0) return "";
+   
    width = width - 3; // [ and ]
    marker = width * (1.0 * value / max);
    if (marker == 0)
