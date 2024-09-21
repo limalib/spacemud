@@ -210,7 +210,6 @@ int can_drink()
 }
 
 //: FUNCTION hp_adjustment
-// int hp_adjustment(int hp,int level)
 // Returns the adjustment HP for a limb for an adversary.
 int hp_adjustment(int hp, int level)
 {
@@ -235,7 +234,6 @@ void update_max_health()
 }
 
 //: FUNCTION update_body_style
-// int update_body_style(string body_style);
 // Queries BODY_D for the number and type of limbs that will be used.
 // e.g. update_body_style("humanoid") will give the body a torso, head,
 // two arms, and two legs.
@@ -260,6 +258,8 @@ int update_body_style(string bstyle)
 
    foreach (string name, class limb l in health)
    {
+      if (l.health == -1)
+         continue;
       l.max_health = hp_adjustment(l.max_health, query_level());
       l.health = hp_adjustment(l.max_health, query_level());
    }
@@ -299,7 +299,6 @@ int is_attacking_limb(string limb)
 }
 
 //: FUNCTION query_limbs
-// string *query_limbs();
 // Returns a string *containing all limbs that health is applied to.
 string *query_limbs()
 {
@@ -307,7 +306,6 @@ string *query_limbs()
 }
 
 //: FUNCTION query_wielding_limbs
-// string *query_wielding_limbs();
 // Returns a string *containing all the limbs that can wield weapons.
 string *query_wielding_limbs()
 {
@@ -315,7 +313,6 @@ string *query_wielding_limbs()
 }
 
 //: FUNCTION query_attacking_limbs
-// string *query_attacking_limbs();
 // Returns a string *containing all the limba that can attack.
 string *query_attacking_limbs()
 {
@@ -323,7 +320,6 @@ string *query_attacking_limbs()
 }
 
 //: FUNCTION query_vital_limbs
-// string *query_vital_limbs();
 // Returns a string *containing all the limbs that are considered
 // vital for survival. If any one of these limbs is disabled, the
 // adversary dies.
@@ -333,7 +329,6 @@ string *query_vital_limbs()
 }
 
 //: FUNCTION query_mobile_limbs
-// string *query_mobile_limbs();
 // Lima doesn't do anything with mobile limbs, but they're provided for
 // those who want health of mobile limbs to affect movement and such.
 string *query_mobile_limbs()
@@ -342,7 +337,6 @@ string *query_mobile_limbs()
 }
 
 //: FUNCTION query_system_limbs
-// string *query_system_limbs();
 // Returns a string *of 'system' limbs. When ALL system limbs are
 // disabled, the adversary dies.
 string *query_system_limbs()
@@ -351,7 +345,6 @@ string *query_system_limbs()
 }
 
 //: FUNCTION query_non_limbs
-// string *query_non_limbs();
 // Returns a list of body parts that are not worth tracking health for.
 // Such body parts are defined by having a max_health of -1.
 string *query_non_limbs()
@@ -360,7 +353,6 @@ string *query_non_limbs()
 }
 
 //: FUNCTION query_reflex
-// int query_reflex()
 // Returns the amount of reflex currently had by the adversary.
 int query_reflex()
 {
@@ -368,7 +360,6 @@ int query_reflex()
 }
 
 //: FUNCTION max_reflex
-// int max_reflex()
 // Returns the max reflex based on the mana stat and a bonus for level of the
 // adversary.
 int max_reflex()
@@ -377,7 +368,6 @@ int max_reflex()
 }
 
 //: FUNCTION set_reflex
-// void set_reflex(int mp)
 // Set the reflex to an integer, but never higher than max_reflex().
 void set_reflex(int mp)
 {
@@ -387,7 +377,6 @@ void set_reflex(int mp)
 }
 
 //: FUNCTION spend_reflex
-// void spend_reflex(int m)
 // Spends reflex nomatter whether there is enough or too little. reflex is left at 0 no matter
 // what. Returns 1 if we had enough, 0 if we didn't.
 int spend_reflex(int m)
@@ -402,7 +391,6 @@ int spend_reflex(int m)
 }
 
 //: FUNCTION use_reflex
-// int use_reflex(int m)
 // Uses reflex from the reflex pool only if it's available and returns 1. If there is not enough
 // nothing is used, and 0 is returned.
 int use_reflex(int m)
@@ -416,7 +404,6 @@ int use_reflex(int m)
 }
 
 //: FUNCTION restore_reflex
-// protected void restore_reflex(int x);
 // Restore us a specified amount, truncating at max_reflex().
 protected
 void restore_reflex(int x)
@@ -443,7 +430,6 @@ int query_heal_rate()
 }
 
 //: FUNCTION set_max_limb_health
-// void set_max_limb_health(string limb, int x);
 // Sets the maximum health for a given limb.
 void set_max_limb_health(string limb, int x)
 {
@@ -461,7 +447,6 @@ void set_max_limb_health(string limb, int x)
 }
 
 //: FUNCTION set_max_health
-// void set_max_health(int x);
 // Set the maximum number of hit points of a monster, and also set it's
 // hit points to the new max. MUST be called *after* update_body_type()
 // if that is called since that resets all limbs to neutral hitpoints
@@ -475,18 +460,23 @@ void set_max_health(int x)
       hp_cap = x;
 
    foreach (string l, class limb d in health)
+   {
+      if (d.health == -1)
+         continue;
       if (d.max_health > max)
          max = d.max_health;
+   }
 
    foreach (string l, class limb d in health)
    {
+      if (d.health == -1)
+         continue;
       d.max_health = d.max_health * x / max;
       d.health = d.max_health;
    }
 }
 
 //: FUNCTION can_move
-// int can_move();
 // Returns 1 if we can move, 0 if not.
 int can_move()
 {
@@ -548,17 +538,6 @@ void kill_us()
    die();
 }
 
-/* OLD function where all is equal
-string query_random_limb()
-{
-   string *limbs = filter_mapping(keys(health),
-                          (
-                              : ((class limb)health[$1])->health > 0
-                              :));
-   return sizeof(limbs) ? choice(limbs) : 0;
-}
-*/
-
 //: FUNCTION query_random_limb
 // Return a limb based on the size of the limb. The larger
 // the limb the higher chance it's returned. Only limbs that
@@ -576,7 +555,6 @@ string query_random_limb()
 }
 
 //: FUNCTION disable_limb
-// void disable_limb(string limb);
 // Disables a limb. For effects on vital and system limbs, see
 // query_vital_limbs() and query_system_limbs().
 void disable_limb(string limb)
@@ -626,11 +604,13 @@ void disable_limb(string limb)
 }
 
 //: FUNCTION enable_limb
-// void enable_limb(string limb);
 // Re-enables a disabled limb.
 void enable_limb(string limb)
 {
    class limb tmp = health[limb];
+
+   if (tmp.health == -1)
+      return;
 
    if (tmp.health == 0)
       tmp.health = 1;
@@ -642,6 +622,9 @@ void enable_limb(string limb)
 varargs void set_health(string limb, int x)
 {
    class limb tmp = health[limb];
+
+   if (tmp.health == -1)
+      return;
 
    if (!tmp)
       error("Bad limb.\n");
@@ -658,7 +641,6 @@ varargs void set_health(string limb, int x)
 }
 
 //: FUNCTION hurt_us
-// varargs int hurt_us(int x, string limb);
 // Hurt us a specified amount.
 varargs int hurt_us(int x, string limb)
 {
@@ -667,6 +649,10 @@ varargs int hurt_us(int x, string limb)
    if (!limb)
       limb = query_random_limb();
    tmp = health[limb];
+
+   if (tmp.health == -1)
+      return;
+
    if (!tmp)
       error("Bad limb '" + limb + "'.\n");
    update_health();
@@ -686,7 +672,6 @@ varargs int hurt_us(int x, string limb)
 }
 
 //: FUNCTION heal_limb
-// protected void heal_limb(string limb, int x);
 // Heal us a specified amount, truncating at max_health.
 protected
 void heal_limb(string limb, int x)
@@ -708,7 +693,6 @@ void heal_limb(string limb, int x)
 }
 
 //: FUNCTION is_limb
-// int is_limb(string s);
 // Returns 1 if 's' is a valid limb.
 int is_limb(string s)
 {
@@ -716,7 +700,6 @@ int is_limb(string s)
 }
 
 //: FUNCTION query_max_health
-// varargs int query_max_health(string limb);
 // Tells us the maximum health of a given limb.
 varargs int query_max_health(string limb)
 {
@@ -732,7 +715,6 @@ varargs int query_max_health(string limb)
 }
 
 //: FUNCTION heal_us
-// varargs void heal_us(int x, string limb);
 // Heals all limbs by 'x' amount.
 varargs void heal_us(int x, string limb)
 {
@@ -747,7 +729,6 @@ varargs void heal_us(int x, string limb)
 }
 
 //: FUNCTION heal_all
-// void heal_all();
 // Heal us entirely.
 void heal_all()
 {
@@ -760,7 +741,6 @@ void heal_all()
 }
 
 //: FUNCTION reincarnate
-// void reincarnate();
 // Makes us alive again!
 void reincarnate()
 {
@@ -796,7 +776,6 @@ void update_health()
 }
 
 //: FUNCTION query_health
-// int query_health(string limb);
 // Find the current number of hitpoints of a monster
 int query_health(string limb)
 {
@@ -807,7 +786,6 @@ int query_health(string limb)
 }
 
 //: FUNCTION get_health
-// mapping get_health();
 // Return the health mapping for adversary.
 mapping get_health()
 {
@@ -821,7 +799,6 @@ int query_ghost()
 }
 
 // : FUNCTION banner_wounded
-// void banner_wounded(string limb, int hp);
 // Tell this_object() that they're badly wounded.
 void banner_wounded(string limb, int hp)
 {
@@ -898,7 +875,7 @@ string very_wounded()
 
 //: FUNCTION diagnose
 // Returns a string diagnosing the adversary. The string lists limbs in bad health,
-//  drunkenness level and other conditions that affect the adversary.
+// drunkenness level and other conditions that affect the adversary.
 string diagnose()
 {
    string ret;
