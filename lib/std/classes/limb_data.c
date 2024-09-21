@@ -1,15 +1,11 @@
 /* Do not remove the headers from this file! see /USAGE for more info. */
 
-// Class used to store data inside adversaries.
+//Holds limb config for BODY_D. This object is similar to CLASS_LIMB, but with less fields.
 
-class limb
+class limb_data
 {
    int health;
    int max_health;
-#ifdef LIMB_SHIELDS
-   int shield;
-   int max_shield;
-#endif
    string parent;
    int flags;
 }

@@ -140,7 +140,16 @@
 #define BLOW_STYLE         BLOW_TYPES
 #define FORMULA_STYLE      FORMULA_SKILLS
 #define ADVANCEMENT_STYLE  ADVANCEMENT_SIMPLE
+
+// Give and take karma by calling karma_impact() in the killed creature.
+// Track karma for players.
 #define USE_KARMA
+
+// On top of Hitpoint, add a secondary health stat "shield" that is
+// impacted first before the hitpoints are affected. (A bit like SDC in Rifts)
+// or like various shields in sci-fi shooters. 
+// This options works only when HEALTH_STYLE is HEALTH_LIMBS.
+#define LIMB_SHIELDS
 
 /* #define or #undef these. Modify them without fear of messing anything
    up in your .o files. */

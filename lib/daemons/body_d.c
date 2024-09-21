@@ -7,15 +7,34 @@
 #include <limbs.h>
 
 inherit M_DAEMON_DATA;
+inherit CLASS_LIMB_DATA;
 inherit CLASS_LIMB;
 
 private
 mapping body_types = ([]);
 
+class limb upgrade_limb_data_to_limb(class limb_data ld)
+{
+   mixed *dis = disassemble_class(ld);
+   dis = dis[0..1] + ({0, 0}) + dis[2..];
+   return assemble_class(dis);
+}
+
 mapping get_body(string type)
 {
    if (!undefinedp(body_types[type]))
+   {
+#ifdef LIMB_SHIELDS
+      mapping tmp = ([]);
+      foreach (string limb, class limb_data ld in body_types[type])
+      {
+         tmp[limb] = upgrade_limb_data_to_limb(ld);
+      }
+      return tmp;
+#else
       return copy(body_types[type]);
+#endif
+   }
    else
       return ([]);
 }
@@ -24,7 +43,7 @@ mapping get_body_size(string type)
 {
    mapping body = get_body(type);
    mapping sizes = ([]);
-   foreach (string limb, class limb l in body)
+   foreach (string limb, class limb_data l in body)
    {
       if (l.max_health > 0)
          sizes[limb] = l.max_health;
@@ -57,7 +76,7 @@ void add_limb_to_body(string bname, string limb, int new_health, int new_max, st
       return;
    }
 
-   body_types[bname][limb] = new (class limb, health
+   body_types[bname][limb] = new (class limb_data, health
                                   : new_health, max_health
                                   : new_max, parent
                                   : new_parent, flags

@@ -10,6 +10,7 @@
 #define CLASS_EFFECT        "/std/classes/effect"
 #define CLASS_EVENT_INFO    "/std/classes/event_info"
 #define CLASS_FINGER        "/std/classes/finger"
+#define CLASS_LIMB_DATA     "/std/classes/limb_data"
 #define CLASS_LIMB          "/std/classes/limb"
 #define CLASS_MAILMSG       "/std/classes/mailmsg"
 #define CLASS_NEWSMSG       "/std/classes/newsmsg"
