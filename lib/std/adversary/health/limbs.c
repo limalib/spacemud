@@ -32,6 +32,7 @@ void set_max_health(int);
 int karma_impact();
 int should_cap_skill(string skillname);
 varargs int test_skill(string skill, int opposing_skill, int no_learn);
+int hp_adjustment(int hp, int level);
 
 private
 nosave string body_style = "humanoid";
@@ -209,13 +210,6 @@ int can_drink()
    return 0;
 }
 
-//: FUNCTION hp_adjustment
-// Returns the adjustment HP for a limb for an adversary.
-int hp_adjustment(int hp, int level)
-{
-   float hpModifier = 1 + (level / 10.0) + (query_health_stat() / 20.0) * (1.0 - (query_abuse_percent() / 125.0));
-   return to_int(hp * hpModifier);
-}
 
 void update_max_health()
 {
@@ -266,6 +260,11 @@ int update_body_style(string bstyle)
 
    update_health();
    return 1;
+}
+
+int refresh_body_limbs()
+{
+   return update_body_style(body_style);
 }
 
 string query_body_style()

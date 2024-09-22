@@ -9,6 +9,8 @@ int query_xp_for_level(int lev);
 string query_body_style();
 void update_body_style(string);
 void do_game_command(string str);
+int query_health_stat();
+int query_abuse_percent();
 
 private
 int level;
@@ -177,6 +179,14 @@ varargs int xp_value(object xp_for)
    // int callerLevel = previous_object()->query_could_be_level() > 0 ? previous_object()->query_could_be_level() : 1;
    // TBUG("Caller level:" + callerLevel + " This level: " + this_object()->query_level());
    return xp;
+}
+
+//: FUNCTION hp_adjustment
+// Returns the adjustment HP for a limb for an adversary.
+int hp_adjustment(int hp, int level)
+{
+   float hpModifier = 1 + (level / 10.0) + (query_health_stat() / 20.0) * (1.0 - (query_abuse_percent() / 125.0));
+   return to_int(hp * hpModifier);
 }
 
 int query_xp_modifier()
