@@ -182,7 +182,7 @@ varargs int xp_value(object xp_for)
 }
 
 //: FUNCTION hp_adjustment
-// Returns the adjustment HP for a limb for an adversary.
+// Returns the adjustment HP for an adversary.
 int hp_adjustment(int hp, int level)
 {
    float hpModifier = 1 + (level / 10.0) + (query_health_stat() / 20.0) * (1.0 - (query_abuse_percent() / 125.0));

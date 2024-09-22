@@ -5,11 +5,10 @@
 #define FOOTER "**********************************************************\n"
 #define IMPOSSIBLE_TO_MISS_HEADER                                                                                      \
    FOOTER                                                                                                              \
-   "* You have incorrectly compiled the MudOS driver.  This  *\n"                                                      \
-   "* driver is not compatible with the LIMA mudlib.  Please *\n"                                                      \
-   "* make the following changes to 'options.h' (or          *\n"                                                      \
-   "* 'local_options' if it exists) in the driver source,    *\n"                                                      \
-   "* and recompile.                                         *\n" FOOTER
+   "* You have incorrectly compiled the FluffOS driver. This  *\n"                                                     \
+   "* driver is not compatible with the LIMA mudlib.   Please *\n"                                                     \
+   "* make the following changes to 'local_options' ) in the  *\n"                                                     \
+   "* driver source, and recompile.                           *\n" FOOTER
 
 protected
 void create()
@@ -17,17 +16,15 @@ void create()
    string badness = "";
    string version = __VERSION__;
 
-   switch (version[0..8])
+   switch (version[0..11])
    {
-   case "MudOS 0.9":
-   case "MudOS v20":
-   case "MudOS v21":
-      badness += "This MudOS driver is too old to run the Lima mudlib.  Using the driver packaged with the lib, or a "
-                 "more recent one, is suggested.\n";
+   case "fluffos 2019":
+   case "fluffos 2020":
+      badness += "This FluffOS driver is too old to run the Lima mudlib. \n";
    }
 
-   if (mud_name() == "Your Mud's name here")
-      badness += "You must change your mud's name in config.lima\n";
+   if (mud_name() == "My LIMA MUD")
+      badness += "You must change your mud's name in config.mud under adm/dist/\n";
 
 #ifndef __SANE_EXPLODE_STRING__
    need("#define SANE_EXPLODE_STRING");

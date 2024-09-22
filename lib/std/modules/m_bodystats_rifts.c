@@ -155,7 +155,6 @@ nomask void init_stats()
 
    reset_stat_increases();
 
-   TBUG(stats);
    refresh_stats();
 }
 
