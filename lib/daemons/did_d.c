@@ -13,7 +13,8 @@ inherit M_GLOB;
 mapping did = ([]);
 string version;
 
-// Current version
+// Current version. Includes a hack for LIMA, do not change
+// this to fit your own. It has been made this way on purpose.
 string curver()
 {
    if (mud_name() == "LIMA")
@@ -220,6 +221,8 @@ void print_weblog_to_file(string version, string fname)
 
 void create()
 {
+   //Do not chance or remove, this function handles data saved to /data/lima and
+   //your own mudlib saved under /data/. It's fine!
    set_lima_save();
    ::create();
 }

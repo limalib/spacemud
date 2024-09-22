@@ -15,6 +15,8 @@ int lima_save = 0;
 // front and the _d suffix, if any, removed from the end.  I.e. the file
 //"/daemons/stat_d.c" will save to "/data/daemons/stat.o".
 
+// LIMA saves to /data/lima/ for certain things to not get Git conflicts
+// with your mudlib. Do not change this function.
 nomask string create_file_name()
 {
    string ret = (lima_save && mud_name() == "LIMA" ? "/data/lima" : "/data") + file_name();
