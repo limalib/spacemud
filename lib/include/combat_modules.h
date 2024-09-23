@@ -92,7 +92,10 @@
 **                                 ADVANCEMENT                             **
 **                                                                         **
 ** ADVANCEMENT_SIMPLE A simple experience based advancement.               **
-**                    Presently this is all that comes with Lima.          **
+**                                                                         **
+** ADVANCEMENT_RIFTS  An advancement example that mimics some of the       **
+**                    features of the RIFTS rpg                            **
+**                                                                         **
 **                                                                         **
 ****************************************************************************/
 
@@ -126,6 +129,7 @@
 #define FORMULA_STATS         2
 #define FORMULA_SKILLS        3
 #define ADVANCEMENT_SIMPLE    1
+#define ADVANCEMENT_RIFTS     2
 
 /*
 ** Customize the following options, but be aware that
@@ -239,6 +243,10 @@
 
 #if ADVANCEMENT_STYLE == ADVANCEMENT_SIMPLE
 #define ADVANCEMENT_MODULE simple
+#else
+#if ADVANCEMENT_STYLE == ADVANCEMENT_RIFTS
+#define ADVANCEMENT_MODULE rifts
+#endif
 #endif
 
 #endif

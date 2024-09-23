@@ -3,6 +3,11 @@
 #define AUTO_LEVEL
 #undef TRAIN_FOR_LEVEL
 
+// Since rifts only gives 3.5 hp per level, and we hand it out to 6 limbs,
+// here is a multiplier you can tweak if you want the players to have more HP per limb.
+// 3 seems like a nice round number, but YMMV.
+#define WE_NEED_MORE_HP_MULTIPLIER 3
+
 void save_me();
 varargs int query_level_for_xp(int xp);
 int query_xp_for_level(int lev);
@@ -11,17 +16,21 @@ void update_body_style(string);
 void do_game_command(string str);
 int query_health_stat();
 int query_abuse_percent();
+int query_stat(string stat);
 
 private
 int level;
-
-private int sdc;
 private
 int experience = 0;
 private
 int xp_modifier;
 private
+int *hp = ({});
+private
+int sdc = random(6) + random(6) + 2 + 12;
+private
 nosave int guild_xp_buff;
+
 #ifdef USE_KARMA
 int karma = 100; // Karma goes from -1000 to 1000.
 #endif
@@ -183,19 +192,39 @@ varargs int xp_value(object xp_for)
    return xp;
 }
 
+int hp_for_level(int level)
+{
+   if (sizeof(hp) == 0)
+      hp = ({query_stat("pe") + random(6) + 1});
+
+   while (sizeof(hp) < level)
+      hp += ({(random(6) + 1)});
+
+   return level < sizeof(hp) ? array_sum(hp[0..level]) : array_sum(hp);
+}
+
+int *query_hp_rolls()
+{
+   return hp;
+}
+
+void reset_hp()
+{
+   hp = ({});
+}
+
 //: FUNCTION hp_adjustment
 // Returns the adjustment HP for an adversary.
 int hp_adjustment(int hp, int level)
 {
-   float hpModifier = 1 + (level / 10.0) + (query_health_stat() / 20.0) * (1.0 - (query_abuse_percent() / 125.0));
-   return to_int(hp * hpModifier);
+   return to_int(hp / 100.0 * WE_NEED_MORE_HP_MULTIPLIER * hp_for_level(level));
 }
 
 //: FUNCTION shield_adjustment
 // Returns the adjustment shied for an adversary.
 int shield_adjustment(int hp, int level)
 {
-   return to_int(hp / 100.0 * sdc);
+   return to_int(hp / 100.0 * WE_NEED_MORE_HP_MULTIPLIER * sdc);
 }
 
 int query_xp_modifier()

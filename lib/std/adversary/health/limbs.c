@@ -33,6 +33,7 @@ int karma_impact();
 int should_cap_skill(string skillname);
 varargs int test_skill(string skill, int opposing_skill, int no_learn);
 int hp_adjustment(int hp, int level);
+int shield_adjustment(int hp, int level);
 
 private
 nosave string body_style = "humanoid";
@@ -256,6 +257,10 @@ int update_body_style(string bstyle)
          continue;
       l.max_health = hp_adjustment(l.max_health, query_level());
       l.health = hp_adjustment(l.max_health, query_level());
+#ifdef LIMB_SHIELDS
+      l.max_shield = shield_adjustment(l.max_health, query_level());
+      l.shield = shield_adjustment(l.max_health, query_level());
+#endif
    }
 
    update_health();

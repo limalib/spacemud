@@ -51,6 +51,15 @@ void main(string arg)
    string ansi_colour = "GREEN";
    string m_pinkfish_colour = "CYAN";
    string content = "";
+   string shield;
+   string extra_space = "";
+
+#ifdef LIMB_SHIELDS
+   shield = "Shield";
+#endif
+#if ADVANCEMENT_STYLE == ADVANCEMENT_RIFTS
+   shield = "S.D.C.";
+#endif
 
    if (strlen(arg) > 0 && wizardp(this_user()))
    {
@@ -75,8 +84,16 @@ void main(string arg)
 
    frame_init_user();
    set_frame_title("HP");
+#ifdef LIMB_SHIELDS
+   hp_bar -= strlen(shield) + 8;
+   extra_space = repeat_string(" ", 7+strlen(shield));
+
+   set_frame_header(sprintf("%14s %6-s %5s/%5-s %5s/%5-s %5-s %s", "Limb", "Type", "HP", "Max", shield, "Max", "Armour",
+                            i_simplify() ? "" : "Bar"));
+#else
    set_frame_header(
        sprintf("%14s %6-s %5s/%5-s %5-s %s", "Limb", "Type", "HP", "Max", "Armour", i_simplify() ? "" : "Bar"));
+#endif
 
    foreach (string name in names)
    {
@@ -107,18 +124,26 @@ void main(string arg)
                ac_total += armour->query_armour_class();
          }
 
+#ifdef LIMB_SHIELDS
+      content += sprintf("%15s %6-s %5s/%5-s %5s/%5-s  %5-s %s\n", capitalize(name),
+                         (sizeof(type) ? capitalize(implode(type, ",")) : ""), "" + limb.health, "" + limb.max_health,
+                         "" + limb.shield, "" + limb.max_shield, "" + ac_total,
+                         critical_bar_2stacked(limb.health, limb.shield, limb.max_health + limb.max_shield, hp_bar));
+#else
       content += sprintf("%15s %6-s %5s/%5-s %5-s %s\n", capitalize(name),
                          (sizeof(type) ? capitalize(implode(type, ",")) : ""), "" + limb.health, "" + limb.max_health,
                          "" + ac_total, critical_bar(limb.health, limb.max_health, hp_bar));
+#endif
    }
-   content += sprintf("\n%15s %6-s %5s/%5-s %5-s %s\n", "Reflex", "Pool", "" + body->query_reflex(),
-                      "" + body->max_reflex(), "-", green_bar(body->query_reflex(), body->max_reflex(), hp_bar));
+   content +=
+       sprintf("\n%15s %6-s %5s/%5-s %5-s %s\n", "Reflex", "Pool", "" + body->query_reflex(), "" + body->max_reflex(),
+               "-", extra_space + green_bar(body->query_reflex(), body->max_reflex(), hp_bar));
 
    content += sprintf("\n%15s %6-s %8.8s    %5-s %s\n", "Intoxication", "%", "" + body->query_drunk_percent() + "%",
-                      "-", reverse_critical_bar(body->query_drunk(), body->query_max_drunk(), hp_bar));
+                      "-", extra_space + reverse_critical_bar(body->query_drunk(), body->query_max_drunk(), hp_bar));
 
    content += sprintf("%15s %6-s %8.8s    %5-s %s\n", "System Abuse", "%", "" + body->query_abuse_percent() + "%", "-",
-                      reverse_critical_bar(body->query_abuse(), body->query_max_abuse(), hp_bar));
+                      extra_space + reverse_critical_bar(body->query_abuse(), body->query_max_abuse(), hp_bar));
 
    set_frame_content(content);
    out(frame_render());
