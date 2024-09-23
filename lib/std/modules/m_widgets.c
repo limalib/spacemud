@@ -140,6 +140,42 @@ string critical_bar(int value, int max, int width)
                   repeat_string(barchar, green), repeat_string(nobarchar, white));
 }
 
+//: FUNCTION critical_bar_2stacked
+// A bar that change colour the lower it gets
+string critical_bar_2stacked(int value, int shield, int max, int width)
+{
+   int green, blue, white;
+   float p;
+   string barchar = uses_unicode() ? "▅" : "=";
+   string nobarchar = uses_unicode() ? "▅" : ".";
+
+   string bar_colour = "<040>";
+   string shield_colour = "<045>";
+   if (i_simplify())
+      return "";
+   p = value / (max * 1.0);
+
+   if (p < 0.10)
+      bar_colour = "<129>";
+   else if (p < 0.20)
+      bar_colour = "<196>";
+   else if (p < 0.50)
+      bar_colour = "<226>";
+
+   if (value > max)
+      value = max;
+   green = (value * 1.00 / max) * (width)-1;
+   blue = (shield * 1.00 / max) * (width);
+   if (green < 0)
+      green = 0;
+   if (blue < 0)
+      blue = 0;
+   white = width - 1 - green - blue;
+
+   return sprintf("[" + bar_colour + "%s" + shield_colour + "%s<res><" + (uses_unicode() ? "238" : "007") + ">%s<res>]",
+                  repeat_string(barchar, green), repeat_string(barchar, blue), repeat_string(nobarchar, white));
+}
+
 //: FUNCTION reverse_critical_bar
 // A bar that change colour the lower it gets
 string reverse_critical_bar(int value, int max, int width)
@@ -235,10 +271,11 @@ string slider_colours_sum(int value, mapping colours, int width)
       x_char = "X";
       line_char = "-";
    }
-   
-   //We got some bad input, to avoid div/0, we return here.
-   if (max==0) return "";
-   
+
+   // We got some bad input, to avoid div/0, we return here.
+   if (max == 0)
+      return "";
+
    width = width - 3; // [ and ]
    marker = width * (1.0 * value / max);
    if (marker == 0)
