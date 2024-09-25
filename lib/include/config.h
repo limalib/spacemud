@@ -137,13 +137,13 @@
 #define REFERRALS_LOG "/data/referrals"
 
 /* Define where the obvious exits should appear if at all.
- * OBVIOUS_EXITS displays the exits above the long description,
- * OBVIOUS_EXITS_BOTTOM displays them after the long description. 
+ * OBVIOUS_EXITS_TOP displays the exits top of the long description,
+ * OBVIOUS_EXITS_BOTTOM displays them after the long description,
  * COUNT_EXITS counts the obvious exits in the description.
  */
-#undef OBVIOUS_EXITS
+#undef OBVIOUS_EXITS_TOP
 #define OBVIOUS_EXITS_BOTTOM
-#define COUNT_EXITS
+#undef COUNT_EXITS
 
 /* Define this if you wish closed doors to show up as an obvious exit */
 #undef CLOSED_DOORS_ARE_OBVIOUS_EXITS

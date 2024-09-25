@@ -110,8 +110,19 @@ varargs void do_looking(int force_long_desc, object who)
    }
    else
    {
+#ifdef OBVIOUS_EXITS_TOP
+#ifdef COUNT_EXITS
+      tell(who, sprintf("%%^ROOM_SHORT%%^%s%%^RESET%%^ [%d exits: %%^ROOM_EXIT%%^%s%%^RESET%%^] %s\n", short(),
+                        sizeof(this_object()->query_exit_directions(0)), show_exits(),
+                        query_combat_forbidden() ? " [%^ROOM_SPECIAL%^No Combat%^RESET%^]" : ""));
+#else
+      tell(who, sprintf("%%^ROOM_SHORT%%^%s%%^RESET%%^ [exits: %%^ROOM_EXIT%%^%s%%^RESET%%^] %s\n", short(),
+                        show_exits(), query_combat_forbidden() ? " [%^ROOM_SPECIAL%^No Combat%^RESET%^]" : ""));
+#endif
+#else
       tell(who, sprintf("[%%^ROOM_SHORT%%^%s%%^RESET%%^]%s\n", short(),
                         query_combat_forbidden() ? " [%^ROOM_SPECIAL%^No Combat%^RESET%^]" : ""));
+#endif
       if (wizardp(who) && who->query_link()->query_shell_ob()->get_variable("show_loc"))
       {
          tell(who, sprintf("File: %s %s\n", file_name(this_object()),

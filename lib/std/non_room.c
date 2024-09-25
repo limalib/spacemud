@@ -81,7 +81,7 @@ void do_looking(int force_long_desc)
    }
    else
    {
-#ifdef OBVIOUS_EXITS
+#ifdef OBVIOUS_EXITS_TOP
       printf("%%^ROOM_SHORT%%^%s%%^RESET%%^" + " [exits: %%^ROOM_EXIT%%^%s%%^RESET%%^]\n", get_brief(), show_exits());
 #else
       printf("%%^ROOM_SHORT%%^%s%%^RESET%%^\n", get_brief());
