@@ -212,12 +212,19 @@ string fancy_long()
    return rtrim("\n   " + replace_string(simple_long(), "\n", "\n\n   ")) + "\n";
 }
 
+
 string long()
 {
 #ifdef OBVIOUS_EXITS_BOTTOM
    string objtally = show_objects();
+#ifdef COUNT_EXITS
+   return sprintf("%sThere are %s obvious exits: %%^ROOM_EXIT%%^%s%%^RESET%%^\n%s",
+                  (dont_show_long() ? "" : fancy_long()), number_word(sizeof(query_exit_directions(0))), show_exits() + "\n",
+                  objtally);
+#else
    return sprintf("%sObvious Exits: %%^ROOM_EXIT%%^%s%%^RESET%%^\n%s", (dont_show_long() ? "" : fancy_long()),
                   show_exits() + "\n", objtally);
+#endif
 #else
    return sprintf("%s%s", (dont_show_long() ? "" : rtrim(fancy_long()) + "\n"), show_objects());
 #endif
@@ -259,7 +266,7 @@ string query_smell()
    return smell;
 }
 
-//:FUNCTION do_listen
+//: FUNCTION do_listen
 // Uses write() to return the listen text set with the ``set_listen()``
 // function, otherwise returns "You hear nothing unusual.".
 void do_listen()
