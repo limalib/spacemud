@@ -2,9 +2,6 @@
 
 #include <playerflags.h>
 
-private
-nosave string remote_desc;
-
 int query_light();
 string short();
 string show_exits();
@@ -134,28 +131,4 @@ varargs void do_looking(int force_long_desc, object who)
       tell(who, long());
       this_look_is_forced = 0;
    }
-}
-
-// ### I think this should be torched :-)
-//  I don't.
-//  This should be overloaded if you want to be able to give different
-//  descs from different rooms
-//  Hmm, I know who made each of these comments.  Who else does? :-)
-//  I do =)
-//  Your mom.
-void remote_look(object o)
-{
-   if (remote_desc)
-   {
-      printf("%s\n", remote_desc);
-   }
-   else
-   {
-      printf("You can't seem to make out anything.\n");
-   }
-}
-
-void set_remote_desc(string s)
-{
-   remote_desc = s;
 }
