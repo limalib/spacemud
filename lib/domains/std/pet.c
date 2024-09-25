@@ -101,7 +101,8 @@ void setup()
    string name;
 
    master = this_body();
-   if (file = read_file(WIZ_DIR+"/" + master->query_name() + "/.petrc"))
+
+   if (file = read_file(WIZ_DIR+"/" + lower_case(master->query_name()) + "/.petrc"))
       m = parse_file(file);
    else
       m = ([]);
