@@ -1160,7 +1160,7 @@ Testing calls:
 @GUILD_D->query_missions()
 @GUILD_D->run_mission(1,"Wood gathering","yakitori")
 @GUILD_D->start_favour(1,"XP Buff Small","yakitori")
-@filter_array(objects(),(: base_name($1)=="/domains/std/guild/missions/wood_gathering" && clonep($1) :))->remove()
+@filter_array(objects(),(: base_name($1)=="/domains/std/guild/mission/wood_gathering" && clonep($1) :))->remove()
 @GUILD_D->add_guild_skill("yakitori","combat/special/roundhouse")
 
 */

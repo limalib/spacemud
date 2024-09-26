@@ -1,4 +1,4 @@
-inherit "/domains/std/guild/missions/std_mission";
+inherit "/domains/std/guild/mission/std_mission";
 
 // MISSION: Wood gathering (Medium)
 int wood_total = 0;

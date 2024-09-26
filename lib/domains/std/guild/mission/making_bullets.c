@@ -1,4 +1,4 @@
-inherit "/domains/std/guild/missions/std_mission";
+inherit "/domains/std/guild/mission/std_mission";
 
 // MISSION: Making Bullets
 int steel_total = 0;
