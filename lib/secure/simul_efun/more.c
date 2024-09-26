@@ -10,7 +10,7 @@ private
 nomask int default_num()
 {
    int t = get_user_variable("MORE");
-   int num = 30;
+   int num = DEFAULT_SCREEN_HEIGHT;
 
    if (stringp(t))
       t = to_int(t);

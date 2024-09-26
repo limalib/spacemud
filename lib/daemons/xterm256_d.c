@@ -357,7 +357,7 @@ string xterm256_wrap(string str, int wrap_at, int indent_at)
    int ends_with_lf = strlen(str) > 1 && str[ < 1] == 10;
    mapping running = (["length":0]);
    if (!wrap_at)
-      wrap_at = 99;
+      wrap_at =DEFAULT_SCREEN_WIDTH;
 
    // this routine strips out the first space, put it back into the
    // array if the original string had a leading space

@@ -49,6 +49,10 @@
 #define BODY_STATS_DND 2
 #define BODY_STATS_RIFTS 3
 
+/* Default screen width, when the user didn't set a width */
+#define DEFAULT_SCREEN_WIDTH 99
+#define DEFAULT_SCREEN_HEIGHT 40
+
 /* But edit here:
 ** Edit body stats module to use. Only one option can be picked below. */
 #define BODY_STATS BODY_STATS_LIMA

@@ -74,7 +74,7 @@ void window_size(int w, int h)
 
 int *query_window_size()
 {
-   return ({width || 99, height || 40});
+   return ({width ||DEFAULT_SCREEN_WIDTH, height || DEFAULT_SCREEN_HEIGHT});
 }
 
 string query_terminal_type()
