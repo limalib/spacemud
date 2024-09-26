@@ -74,7 +74,7 @@ void window_size(int w, int h)
 
 int *query_window_size()
 {
-   return ({width || 79, height || 40});
+   return ({width || 99, height || 40});
 }
 
 string query_terminal_type()
