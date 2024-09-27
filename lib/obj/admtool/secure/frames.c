@@ -68,9 +68,7 @@ void add_theme(string theme)
       colours = query_themes();
 
    colours[theme] = ({"088,089,090,091,092,093", "228", "045", "197"});
-
-   TBUG(theme);
-   TBUG(colours[theme]);
+   write("Theme '" + theme + "' added with default values. Use 's " + theme + "' to show it.\n");
 }
 
 void change_colour(string colour, string theme, string p)
