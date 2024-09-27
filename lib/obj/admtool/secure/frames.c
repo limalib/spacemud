@@ -26,6 +26,7 @@ nomask string module_user()
 
 void stat_frames()
 {
+   write("** Only shows themes written to config!\n");
    CMD_OB_FRAMES->player_menu_entry("themes");
 }
 
@@ -59,6 +60,17 @@ void show_theme(string theme)
    write("Frame title colour  : " + "<" + colours[theme][1] + ">" + colours[theme][1] + "<res>");
    write("Frame accent colour : " + "<" + colours[theme][2] + ">" + colours[theme][2] + "<res>");
    write("Frame warning colour: " + "<" + colours[theme][3] + ">" + colours[theme][3] + "<res>");
+}
+
+void add_theme(string theme)
+{
+   if (!colours)
+      colours = query_themes();
+
+   colours[theme] = ({"088,089,090,091,092,093", "228", "045", "197"});
+
+   TBUG(theme);
+   TBUG(colours[theme]);
 }
 
 void change_colour(string colour, string theme, string p)
@@ -124,6 +136,14 @@ nomask class command_info *module_commands()
             : "palette", action
             : (
                 : show_palette:)),
+       new (class command_info, key
+            : "a", proto
+            : "[theme]", args
+            : ({"Theme: "}), action
+            : (
+                  : add_theme:),
+              desc
+            : "add new theme"),
        new (class command_info, key
             : "s", proto
             : "[theme]", args
