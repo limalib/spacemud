@@ -203,7 +203,7 @@ nomask void rebuild_data()
 
    if (pending_count)
    {
-      write("HELP_D is currently rebuilding!\n");
+      write("HELP_D is STILL rebuilding!\n");
       return;
    }
 
