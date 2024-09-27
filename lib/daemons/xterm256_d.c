@@ -47,10 +47,11 @@ void create()
    update_ansi();
 }
 
-void update_ansi()
+int update_ansi()
 {
    // We cache these to not query them all the time...
    ansi = ANSI_D->query_translations()[0];
+   return 1;
 }
 
 mapping query_alt()

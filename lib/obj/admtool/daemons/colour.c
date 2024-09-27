@@ -9,7 +9,7 @@ nomask string module_name()
 
 nomask string module_key()
 {
-   return "C";
+   return "c";
 }
 
 nomask string module_user()
@@ -33,7 +33,8 @@ private
 void receive_add_colour(string key, string value, int restricted)
 {
    ANSI_D->add_default_colour(key, value, restricted);
-   write("Done.\n");
+   XTERM256_D->update_ansi();
+   write("Done. " + upper_case(key) + " set to %^" + upper_case(value) + "%^" + value + "<res>\n");
 }
 
 // Returns lower_cased if unrestricted
@@ -49,11 +50,19 @@ void list_colours()
 {
    string *restrict = ANSI_D->query_restrictions();
    mixed tmp;
+   mapping colours = ANSI_D->query_translations()[0];
    tmp = ANSI_D->defaults();
    tmp = sort_array(keys(tmp), 1);
    tmp = map(tmp, ( : restrict_modify:));
-   tmp = implode(tmp, ", ");
-   write("Default colours (wiz-only in CAPs)\n" + tmp + "\n\n");
+   TBUG(tmp);
+   write("Default colours (wiz-only in CAPs)\n");
+   printf("<bld>%-30.30s   %-30.30s%%^RESET%%^<res>", "Colour name", "Colour example");
+   write("-----------------------------------------------------------------");
+   foreach (string t in tmp)
+   {
+      string col = colours[upper_case(t)];
+      printf("%-30.30s   %s%-30.30s%%^RESET%%^", t, "%^" + upper_case(col) + "%^", t);
+   }
 }
 
 private
@@ -78,7 +87,7 @@ nomask class command_info *module_commands()
             new (class command_info, key
                  : "a", proto
                  : "[colour] [value]", desc
-                 : "add default colour", args
+                 : "add default colour (only ANSI accepted)", args
                  : ({"Colour code? ", "Value? "}), action
                  : (
                      : receive_add_colour:)),
