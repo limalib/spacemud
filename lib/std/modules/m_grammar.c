@@ -97,6 +97,8 @@ string number_word(int num)
 {
    switch (num)
    {
+   case 0:
+      return "zero";
    case 1:
       return "one";
    case 2:
