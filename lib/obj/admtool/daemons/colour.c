@@ -54,14 +54,13 @@ void list_colours()
    tmp = ANSI_D->defaults();
    tmp = sort_array(keys(tmp), 1);
    tmp = map(tmp, ( : restrict_modify:));
-   TBUG(tmp);
    write("Default colours (wiz-only in CAPs)\n");
    printf("<bld>%-30.30s   %-30.30s%%^RESET%%^<res>", "Colour name", "Colour example");
    write("-----------------------------------------------------------------");
    foreach (string t in tmp)
    {
       string col = colours[upper_case(t)];
-      printf("%-30.30s   %s%-30.30s%%^RESET%%^", t, "%^" + upper_case(col) + "%^", t);
+      printf("%-30.30s   %s%-30.30s%%^RESET%%^", t, "%^" + replace_string(upper_case(col),",","%^%^") + "%^", t);
    }
 }
 
