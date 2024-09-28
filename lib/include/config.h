@@ -49,10 +49,6 @@
 #define BODY_STATS_DND 2
 #define BODY_STATS_RIFTS 3
 
-/* Default screen width, when the user didn't set a width */
-#define DEFAULT_SCREEN_WIDTH 99
-#define DEFAULT_SCREEN_HEIGHT 40
-
 /* But edit here:
 ** Edit body stats module to use. Only one option can be picked below. */
 #define BODY_STATS BODY_STATS_LIMA
@@ -61,11 +57,6 @@
 ** it drop to the corpse. */
 #undef PLAYERS_DROP_EQUIPMENT_AT_DEATH
 
-/* The default frame style and theme for new players
- * can be defined here. See /obj/mudlib/frame.c for the
- * entire list of themes. */
-#define DEFAULT_FRAMES_THEME "dusk"
-#define DEFAULT_FRAMES_STYLE "single"
 
 #define USE_QUESTS
 
@@ -121,6 +112,16 @@
  **  Options affecting the appearance of the game.			                **
  ** 									                                                  **
  *********************************************************************** */
+
+/* Default screen width, when the user didn't set a width */
+#define DEFAULT_SCREEN_WIDTH 79
+#define DEFAULT_SCREEN_HEIGHT 40
+
+/* The default frame style and theme for new players
+ * can be defined here. See /obj/mudlib/frame.c for the
+ * entire list of themes. */
+#define DEFAULT_FRAMES_THEME "dusk"
+#define DEFAULT_FRAMES_STYLE "single"
 
 /* WELCOME_FILE is the file displayed when someone connects to the game before
  * the login promopt is displayed.
