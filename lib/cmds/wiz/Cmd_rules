@@ -6,6 +6,7 @@ discuss          obj
 echoall          str*
 echoto           user str*
 findfunc         str obj
+fix              obj
 flist -i         obj
 goto             obj
 last -sn:d:D:    [str*]

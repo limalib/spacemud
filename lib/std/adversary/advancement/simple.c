@@ -15,7 +15,8 @@ int query_abuse_percent();
 private
 int level;
 
-private int sdc;
+private
+int sdc;
 private
 int experience = 0;
 private
@@ -194,8 +195,18 @@ int hp_adjustment(int hp, int level)
 //: FUNCTION shield_adjustment
 // Returns the adjustment shied for an adversary.
 int shield_adjustment(int hp, int level)
-{
+{-
    return to_int(hp / 100.0 * sdc);
+}
+
+void set_shield(int s)
+{
+   sdc = s;
+}
+
+int query_shield()
+{
+   return sdc;
 }
 
 int query_xp_modifier()
