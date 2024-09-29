@@ -11,21 +11,8 @@
 
 inherit VERB_OB;
 
-/* This is more than likely a temporary fix -- Tigran */
-/* Using default_checks here is bad.  Complaining about not standing when
- * trying to and the like */
-mixed can_verb_rule(string verb, string rule)
-{
-   return 1;
-}
-
 void do_stand()
 {
-   if (!this_body()->query_prone())
-   {
-      write("You're already standing.");
-      return;
-   }
    this_body()->simple_action("$N $vstand up.");
    this_body()->stand_up();
 }
@@ -38,11 +25,6 @@ void do_stand_wrd(string prep)
       return;
    }
 
-   if (!this_body()->query_prone())
-   {
-      write("You're already standing.");
-      return;
-   }
    this_body()->simple_action("$N $vstand up.");
    this_body()->stand_up();
 }

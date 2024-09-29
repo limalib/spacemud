@@ -512,7 +512,7 @@ string the_short()
 }
 string in_room_desc()
 {
-   return base_in_room_desc() + conditionString() + query_idle_string();
+   return base_in_room_desc() + condition_string() + query_idle_string();
 }
 
 /* end of naming overrides */

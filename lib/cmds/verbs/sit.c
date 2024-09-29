@@ -13,7 +13,19 @@ void do_sit_wrd_obj(string prep, object ob)
    ob->do_verb_rule("sit", "WRD OBJ", prep, ob);
 }
 
+void do_sit()
+{
+   this_body()->sit_down();
+   this_body()->simple_action("$N $vsit down.");
+}
+
+void do_sit_down()
+{
+   this_body()->sit_down();
+   this_body()->simple_action("$N $vsit down.");
+}
+
 void create()
 {
-   add_rules(({"WRD OBJ"}), ({}));
+   add_rules(({"WRD OBJ", "", "down"}), ({}));
 }

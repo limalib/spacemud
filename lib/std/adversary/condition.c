@@ -21,6 +21,8 @@ nosave int stunned; // time to awake from stunned status
 private
 nosave int prone; // 1 if prone
 private
+nosave int sitting; // 1 if sitting
+private
 int asleep; // flag for "asleep" status
 private
 nosave int chance; // counter for attempted "wake up"
@@ -51,11 +53,23 @@ int query_attack_speed()
    return attack_speed;
 }
 
+int sit_down()
+{
+   if (!sitting)
+   {
+      sitting = 1;
+      prone = 0;
+      return 1;
+   }
+   return 0;
+}
+
 int lie_down()
 {
    if (!prone)
    {
       prone = 1;
+      sitting = 0;
       return 1;
    }
    return 0;
@@ -70,9 +84,10 @@ int query_stunned()
 
 int stand_up()
 {
-   if (prone && !query_stunned())
+   if ((prone || sitting) && !query_stunned())
    {
       prone = 0;
+      sitting = 0;
       return 1;
    }
    return 0;
@@ -81,6 +96,11 @@ int stand_up()
 int query_prone()
 {
    return prone;
+}
+
+int query_sitting()
+{
+   return sitting;
 }
 
 int query_asleep()
@@ -166,7 +186,7 @@ void stun(string limb, int period)
    }
 }
 
-string conditionString()
+string condition_string()
 {
    string *condi = ({});
    if (query_stunned())
@@ -177,10 +197,36 @@ string conditionString()
       condi += ({"drunk"});
    if (query_prone())
       condi += ({"prone"});
+   if (query_sitting())
+      condi += ({"sitting"});
 
    if (sizeof(condi))
       return " [%^COMBAT_CONDITION%^" + format_list(condi) + "%^RESET%^]";
    return "";
+}
+
+mixed can_lie_down()
+{
+   return prone ? "You are already lying down." : 1;
+}
+
+mixed can_sit()
+{
+   if (query_stunned())
+      return "You're stunned right now.";
+   return sitting ? "You are already sitting." : 1;
+}
+
+mixed can_stand()
+{
+   if (query_stunned())
+      return "You're stunned right now.";
+   return sitting + prone ? 1 : "You're already standing.";
+}
+
+mixed can_stand_wrd()
+{
+   return can_stand();
 }
 
 void wake_up()

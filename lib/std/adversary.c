@@ -131,7 +131,7 @@ string query_in_room_desc()
 {
    if (!this_object()->is_visible())
       return "";
-   return ::query_in_room_desc() + conditionString();
+   return ::query_in_room_desc() + condition_string();
 }
 
 /*
