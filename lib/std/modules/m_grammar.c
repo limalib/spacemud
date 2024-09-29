@@ -98,7 +98,7 @@ string number_word(int num)
    switch (num)
    {
    case 0:
-      return "zero";
+      return "no"; //Rarely used for inventory, but used for COUNT_EXITS.
    case 1:
       return "one";
    case 2:
