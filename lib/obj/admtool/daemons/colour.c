@@ -2,6 +2,9 @@
 
 inherit ADMTOOL_BASE;
 
+private
+mapping ansi_colours;
+
 nomask string module_name()
 {
    return "colour";
@@ -30,11 +33,48 @@ void receive_remove_colour(string key)
 }
 
 private
+int allowed_colour(string s)
+{
+   if (!ansi_colours)
+   {
+      mapping tmp = ANSI_D->query_default_translations();
+      string *illegal =
+          ({"endterm", "clearline", "initterm", "reset", "new reset", "restore", "flash", "save", "home"});
+      ansi_colours = ([]);
+      foreach (string key, string value in tmp)
+      {
+         string new_key = lower_case(replace_string(replace_string(key, "B_", "bold,"), "_", " "));
+         if (member_array(new_key, illegal) != -1)
+            continue;
+         ansi_colours[new_key] = key;
+      }
+   }
+
+   if (strlen(s) == 3 && to_int(s) > 0 && to_int(s) < 256)
+      return 1;
+
+   if (member_array(s, keys(ansi_colours)) != -1)
+      return 1;
+
+   return 0;
+}
+
+private
 void receive_add_colour(string key, string value, int restricted)
 {
+   if (!allowed_colour(value))
+   {
+      write("Illegal colour '" + value + ".\n" + "Valid ANSI colours are: " + implode(keys(ansi_colours), "\n  ") +
+            "\n" + "Valid XTERM colours are: <<res>001> to <<res>255>.");
+      return;
+   }
    ANSI_D->add_default_colour(key, value, restricted);
    XTERM256_D->update_ansi();
-   write("Done. " + upper_case(key) + " set to %^" + upper_case(value) + "%^" + value + "<res>\n");
+   if (strlen(value) == 3 && to_int(value) > 0 && to_int(value) < 256)
+      write("Done. " + upper_case(key) + " set to an XTERM <" + value + ">colour.<res>\n");
+   else
+      write("Done. " + upper_case(key) + " set to %^" + upper_case(replace_string(upper_case(value), ",", "%^%^")) +
+            "%^" + value + "<res>\n");
 }
 
 // Returns lower_cased if unrestricted
@@ -55,12 +95,15 @@ void list_colours()
    tmp = sort_array(keys(tmp), 1);
    tmp = map(tmp, ( : restrict_modify:));
    write("Default colours (wiz-only in CAPs)\n");
-   printf("<bld>%-30.30s   %-30.30s%%^RESET%%^<res>", "Colour name", "Colour example");
-   write("-----------------------------------------------------------------");
+   printf("<bld>%-30.30s   %-20.20s   %-30.30s<res>", "Colour name", "Selected", "Colour example");
+   write("------------------------------------------------------------------------------------");
    foreach (string t in tmp)
    {
       string col = colours[upper_case(t)];
-      printf("%-30.30s   %s%-30.30s%%^RESET%%^", t, "%^" + replace_string(upper_case(col),",","%^%^") + "%^", t);
+      printf("%-30.30s   %-20.20s   %s%-30.30s<res>", t, col,
+             strlen(col) == 3 && to_int(col) ? "<" + col + ">"
+                                             : ("%^" + replace_string(upper_case(col), ",", "%^%^") + "%^"),
+             t);
    }
 }
 

@@ -41,6 +41,9 @@ inherit M_DAEMON_DATA;
 protected
 mapping translations, null_translations, identity_translations;
 
+protected
+nosave mapping default_translations;
+
 string *restrictions;
 
 mapping defaults;
@@ -60,18 +63,23 @@ mapping defaults()
    return defaults;
 }
 
+mapping query_default_translations()
+{
+   return (["NONE":"",
+            "RESET":RESET, "BOLD":BOLD, "FLASH":FLASH, "BLACK":BLACK, "RED":RED, "GREEN":GREEN, "ORANGE":ORANGE,
+           "YELLOW":YELLOW, "BLUE":BLUE, "CYAN":CYAN, "MAGENTA":MAGENTA, "WHITE":WHITE, "B_RED":B_RED,
+          "B_GREEN":B_GREEN, "B_ORANGE":B_ORANGE, "B_YELLOW":B_YELLOW, "B_BLUE":B_BLUE, "B_CYAN":B_CYAN,
+          "B_BLACK":B_BLACK, "B_WHITE":B_WHITE, "CLEARLINE":CLEARLINE, "B_MAGENTA":B_MAGENTA, "INITTERM":INITTERM,
+          "ENDTERM":ENDTERM, "SAVE":SAVE, "RESTORE":RESTORE, "HOME":HOME, "NEW_RESET":NEW_RESET,
+       "BLACK_BACK":BLACK_BACK, ]);
+}
+
 void create()
 {
    ::create();
 
    if (!translations)
-      translations = (["NONE":"",
-                      "RESET":RESET, "BOLD":BOLD, "FLASH":FLASH, "BLACK":BLACK, "RED":RED, "GREEN":GREEN,
-                     "ORANGE":ORANGE, "YELLOW":YELLOW, "BLUE":BLUE, "CYAN":CYAN, "MAGENTA":MAGENTA, "WHITE":WHITE,
-                      "B_RED":B_RED, "B_GREEN":B_GREEN, "B_ORANGE":B_ORANGE, "B_YELLOW":B_YELLOW, "B_BLUE":B_BLUE,
-                     "B_CYAN":B_CYAN, "B_BLACK":B_BLACK, "B_WHITE":B_WHITE, "CLEARLINE":CLEARLINE,
-                  "B_MAGENTA":B_MAGENTA, "INITTERM":INITTERM, "ENDTERM":ENDTERM, "SAVE":SAVE, "RESTORE":RESTORE,
-                       "HOME":HOME, "NEW_RESET":NEW_RESET, "BLACK_BACK":BLACK_BACK, ]);
+      translations = query_default_translations();
 
    if (!defaults)
       defaults = (["ROOM_EXIT":"magenta",
