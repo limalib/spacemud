@@ -212,15 +212,22 @@ string fancy_long()
    return rtrim("\n   " + replace_string(simple_long(), "\n", "\n\n   ")) + "\n";
 }
 
+//Only used for #define COUNT_EXITS.
+private
+string describe_exits()
+{
+   int exit_count = sizeof(query_exit_directions(0));
+   return sprintf("There %s %s obvious exit%s", exit_count == 1 ? "is" : "are", number_word(exit_count),
+                  exit_count == 1 ? "" : "s");
+}
 
 string long()
 {
 #ifdef OBVIOUS_EXITS_BOTTOM
    string objtally = show_objects();
 #ifdef COUNT_EXITS
-   return sprintf("%sThere are %s obvious exits: %%^ROOM_EXIT%%^%s%%^RESET%%^\n%s",
-                  (dont_show_long() ? "" : fancy_long()), number_word(sizeof(query_exit_directions(0))), show_exits() + "\n",
-                  objtally);
+   return sprintf("%s%s: %%^ROOM_EXIT%%^%s%%^RESET%%^\n%s", (dont_show_long() ? "" : fancy_long()), describe_exits(),
+                  show_exits() + "\n", objtally);
 #else
    return sprintf("%sObvious Exits: %%^ROOM_EXIT%%^%s%%^RESET%%^\n%s", (dont_show_long() ? "" : fancy_long()),
                   show_exits() + "\n", objtally);
