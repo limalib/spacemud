@@ -195,7 +195,7 @@ int hp_adjustment(int hp, int level)
 //: FUNCTION shield_adjustment
 // Returns the adjustment shied for an adversary.
 int shield_adjustment(int hp, int level)
-{-
+{
    return to_int(hp / 100.0 * sdc);
 }
 

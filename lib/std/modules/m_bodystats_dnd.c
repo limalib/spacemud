@@ -24,6 +24,11 @@ int skill_stat_sum(string stat);
 private
 mapping stats = ([]);
 
+mapping query_stats()
+{
+   return copy(stats);
+}
+
 nomask int query_stat_pure(string stat)
 {
    return stats["stat_" + stat];

@@ -33,7 +33,9 @@ varargs void fix_body(object body, int step)
    {
    case 0:
       wrfix("Diagnosing " + body->query_name() + " ...", FIXED);
-      tell(body, "Your body is being diagnosed by " + this_body()->query_name() + ". Leave combat, then stand still.");
+      if (body != this_body())
+         tell(body,
+              "Your body is being diagnosed by " + this_body()->query_name() + ". Leave combat, then stand still.");
       user = this_body();
       break;
    case 1:
@@ -58,7 +60,8 @@ varargs void fix_body(object body, int step)
          mixed dl = disassemble_class(torso);
          mixed dnl = disassemble_class(nl);
 
-         wrfix("Torso limb has " + sizeof(dl) + " class members, a new limb has " + sizeof(dnl),
+         wrfix("Torso limb has " + sizeof(dl) + " class members, a new limb has " + sizeof(dnl) +
+                   ". Did you change to or from LIMB_SHIELDS in <config.h>?",
                sizeof(dl) == sizeof(dnl));
 
          if (sizeof(dl) != sizeof(dnl))
@@ -68,6 +71,26 @@ varargs void fix_body(object body, int step)
                   FIXED);
          }
       }
+      break;
+
+   case 3:
+      // Check 3, do we have stats?
+      {
+         int stats = body->query_carrying_stat() + body->query_health_stat() + body->query_physical_dmg_stat() +
+                     body->query_agility_stat() + body->query_social_stat() + body->query_mental_stat() +
+                     body->query_reflex_stat();
+
+         wrfix("Checking if any known stat is > 0", stats != 0);
+         if (!stats)
+         {
+            body->init_stats();
+            stats = body->query_carrying_stat() + body->query_health_stat() + body->query_physical_dmg_stat() +
+                    body->query_agility_stat() + body->query_social_stat() + body->query_mental_stat() +
+                    body->query_reflex_stat();
+            wrfix(body->query_name() + " rerolled stats.", stats != 0);
+         }
+      }
+
       break;
    default:
       wrfix("Repairing " + body->query_name() + " done.", FIXED);

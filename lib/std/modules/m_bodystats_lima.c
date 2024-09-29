@@ -68,6 +68,11 @@ int skill_stat_sum(string stat);
 private
 mapping stats = ([]);
 
+mapping query_stats()
+{
+   return copy(stats);
+}
+
 /* Because of the complexity of the system, a bonus to strength affects
  * str as well as con and wis and cha.  To avoid having to recall all
  * the hooks for all the base stats every time one of the derived stats
