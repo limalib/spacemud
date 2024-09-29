@@ -4,7 +4,7 @@
 // USAGE: ``fix <body>``
 //
 // Checks a player body, and fixes possible issues needed
-// for it to work.
+// for it to work. This command is mostly useful for bodies using limbs.
 //
 // .. TAGS: RST
 
