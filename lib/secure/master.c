@@ -176,7 +176,10 @@ string error_handler(mapping mp, int caught)
       userid = this_user()->query_userid();
       if (!userid || userid == "")
          userid = "(none)";
-      printf("%sTrace written to %s\n", what, logfile);
+      if (wizardp(this_user()))
+         printf("%sTrace written to %s\n", what, logfile);
+      else
+         printf(BUG_MSG);
       errors[userid] = mp;
    }
    else
