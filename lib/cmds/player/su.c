@@ -46,6 +46,11 @@ void main(string arg)
    }
    if (race)
    {
+      if (!wizardp(this_user()))
+         {
+            out("Players cannot change race like this, sorry.");
+            return;
+         }
       race = DIR_RACES + "/" + depath(evaluate_path(race));
       if (race[ < 2..] != ".c")
          race += ".c";

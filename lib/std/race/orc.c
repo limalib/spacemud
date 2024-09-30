@@ -6,6 +6,11 @@ string query_race()
    return "orc";
 }
 
+string *compatibility()
+{
+   return ({"lima"});
+}
+
 string short_description()
 {
    return "Orcs get bonuses to constitution.  Their strength is very high, their agility is slightly above average, "

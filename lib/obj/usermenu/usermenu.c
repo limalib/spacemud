@@ -14,6 +14,16 @@
 inherit "/std/menu2";
 inherit M_ACCESS;
 
+private
+string stats =
+#if BODY_STATS == BODY_STATS_LIMA
+    "lima";
+#elif BODY_STATS == BODY_STATS_DND
+    "dnd";
+#elif BODY_STATS == BODY_STATS_RIFTS
+    "rifts";
+#endif
+
 class menu toplevel;
 // submenus of the toplevel (main) menu
 class menu_item quit_item;
@@ -61,8 +71,9 @@ void load_races()
    {
       string tmp = DIR_RACES + "/" + file;
       string name;
-
       if (!load_object(tmp))
+         continue;
+      if (member_array(stats, tmp->compatibility()) == -1)
          continue;
       name = tmp->query_race();
       races[name] = tmp;

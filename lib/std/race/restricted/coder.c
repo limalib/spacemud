@@ -10,6 +10,12 @@ string query_race()
 {
    return "coder";
 }
+
+string *compatibility()
+{
+   return ({"lima"});
+}
+
 string short_description()
 {
    return "Coder race is a misterious race of supernatural beings. You need to be a wizard in order to be a member of "

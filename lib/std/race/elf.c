@@ -7,6 +7,11 @@ string query_race()
    return "elf";
 }
 
+string *compatibility()
+{
+   return ({"lima", "dnd"});
+}
+
 string short_description()
 {
    return "Elves get bonuses to charisma and wisdom.  Their strength is below average, their agility is average, their "

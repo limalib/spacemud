@@ -11,6 +11,11 @@ string query_race()
    return "troll";
 }
 
+string *compatibility()
+{
+   return ({"lima"});
+}
+
 /*
  * This is the description shown when the user types 'help race' during the
  * selection process
