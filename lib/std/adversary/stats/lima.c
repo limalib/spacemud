@@ -56,6 +56,11 @@
 inherit "/std/adversary/stats/base";
 private
 inherit CLASS_STATMODS;
+inherit CLASS_WEAR_INFO;
+
+int query_gender();
+string query_race();
+class wear_info find_wi(string s);
 
 mixed call_hooks(string, int);
 #ifdef USE_SKILLS
@@ -226,6 +231,119 @@ nomask void set_stat(string stat, int c)
    stats["stat_" + stat] = c;
    recompute_derived();
 }
+
+#ifdef USE_INTRODUCTIONS
+string describe_stat(string stat, int value)
+{
+   string desc;
+
+   switch (stat)
+   {
+   case "int":
+      desc = value > 25 ? "intense" : "unfocused";
+      break;
+   case "wil":
+      desc = value > 25 ? "focused" : "distracted";
+      break;
+   case "man":
+      desc = value > 25 ? "relaxed" : "stressed";
+      break;
+   case "str":
+      desc = value > 25 ? "strong" : "weak";
+      break;
+   case "agi":
+      desc = value > 25 ? "agile" : "clumsy";
+      break;
+   case "con":
+      desc = value > 25 ? "healthy" : "sickly";
+      break;
+   case "cha":
+      if (query_gender() == 1)
+         desc = value > 25 ? "gorgeous" : "ugly";
+      else
+         desc = value > 25 ? "beautiful" : "ugly";
+      break;
+   case "spd":
+      desc = value > 25 ? "fast" : "slow";
+      break;
+   }
+
+   switch (value)
+   {
+   case 0..10:
+      return "very " + desc;
+   case 11..18:
+      return "quite " + desc;
+   case 19..25:
+      return "a bit " + desc;
+   case 26..35:
+      return desc;
+   case 36..45:
+      return "quite " + desc;
+   case 46..55:
+      return "very " + desc;
+   case 56..80:
+      return "very " + desc;
+   default:
+      return "godly " + desc;
+   }
+}
+
+string physical_appearance()
+{
+   mapping current;
+   string best_stat, second_stat, desc, armour_desc;
+   object item = ((class wear_info)find_wi("torso"))->primary;
+   string *race = explode(capitalize(add_article(query_race())), " ");
+   int best, second;
+
+   if (cached_description)
+      return cached_description;
+
+   current = stat_type("cur");
+
+   foreach (string stat, int value in current)
+   {
+      if (stat == "spd")
+         continue;
+      if (value > second)
+      {
+         second = value;
+         second_stat = stat;
+      }
+      if (value > best)
+      {
+         second = best;
+         second_stat = best_stat;
+         best = value;
+         best_stat = stat;
+      }
+   }
+
+   if (!item)
+      item = ((class wear_info)find_wi("head"))->primary;
+
+   if (item)
+   {
+      // We have an item, take the second stat out of the picture since it's average.
+      if (second > 9 || second < 13)
+      {
+         second = 0;
+         second_stat = 0;
+      }
+      armour_desc = "wearing " + add_article(item->short());
+   }
+
+   cached_description = describe_stat(best_stat[4..], best);
+   if (second_stat)
+      cached_description += ", " + describe_stat(second_stat[4..], second);
+
+
+   cached_description = race[0] + " " + cached_description + " " + race[1] + (armour_desc ? " " + armour_desc : "");
+
+   return cached_description;
+}
+#endif
 
 int skill_stat_sum(string stat)
 {
