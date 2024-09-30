@@ -168,7 +168,6 @@ string physical_appearance()
          best_stat = stat;
       }
    }
-   TBUG("Best: " + best_stat + " Second: " + second_stat);
 
    if (!item)
       item = ((class wear_info)find_wi("head"))->primary;
@@ -187,8 +186,6 @@ string physical_appearance()
    cached_description = describe_stat(best_stat[4..], best);
    if (second_stat)
       cached_description += ", " + describe_stat(second_stat[4..], second);
-
-   TBUG(cached_description);
 
    cached_description = race[0] + " " + cached_description + " " + race[1] + (armour_desc ? " " + armour_desc : "");
 

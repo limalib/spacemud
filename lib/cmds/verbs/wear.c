@@ -10,6 +10,9 @@ void do_wear_obj(object ob)
       return;
 
    ob->do_wear();
+#ifdef USE_INTRODUCTIONS
+   this_body()->clear_description();
+#endif
 }
 
 void do_wear_obs(object *obs)
@@ -25,6 +28,9 @@ void do_wear_obs(object *obs)
          continue;
       ob->do_wear();
    }
+#ifdef USE_INTRODUCTIONS
+   this_body()->clear_description();
+#endif
 }
 
 void create()

@@ -51,6 +51,9 @@ mixed can_remove_wrd_from_obj(string wrd, object ob)
 void do_remove_obj(object ob)
 {
    ob->do_remove();
+#ifdef USE_INTRODUCTIONS
+   this_body()->clear_description();
+#endif
 }
 
 void do_remove_obs(object *obs)
@@ -65,6 +68,9 @@ void do_remove_obs(object *obs)
          continue;
       ob->do_remove();
    }
+#ifdef USE_INTRODUCTIONS
+   this_body()->clear_description();
+#endif
 }
 
 void do_remove_wrd(string wrd)

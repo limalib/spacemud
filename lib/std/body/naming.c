@@ -57,7 +57,6 @@ int is_introduced(object body)
 
 void introduce(object body)
 {
-   TBUG(body);
    if (!is_introduced(body))
       introduced += ({body->query_link()->query_userid() + ":" + body->query_name()});
 }
@@ -65,6 +64,11 @@ void introduce(object body)
 string *query_introduced()
 {
    return introduced;
+}
+
+void clear_introduced()
+{
+   introduced=({});
 }
 
 string query_description()
