@@ -122,6 +122,14 @@ int colour_strlen(string str)
    return strlen(XTERM256_D->substitute_colour(str, "plain"));
 }
 
+
+#ifdef USE_INTRODUCTIONS
+string physical_appearance()
+{
+   return this_object()->short();
+}
+#endif
+
 // Always returns a strlen 6.
 string pretty_bonus(int b)
 {

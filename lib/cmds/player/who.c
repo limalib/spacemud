@@ -88,7 +88,15 @@ string get_who_string(string arg)
       retval += "Sorry, no one fits that bill.";
    foreach (object body in u)
    {
+#ifdef USE_INTRODUCTIONS
+#ifdef USE_TITLES
+      name = body->query_title();
+#else
+      name = body->query_name();
+#endif
+#else
       name = body->query_formatted_desc(78);
+#endif
       if (!name)
          name = capitalize(body->query_userid());
 

@@ -49,6 +49,8 @@ string query_pronoun()
       return "he";
    case 2:
       return "she";
+   case 3:
+      return "they";
    }
 }
 
@@ -64,6 +66,8 @@ string query_objective()
       return "him";
    case 2:
       return "her";
+   case 3:
+      return "themselves";
    }
 }
 

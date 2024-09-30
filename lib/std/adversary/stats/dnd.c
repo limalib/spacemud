@@ -91,6 +91,7 @@ void init_stats()
    refresh_stats();
 }
 
+#ifdef USE_INTRODUCTIONS
 string describe_stat(string stat, int value)
 {
    string desc;
@@ -189,10 +190,11 @@ string physical_appearance()
 
    TBUG(cached_description);
 
-   cached_description = race[0] + " " + cached_description + " " + race[1] + " " + armour_desc;
+   cached_description = race[0] + " " + cached_description + " " + race[1] + (armour_desc ? " " + armour_desc : "");
 
    return cached_description;
 }
+#endif
 
 /*
 ** Must be defined for the mudlib inteface. Put in the stat you want.

@@ -16,29 +16,78 @@ string invis_name;
 private
 string nickname;
 
-int is_visible();
-int test_flag(int which);
-int query_ghost();
-object query_link();
-string number_of(int num, string what);
+#ifdef USE_INTRODUCTIONS
+private
+string *introduced = ({});
+#endif
+
 void save_me();
-string query_reflexive();
 void remove_id(string *id...);
 void add_id_no_plural(string *id...);
+
+string number_of(int num, string what);
 string in_room_desc();
 string living_query_name();
 string query_name();
 string query_race();
-string physical_appearance();
+string query_pronoun();
+string query_reflexive();
+
+int is_visible();
+int test_flag(int which);
+int query_ghost();
 int query_prone();
 int query_sitting();
+
+object query_link();
+
+#ifdef USE_INTRODUCTIONS
+string physical_appearance();
+#endif
 
 #ifdef USE_TITLES
 string query_title();
 #endif
 
+#ifdef USE_INTRODUCTIONS
+int is_introduced(object body)
+{
+   return member_array(body->query_link()->query_userid() + ":" + body->query_name(), introduced) != -1;
+}
+
+void introduce(object body)
+{
+   TBUG(body);
+   if (!is_introduced(body))
+      introduced += ({body->query_link()->query_userid() + ":" + body->query_name()});
+}
+
+string *query_introduced()
+{
+   return introduced;
+}
+
+string query_description()
+{
+   string state = query_prone() ? "is lying on the ground" : (query_sitting() ? "is sitting here" : "is standing here");
+   return physical_appearance() + " " + state + ".";
+}
+#endif
+
 string query_long_name()
 {
+#ifdef USE_INTRODUCTIONS
+   if (query_ghost())
+      return "A ghostly outline of " + add_article(query_race());
+#ifdef USE_TITLES
+   // If the onlooker is introduced to use, give them our title, otherwise give them our description.
+   return this_body()->is_introduced(this_object()) ? query_title() : query_description();
+#else
+   return this_body()->is_introduced(this_object()) ? query_description() + "[" + query_name() + "]" +)
+       : query_description();
+#endif
+   return;
+#else
    if (query_ghost())
       return "The ghost of " + capitalize(living_query_name());
 #ifdef USE_TITLES
@@ -46,12 +95,7 @@ string query_long_name()
 #else
    return capitalize(living_query_name());
 #endif
-}
-
-string query_description()
-{
-   string state = query_prone() ? "is lying on the ground" : (query_sitting() ? "is sitting here" : "is standing here");
-   return physical_appearance() + " " + state + ".";
+#endif
 }
 
 nomask string query_userid()
@@ -137,8 +181,13 @@ string our_description()
    if (describe)
       return in_room_desc() + "\n" + describe + "\n";
 
-   return in_room_desc() + "\n" + capitalize(query_name()) + " is boring and hasn't described " + query_reflexive() +
-          ".\n";
+   return in_room_desc() + "\n" +
+#ifdef USE_INTRODUCTIONS
+          capitalize(query_pronoun())
+#else
+          capitalize(query_name())
+#endif
+          + " is boring and hasn't described " + query_reflexive() + ".\n";
 }
 
 void set_nickname(string arg)

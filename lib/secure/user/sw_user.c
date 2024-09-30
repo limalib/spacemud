@@ -72,6 +72,10 @@ nomask int do_su(string old_userid, string new_userid, string new_body)
       if (old_name)
          tell_environment(body, sprintf("%s has polymorphed into %s.\n", old_name, new_name), 0, ({body}));
    }
+#ifdef USE_INTRODUCTIONS
+   if (body)
+      body->add_id_no_plural(body->query_race());
+#endif
    receive(sprintf("Done. You are now %s.\n", new_name));
 
    /*

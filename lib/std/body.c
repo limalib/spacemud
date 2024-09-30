@@ -195,6 +195,11 @@ nomask void su_enter_game(object where)
 
 void enter_game(int state)
 {
+
+#ifdef USE_INTRODUCTIONS
+   add_id_no_plural(this_object()->query_race());
+#endif
+
    switch (state)
    {
    case 1:
