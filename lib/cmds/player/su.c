@@ -53,7 +53,6 @@ void main(string arg)
       {
          if (wizardp(this_user()))
             race = replace_string(race, "/race/", "/race/restricted/");
-         TBUG(race);
          if (!is_file(race))
          {
             out("No such race.\n");
