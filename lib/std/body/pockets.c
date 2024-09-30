@@ -6,7 +6,7 @@
 #define PERCENT_TO_DROP_WHEN_ENCUMBERED 10
 #define PERCENT_TO_TAKE_DMG_ENCUMBERED 10
 
-int query_carrying_stat();                               // From M_BODYSTATS
+int query_carrying_stat();                     // From stats
 varargs float query_capacity(string relation); // From CONTAINER
 
 private

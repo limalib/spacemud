@@ -204,7 +204,6 @@
 
 /* for mudlib objects */
 #define _MODULES           "/std/modules/"
-#define M_BODY_STATS       _MODULES "m_bodystats"
 #define M_COLOURS          _MODULES "m_colours"
 #define M_COMPLETE         _MODULES "m_complete"
 #define M_CONVERSATION     _MODULES "m_conversation"

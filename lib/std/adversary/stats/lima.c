@@ -1,7 +1,7 @@
 /* Do not remove the headers from this file! see /USAGE for more info. */
 
 //: MODULE
-// m_bodystats_lima.c -- body statistics (characteristics)
+// lima.c -- body statistics (characteristics)
 //
 // This module should be inherited into anything requiring physical
 // statistics/characteristics.  Typically, this will be used by a
@@ -49,11 +49,11 @@
 //
 // .. TAGS: RST
 
-#include <classes.h>
 #include <config/stats.h>
 #include <hooks.h>
 #include <stats.h>
 
+inherit "/std/adversary/stats/base";
 private
 inherit CLASS_STATMODS;
 
@@ -64,14 +64,6 @@ int aggregate_skill(string skill);
 void recompute_derived();
 void refresh_stats();
 int skill_stat_sum(string stat);
-
-private
-mapping stats = ([]);
-
-mapping query_stats()
-{
-   return copy(stats);
-}
 
 /* Because of the complexity of the system, a bonus to strength affects
  * str as well as con and wis and cha.  To avoid having to recall all
@@ -104,10 +96,6 @@ nosave private int *constant_vector;
 ** query_xxx() returns the statistic, adjusted for all additional factors
 **   such as temporary boosts, detriments, etc.
 */
-nomask int query_stat_pure(string stat)
-{
-   return stats["stat_" + stat];
-}
 
 nomask int query_stat(string stat)
 {
@@ -126,11 +114,6 @@ void set_mod_stat(string stat, int s)
 {
    stats["mod_" + stat] = s;
    recompute_derived();
-}
-
-int query_mod_stat(string stat)
-{
-   return stats["mod_" + stat];
 }
 
 void inc_mod_stat(string stat)
@@ -303,15 +286,6 @@ int max_stat()
    return max(({stats["stat_str"], stats["stat_agi"], stats["stat_int"], stats["stat_wil"]}));
 }
 
-void reset_stat_increases()
-{
-   stats["mod_str"] = 0;
-   stats["mod_agi"] = 0;
-   stats["mod_int"] = 0;
-   stats["mod_wil"] = 0;
-   refresh_stats();
-}
-
 //: FUNCTION init_stats
 // Rolls the stats for the first time, based on the proper racial adjustments.
 // Admins can call this to reinitialize a player's stats (for example, in the
@@ -319,11 +293,8 @@ void reset_stat_increases()
 nomask void init_stats()
 {
    class stat_roll_mods mods;
+   ::init_stats();
 
-   /*
-   if ( stat_str && !check_previous_privilege(1) )
-   error("cannot reinitialize statistics\n");
-*/
    mods = query_roll_mods();
    if (mods.str_adjust + mods.agi_adjust + mods.int_adjust + mods.wil_adjust != 0)
       error("illegal stat adjustment values\n");
@@ -398,11 +369,6 @@ int query_reflex_stat()
 mapping stat_abrev()
 {
    return (["strength":"str", "agility":"agi", "intelligence":"int", "willpower":"wil"]);
-}
-
-int colour_strlen(string str)
-{
-   return strlen(XTERM256_D->substitute_colour(str, "plain"));
 }
 
 // Always returns a strlen 6.

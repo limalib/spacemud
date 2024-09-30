@@ -28,6 +28,10 @@ void add_id_no_plural(string *id...);
 string in_room_desc();
 string living_query_name();
 string query_name();
+string query_race();
+string physical_appearance();
+int query_prone();
+int query_sitting();
 
 #ifdef USE_TITLES
 string query_title();
@@ -42,6 +46,12 @@ string query_long_name()
 #else
    return capitalize(living_query_name());
 #endif
+}
+
+string query_description()
+{
+   string state = query_prone() ? "is lying on the ground" : (query_sitting() ? "is sitting here" : "is standing here");
+   return physical_appearance() + " " + state + ".";
 }
 
 nomask string query_userid()

@@ -1,17 +1,15 @@
 /* Do not remove the headers from this file! see /USAGE for more info. */
 
 //: MODULE
-// m_bodystats_rifts.c -- body statistics (characteristics)
+// rifts.c -- body statistics (characteristics)
 //
 // Very rough version 0.1 by Tsath 2024.
 //
 // .. TAGS: RST
 
-#include <classes.h>
-#include <config/stats.h>
 #include <hooks.h>
-#include <stats.h>
 
+inherit "/std/adversary/stats/base";
 private
 inherit CLASS_STATMODS;
 
@@ -60,27 +58,6 @@ int spare_points()
    return total_pts;
 }
 
-/*
-** Derived statistics
-*/
-//: FUNCTION refresh_stats
-// refresh_stats() recalculates all the stats and requery's all the bonuses.
-// Combat calls this once a round.  If you are using stats in a non-combat
-// setting, you might want to call this first.
-void refresh_stats()
-{
-   int adj_iq, adj_me, adj_ma, adj_ps, adj_pp, adj_pe, adj_pb, adj_spd;
-
-   stats["cur_iq"] = stats["stat_iq"] + stats["mod_iq"] + (adj_iq = call_hooks("str_bonus", HOOK_SUM));
-   stats["cur_me"] = stats["stat_me"] + stats["mod_me"] + (adj_me = call_hooks("dex_bonus", HOOK_SUM));
-   stats["cur_ps"] = stats["stat_ps"] + stats["mod_ps"] + (adj_ps = call_hooks("int_bonus", HOOK_SUM));
-   stats["cur_pp"] = stats["stat_pp"] + stats["mod_pp"] + (adj_pp = call_hooks("wil_bonus", HOOK_SUM));
-   stats["cur_ma"] = stats["stat_ma"] + stats["mod_ma"] + (adj_ma = call_hooks("wil_bonus", HOOK_SUM));
-   stats["cur_pe"] = stats["stat_pe"] + stats["mod_pe"] + (adj_pe = call_hooks("wil_bonus", HOOK_SUM));
-   stats["cur_pb"] = stats["stat_pb"] + stats["mod_pb"] + (adj_pb = call_hooks("wil_bonus", HOOK_SUM));
-   stats["cur_spd"] = stats["stat_spd"] + stats["mod_spd"] + (adj_spd = call_hooks("wil_bonus", HOOK_SUM));
-}
-
 nomask void set_stat(string stat, int c)
 {
    stats["stat_" + stat] = c;
@@ -117,37 +94,13 @@ nomask int roll_stat()
       return base;
 }
 
-int max_stat()
-{
-   return max(({stats["stat_iq"], stats["stat_me"], stats["stat_ps"], stats["stat_pp"], stats["stat_ma"],
-                stats["stat_pe"], stats["stat_pb"], stats["stat_spd"]}));
-}
-
-void reset_stat_increases()
-{
-   stats["mod_iq"] = 0;
-   stats["mod_me"] = 0;
-   stats["mod_ma"] = 0;
-   stats["mod_ps"] = 0;
-   stats["mod_pp"] = 0;
-   stats["mod_pe"] = 0;
-   stats["mod_pb"] = 0;
-   stats["mod_spd"] = 0;
-   refresh_stats();
-}
-
 //: FUNCTION init_stats
 // Rolls the stats for the first time, based on the proper racial adjustments.
 // Admins can call this to reinitialize a player's stats (for example, in the
 // case of abysmally horrific (near minimum) rolls.
 nomask void init_stats()
 {
-   class stat_roll_mods mods;
-   stats = ([]);
-   /*
-   if ( stat_iq && !check_previous_privilege(1) )
-   error("cannot reinitialize statistics\n");
-*/
+   ::init_stats();
 
    stats["stat_iq"] = roll_stat();
    stats["stat_me"] = roll_stat();
@@ -225,11 +178,6 @@ mapping stat_abrev()
                  "Mental Endurance (M.E.)":"me", "Mental Affinity (M.A.)":"ma", "Physical Strength (P.S.)":"ps",
                  "Physical Prowess (P.P.)":"pp", "Physical Endurance (P.E.)":"pe", "Physical Beauty (P.B.)":"pb",
                              "Speed (Spd)":"spd"]);
-}
-
-int colour_strlen(string str)
-{
-   return strlen(XTERM256_D->substitute_colour(str, "plain"));
 }
 
 // Always returns a strlen 6.

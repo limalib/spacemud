@@ -1,58 +1,21 @@
 /* Do not remove the headers from this file! see /USAGE for more info. */
 
 //: MODULE
-// m_bodystats_dnd.c -- body statistics (characteristics)
+// dnd.c -- body statistics (characteristics)
 //
 // .. TAGS: RST
-
-#include <classes.h>
-#include <config/stats.h>
-#include <hooks.h>
-#include <stats.h>
-
-
-//Define this to use "Roll 4d6 drop lowest". If not defined, we use old school 3d6.
+// Define this to use "Roll 4d6 drop lowest". If not defined, we use old school 3d6.
 #define USE_4D6DL
 
+inherit "/std/adversary/stats/base";
 private
 inherit CLASS_STATMODS;
+inherit CLASS_WEAR_INFO;
 
-mixed call_hooks(string, int);
 void refresh_stats();
-int skill_stat_sum(string stat);
-
-private
-mapping stats = ([]);
-
-mapping query_stats()
-{
-   return copy(stats);
-}
-
-nomask int query_stat_pure(string stat)
-{
-   return stats["stat_" + stat];
-}
-
-nomask int query_stat(string stat)
-{
-   return stats["cur_" + stat];
-}
-
-void set_mod_stat(string stat, int s)
-{
-   stats["mod_" + stat] = s;
-}
-
-int query_mod_stat(string stat)
-{
-   return stats["mod_" + stat];
-}
-
-void inc_mod_stat(string stat)
-{
-   stats["mod_" + stat]++;
-}
+int query_gender();
+string query_race();
+class wear_info find_wi(string s);
 
 int spare_points()
 {
@@ -60,25 +23,6 @@ int spare_points()
    total_pts -=
        stats["mod_str"] + stats["mod_dex"] + stats["mod_con"] + stats["mod_int"] + stats["mod_wis"] + stats["mod_cha"];
    return total_pts;
-}
-
-/*
-** Derived statistics
-*/
-//: FUNCTION refresh_stats
-// refresh_stats() recalculates all the stats and requery's all the bonuses.
-// Combat calls this once a round.  If you are using stats in a non-combat
-// setting, you might want to call this first.
-void refresh_stats()
-{
-   int adj_str, adj_dex, adj_con, adj_int, adj_wis, adj_cha;
-
-   stats["cur_str"] = stats["stat_str"] + stats["mod_str"] + (adj_str = call_hooks("str_bonus", HOOK_SUM));
-   stats["cur_dex"] = stats["stat_dex"] + stats["mod_dex"] + (adj_dex = call_hooks("dex_bonus", HOOK_SUM));
-   stats["cur_int"] = stats["stat_int"] + stats["mod_int"] + (adj_int = call_hooks("int_bonus", HOOK_SUM));
-   stats["cur_wis"] = stats["stat_wis"] + stats["mod_wis"] + (adj_wis = call_hooks("wil_bonus", HOOK_SUM));
-   stats["cur_con"] = stats["stat_con"] + stats["mod_con"] + (adj_con = call_hooks("wil_bonus", HOOK_SUM));
-   stats["cur_cha"] = stats["stat_cha"] + stats["mod_cha"] + (adj_cha = call_hooks("wil_bonus", HOOK_SUM));
 }
 
 nomask void set_stat(string stat, int c)
@@ -112,7 +56,6 @@ int roll_dice()
    return ((int)sum(total...)) - min;
 }
 
-private
 nomask int roll_stat()
 {
 #ifdef USE_4D6DL
@@ -128,29 +71,13 @@ int max_stat()
                 stats["stat_cha"]}));
 }
 
-void reset_stat_increases()
-{
-   stats["mod_str"] = 0;
-   stats["mod_dex"] = 0;
-   stats["mod_con"] = 0;
-   stats["mod_int"] = 0;
-   stats["mod_wis"] = 0;
-   stats["mod_cha"] = 0;
-   refresh_stats();
-}
-
 //: FUNCTION init_stats
 // Rolls the stats for the first time, based on the proper racial adjustments.
 // Admins can call this to reinitialize a player's stats (for example, in the
 // case of abysmally horrific (near minimum) rolls.
-nomask void init_stats()
+void init_stats()
 {
-   class stat_roll_mods mods;
-
-   /*
-   if ( stat_str && !check_previous_privilege(1) )
-   error("cannot reinitialize statistics\n");
-*/
+   ::init_stats();
 
    stats["stat_str"] = roll_stat();
    stats["stat_dex"] = roll_stat();
@@ -162,6 +89,109 @@ nomask void init_stats()
    reset_stat_increases();
 
    refresh_stats();
+}
+
+string describe_stat(string stat, int value)
+{
+   string desc;
+
+   switch (stat)
+   {
+   case "str":
+      desc = value > 9 ? "muscular" : "weak";
+      break;
+   case "dex":
+      desc = value > 9 ? "agile" : "clumsy";
+      break;
+   case "con":
+      desc = value > 9 ? "healthy" : "sickly";
+      break;
+   case "int":
+      desc = value > 9 ? "intense" : "unfocused";
+      break;
+   case "wis":
+      desc = value > 9 ? "wise" : "distracted";
+      break;
+   case "cha":
+      if (query_gender() == 1)
+         desc = value > 9 ? "gorgeous" : "ugly";
+      else
+         desc = value > 9 ? "beautiful" : "ugly";
+      break;
+   }
+
+   switch (value)
+   {
+   case 0..3:
+      return "very " + desc;
+   case 4..6:
+      return "quite " + desc;
+   case 7..9:
+      return "a bit " + desc;
+   case 10..12:
+      return desc;
+   case 13..15:
+      return "quite " + desc;
+   case 16..18:
+      return "very " + desc;
+   default:
+      return "extremely " + desc;
+   }
+}
+
+string physical_appearance()
+{
+   mapping current;
+   string best_stat, second_stat, desc, armour_desc;
+   object item = ((class wear_info)find_wi("torso"))->primary;
+   string *race = explode(capitalize(add_article(query_race())), " ");
+   int best, second;
+
+   if (cached_description)
+      return cached_description;
+
+   current = stat_type("cur");
+
+   foreach (string stat, int value in current)
+   {
+      if (value > second)
+      {
+         second = value;
+         second_stat = stat;
+      }
+      if (value > best)
+      {
+         second = best;
+         second_stat = best_stat;
+         best = value;
+         best_stat = stat;
+      }
+   }
+   TBUG("Best: " + best_stat + " Second: " + second_stat);
+
+   if (!item)
+      item = ((class wear_info)find_wi("head"))->primary;
+
+   if (item)
+   {
+      // We have an item, take the second stat out of the picture since it's average.
+      if (second > 9 || second < 13)
+      {
+         second = 0;
+         second_stat = 0;
+      }
+      armour_desc = "wearing " + add_article(item->short());
+   }
+
+   cached_description = describe_stat(best_stat[4..], best);
+   if (second_stat)
+      cached_description += ", " + describe_stat(second_stat[4..], second);
+
+   TBUG(cached_description);
+
+   cached_description = race[0] + " " + cached_description + " " + race[1] + " " + armour_desc;
+
+   return cached_description;
 }
 
 /*
@@ -226,11 +256,6 @@ mapping stat_abrev()
            "dexterity":"dex", "intelligence":"int", "wisdom":"wis", "constitution":"con", "charisma":"cha", ]);
 }
 
-int colour_strlen(string str)
-{
-   return strlen(XTERM256_D->substitute_colour(str, "plain"));
-}
-
 // Always returns a strlen 6.
 string pretty_bonus(int b)
 {
@@ -256,12 +281,12 @@ string show_stats()
 {
    return sprintf(
        "    <bld>Strength<res> %2d (%2s)   <bld>Dexterity<res> %2d (%2s)   <bld>Constitution<res> %2d (%2s)\n" +      //
-       "<bld>Intelligence<res> %2d (%2s)      <bld>Wisdom<res> %2d (%2s)       <bld>Charisma<res> %2d (%2s)\n\n", //
-       query_stat("str"), dnd_stat_mod("str"),                                                                    //
-       query_stat("dex"), dnd_stat_mod("dex"),                                                                    //
-       query_stat("con"), dnd_stat_mod("con"),                                                                    //
-       query_stat("int"), dnd_stat_mod("int"),                                                                    //
-       query_stat("wis"), dnd_stat_mod("wis"),                                                                    //
+           "<bld>Intelligence<res> %2d (%2s)      <bld>Wisdom<res> %2d (%2s)       <bld>Charisma<res> %2d (%2s)\n\n", //
+       query_stat("str"), dnd_stat_mod("str"),                                                                        //
+       query_stat("dex"), dnd_stat_mod("dex"),                                                                        //
+       query_stat("con"), dnd_stat_mod("con"),                                                                        //
+       query_stat("int"), dnd_stat_mod("int"),                                                                        //
+       query_stat("wis"), dnd_stat_mod("wis"),                                                                        //
        query_stat("cha"), dnd_stat_mod("cha"), );
 }
 

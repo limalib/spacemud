@@ -9,7 +9,6 @@
 
 inherit LIVING;
 inherit M_DAMAGE_SOURCE;
-inherit M_BODY_STATS;
 
 #define SUBDIR __DIR__ "adversary/"
 
@@ -21,6 +20,15 @@ inherit SUBDIR "messages";
 inherit SUBDIR "mod_config";
 inherit SUBDIR "armour/armour_base";
 inherit SUBDIR "wield/wield_base";
+#if BODY_STATS == BODY_STATS_LIMA
+inherit SUBDIR "stats/lima";
+#elif BODY_STATS == BODY_STATS_DND
+inherit SUBDIR "stats/dnd";
+#elif BODY_STATS == BODY_STATS_RIFTS
+inherit SUBDIR "stats/rifts";
+#endif
+
+
 #ifdef USE_SKILLS
 inherit SUBDIR "skills";
 #endif
