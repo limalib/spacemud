@@ -8,12 +8,12 @@ inherit BODY;
  */
 string query_race()
 {
-   return "human";
+   return "dragon";
 }
 
 string *compatibility()
 {
-   return ({"lima", "dnd","rifts"});
+   return ({"rifts"});
 }
 
 /*
@@ -22,7 +22,7 @@ string *compatibility()
  */
 string short_description()
 {
-   return "Humans are pretty average.  If this were a real mud, a better description would be provided (we hope).\n";
+   return "Dragons are for Rifts.\n";
 }
 
 /*
