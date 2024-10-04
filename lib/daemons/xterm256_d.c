@@ -222,8 +222,15 @@ varargs string substitute_ansi(string text, string mode)
          }
          else
          {
-            parts[sz] = ansi[part];
-            // TBUG(part + " replaced with ANSI code " + user[part]);
+            //Small naughty hack just to handle the old ANSI combo of "bold,yellow".
+            //Not spending too much time on this, trying to move away from PINKFISH.
+            if (strlen(part) > 6 && part[0..4] == "BOLD,")
+            {
+               part = part[5..];
+               parts[sz] = ansi["BOLD"] + ansi[part];
+            }
+            else
+               parts[sz] = ansi[part];
          }
       }
       break;
@@ -358,7 +365,7 @@ string xterm256_wrap(string str, int wrap_at, int indent_at)
    int ends_with_lf = strlen(str) > 1 && str[ < 1] == 10;
    mapping running = (["length":0]);
    if (!wrap_at)
-      wrap_at =DEFAULT_SCREEN_WIDTH;
+      wrap_at = DEFAULT_SCREEN_WIDTH;
 
    // this routine strips out the first space, put it back into the
    // array if the original string had a leading space
