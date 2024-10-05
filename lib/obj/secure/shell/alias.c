@@ -41,11 +41,11 @@
 //
 // | $\*  -- It's the same as $1, but it means 'everything else'.
 //        Example:  If you alias "you're" to:
-//                   say $2, you're $1!  Do you $*?       When you type:
+//                   say $2, you're $1!  Do you $\*?       When you type:
 //                  you're studly Rust exercise much
 //	You'll say: "Hey, Rust, you're studly!  Do you exercise much?"
 //
-// Notice $* matches any number of words, whereas $1, $2, etc...
+// Notice $\* matches any number of words, whereas $1, $2, etc...
 // only match one word.
 //
 // If you don't put a $\* in your expansion, one will be automatically
