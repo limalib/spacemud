@@ -4,7 +4,7 @@ FREQUENTLY ASKED QUESTIONS
 Q Does Lima work on Windows ?
 
 A Yes, if you use Windows Subsystem for Liux (WSL)
-  See https://limamudlib.readthedocs.io/Installation.html.
+  See https://docs.limalib.dev/Installation.html.
 
 Q Does Lima work with other drivers ?
 
@@ -53,7 +53,7 @@ A The entire mud can be backed up by using the "backup" script in the /etc
 
 Q Where is the Lima documentaion?
 
-A Start with   https://limamudlib.readthedocs.io/
+A Start with   https://docs.limalib.dev/
   The help files - either "help <subject>" or browse through the
   /help/ directory
   Read the code
@@ -61,7 +61,7 @@ A Start with   https://limamudlib.readthedocs.io/
 
 Q How can I learn LPC?
 
-A https://limamudlib.readthedocs.io/ - see the learning path tutorials.
+A https://docs.limalib.dev/ - see the learning path tutorials.
   They are split into sveral parts with exercises.
 
 Q how do I call functions from the command line / shell prompt?
