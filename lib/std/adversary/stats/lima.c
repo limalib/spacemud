@@ -294,7 +294,7 @@ string physical_appearance()
    mapping current;
    string best_stat, second_stat, desc, armour_desc;
    object item = ((class wear_info)find_wi("torso"))->primary;
-   string *race = explode(capitalize(add_article(query_race())), " ");
+   string race = query_race();
    int best, second;
 
    if (cached_description)
@@ -339,7 +339,7 @@ string physical_appearance()
       cached_description += ", " + describe_stat(second_stat[4..], second);
 
 
-   cached_description = race[0] + " " + cached_description + " " + race[1] + (armour_desc ? " " + armour_desc : "");
+   cached_description = capitalize(add_article(cached_description + " " + race + (armour_desc ? " " + armour_desc : "")));
 
    return cached_description;
 }
