@@ -32,6 +32,7 @@ nomask int move_me_there(class move_data data)
    object d;
    mixed r;
    mixed txt;
+   string *msgs;
 
    if ((r = move(data.destination, data.relation)) != MOVE_OK)
    {
@@ -94,6 +95,13 @@ nomask int move_me_there(class move_data data)
    if (!txt)
       txt = query_msg("leave");
 
+#ifdef USE_INTRODUCTIONS
+   if (arrayp(txt))
+      txt = map(txt, ( : replace_string($1, "$N", capitalize(add_article(this_object()->query_race()))) :));
+   if (stringp(txt))
+      txt = replace_string(txt, "$N", capitalize(add_article(this_object()->query_race())));
+#endif
+
    /* Display the message */
    if (data.source)
       tell_from_inside(last_loc, action(({data.who}), txt, data.source)[1]);
@@ -113,13 +121,19 @@ nomask int move_me_there(class move_data data)
       return r == MOVE_OK;
 
    /* Display the message */
-   if (data.through)
-      simple_action(txt, data.through);
-   else if (data.source)
-      simple_action(txt, data.source);
-   else
-      simple_action(txt);
 
+   if (data.through)
+      msgs = action(({this_object()}), txt, data.through);
+   else if (data.source)
+      msgs = action(({this_object()}), txt, data.source);
+   else
+      msgs = action(({this_object()}), txt);
+
+#ifdef USE_INTRODUCTIONS
+   msgs[1] = replace_string(msgs[1], this_object()->query_name(), capitalize(add_article(this_object()->query_race())));
+#endif
+
+   tell_environment(this_object(), msgs[1], MSG_INDENT, ({this_object()}));
    return r == MOVE_OK;
 }
 
