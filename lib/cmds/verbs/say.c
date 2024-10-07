@@ -45,10 +45,33 @@ mixed do_say_str(string str)
       more(out);
       break;
    default:
+#ifdef USE_INTRODUCTIONS
+      foreach (object player in others)
+      {
+         string name;
+         string msg;
+
+         if (player->is_introduced(this_body()))
+            name = this_body()->query_name();
+         else
+         {
+            name = this_body()->physical_appearance();
+            if (wizardp(player))
+               name = "[" + this_body()->query_name() + "] " + name;
+         }
+         
+         // Make sure wizards can see who is talking.
+         msg = "%^SAY%^" + name + " says:%^RESET%^ " + punctuate(str) + "<res>";
+         tell(player, msg);
+         player->add_say_history(msg);
+      }
+      tell(this_body(), "%^SAY%^You say:%^RESET%^ " + punctuate(str) + "<res>");
+#else
       msgs = this_body()->action(({this_body()}), "%^SAY%^$N $vsay:%^RESET%^ $o<res>", punctuate(str));
       this_body()->inform(({this_body()}), msgs, others);
       this_body()->add_say_history(msgs[0]);
       others->add_say_history(msgs[1]);
+#endif
    }
 }
 
