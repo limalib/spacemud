@@ -39,34 +39,54 @@ inherit CLASS_WEAR_INFO;
 
 mapping short_names = DAMAGE_D->query_short_names();
 
-int item_length(string *shorts)
+string short_damage_types(string *types)
 {
-   int width = this_user()->query_screen_width() - 60;
-   int uni = uses_unicode();
-   int smallest = max(map(shorts, ( : strlen($1) :)));
-   string ellipsis = uni ? "…" : "...";
-   int l = strlen(ellipsis);
-   if (smallest < 8)
-      smallest = 8;
-   if (smallest < width)
-      width = smallest;
-
-   return clamp(width - l, 0, 100);
+   return format_list(map(types, ( : short_names[$1] :)));
 }
 
-string ellipsis_name(string name, string *names)
+string format_slots(object a, string *slots)
 {
-   int width = item_length(names);
-   int uni = uses_unicode();
-   string ellipsis = uni ? "…" : "...";
-   if (simplify())
-      return capitalize(name);
+   if (a->also_covers())
+      slots += a->also_covers();
 
-   if (strlen(name) - strlen(ellipsis) > width)
+   if (member_array("left foot", slots) != -1 && member_array("right foot", slots) != -1)
    {
-      name = !width ? "..." : trim(name[0..width]) + ellipsis;
+      slots -= ({"left foot", "right foot"});
+      slots += ({"feet"});
    }
-   return capitalize(name);
+
+   if (member_array("left leg", slots) != -1 && member_array("right leg", slots) != -1)
+   {
+      slots -= ({"left leg", "right leg"});
+      slots += ({"legs"});
+   }
+
+   if (member_array("left arm", slots) != -1 && member_array("right arm", slots) != -1)
+   {
+      slots -= ({"left arm", "right arm"});
+      slots += ({"arms"});
+   }
+
+   if (member_array("left hand", slots) != -1 && member_array("right hand", slots) != -1)
+   {
+      slots -= ({"left hand", "right hand"});
+      slots += ({"hands"});
+   }
+
+   if (member_array("arms", slots) != -1 && member_array("legs", slots) != -1 && member_array("torso", slots) != -1)
+   {
+      slots -= ({"arms", "legs", "torso"});
+      slots += ({"full body"});
+   }
+
+   if (member_array("arms", slots) != -1 && member_array("head", slots) != -1 && member_array("torso", slots) != -1)
+   {
+      slots -= ({"arms", "head", "torso"});
+      slots += ({"upper body"});
+   }
+
+   slots = map(slots, ( : capitalize($1) :));
+   return format_list(slots);
 }
 
 private
@@ -77,8 +97,6 @@ void main(string arg)
    object body;
    int nothing_worn = 1;
    int nothing_wielded = 1;
-   int width;
-   int uni = uses_unicode();
    if (arg)
       arg = trim(arg);
 
@@ -117,97 +135,38 @@ void main(string arg)
 
    if (sizeof(weapons))
    {
-      string *props = ({});
-      string content = "";
-      width = item_length(weapons->short()) + (uni ? 2 : 4);
       set_frame_title("Weapons");
-      set_frame_header(
-          sprintf("%-" + width + "s  %-7s  %-5s  %-11s  %s", "Weapon", "WC", "Dura", "Damage Type", "Properties"));
-      foreach (object w in weapons)
-      {
-         string *types =
-             w->query_loadable() && w->loaded_with() ? w->loaded_with()->query_damage_type() : w->query_damage_type();
-         types -= ({0});
-         types = map_array(types, ( : short_names[$1] :));
-         props = w->query_properties() || ({});
-         content += sprintf(" %-" + width + "." + width + "s  %-7s  %-5s  %11-s  %s\n",
-                            ellipsis_name(w->short(), weapons->short()),
-                            "" + w->query_weapon_class() +
-                                (w->query_to_hit_bonus() > 0
-                                     ? "(+" + w->query_to_hit_bonus() + ")"
-                                     : (w->query_to_hit_bonus() < 0 ? "(" + w->query_to_hit_bonus() + ")" : "")),
-                            "" + w->durability_percent() + "%", implode(types, ","), format_list(props));
-      }
-      set_frame_content(content);
-      write(frame_render());
+      frame_add_column("Weapon", weapons->short());
+      frame_add_column("WC", map(weapons, ( : $1->query_weapon_class() :)));
+      frame_add_column("Durability", map(weapons, ( : $1->durability_percent() + "%" :)));
+      frame_add_column("Damage Type", map(weapons, (
+                                                       : short_damage_types($1->query_loadable() && $1->loaded_with()
+                                                                                ? $1->loaded_with()->query_damage_type()
+                                                                                : $1->query_damage_type())
+                                                       :)));
+      frame_add_column("Properties", map(weapons, ( : format_list($1->query_properties()) :)));
       nothing_wielded = 0;
+      write(frame_render_columns());
    }
 
    if (sizeof(armours))
    {
-      string content = "";
-      width = item_length(armours->short()) + (uni ? 2 : 4);
+      frame_init_user();
       set_frame_title("Armours");
-      set_frame_header(sprintf("%-" + width + "." + width + "s  %-21s  %-3s  %-5s  %s", "Item", "Worn on", "AC", "Dura",
-                               "Modifiers"));
-      foreach (object a in armours)
-      {
-         string *slots = ({a->query_slot()});
-
-         if (a->also_covers())
-            slots += a->also_covers();
-
-         if (member_array("left foot", slots) != -1 && member_array("right foot", slots) != -1)
-         {
-            slots -= ({"left foot", "right foot"});
-            slots += ({"feet"});
-         }
-
-         if (member_array("left leg", slots) != -1 && member_array("right leg", slots) != -1)
-         {
-            slots -= ({"left leg", "right leg"});
-            slots += ({"legs"});
-         }
-
-         if (member_array("left arm", slots) != -1 && member_array("right arm", slots) != -1)
-         {
-            slots -= ({"left arm", "right arm"});
-            slots += ({"arms"});
-         }
-
-         if (member_array("left hand", slots) != -1 && member_array("right hand", slots) != -1)
-         {
-            slots -= ({"left hand", "right hand"});
-            slots += ({"hands"});
-         }
-
-         if (member_array("arms", slots) != -1 && member_array("legs", slots) != -1 &&
-             member_array("torso", slots) != -1)
-         {
-            slots -= ({"arms", "legs", "torso"});
-            slots += ({"full body"});
-         }
-
-         if (member_array("arms", slots) != -1 && member_array("head", slots) != -1 &&
-             member_array("torso", slots) != -1)
-         {
-            slots -= ({"arms", "head", "torso"});
-            slots += ({"upper body"});
-         }
-
-         slots = map_array(slots, ( : capitalize($1) :));
-
-         content += sprintf(" %-" + width + "." + width + "s  %-21s  %-3s  %-5s  %s\n",
-                            ellipsis_name(a->short(), armours->short()), format_list(slots),
-                            "" + (a->query_armour_class() || "-"),
-                            a->query_armour_class() ? "" + a->durability_percent() + "%" : "-",
-                            (a->query_stat_bonus() ? capitalize(a->query_stat_bonus()) + " " +
-                                                         (a->query_stat_mod() >= 0 ? "+" : "") + a->query_stat_mod()
-                             : a->stat_mods_string(1) ? a->stat_mods_string(1)
-                                                      : ""), );
-      }
-      set_frame_content(content);
-      write(frame_render());
+      frame_add_column("Item", armours->short());
+      frame_add_column("Worn on", map(armours, ( : format_slots($1, ({$1->query_slot()})) :)));
+      frame_add_column("AC", map(armours, ( : $1->query_armour_class() || "-" :)));
+      frame_add_column("Durabilty", map(armours, (
+                                                     : $1->query_armour_class() ? $1->durability_percent() + "%" : "-"
+                                                     :)));
+      frame_add_column("Modifiers", map(armours, (
+                                                     : ($1->query_stat_mod() >= 0 ? "+" : "") + // Add +
+                                                               $1->query_stat_mod() +           //
+                                                               $1->stat_mods_string(1)
+                                                           ? $1->stat_mods_string(1)
+                                                           : "" // something
+                                                     :)));
+      write(frame_render_columns());
       nothing_worn = 0;
    }
 

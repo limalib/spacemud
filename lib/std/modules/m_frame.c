@@ -833,7 +833,7 @@ string frame_render_columns()
             value = columns[col][i];
          else
             value = "";
-         value = sprintf("%-" + column_width[col] + "." + column_width[col] + "s", value) + "  ";
+         value = sprintf("%-" + column_width[col] + "." + column_width[col] + "s", ""+value) + "  ";
          output += value;
       }
       output += "\n ";
