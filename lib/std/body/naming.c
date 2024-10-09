@@ -50,27 +50,39 @@ string query_title();
 #endif
 
 #ifdef USE_INTRODUCTIONS
+//: FUNCTION is_introduced
+// Returns 1 if body has been introduced to this person. This translates
+// to that this body *knows* the person.
 int is_introduced(object body)
 {
    return member_array(body->query_link()->query_userid() + ":" + body->query_name(), introduced) != -1;
 }
 
+//: FUNCTION introduce
+// Add this person to the list of people that this body knows.
 void introduce(object body)
 {
    if (!is_introduced(body))
       introduced += ({body->query_link()->query_userid() + ":" + body->query_name()});
 }
 
+//: FUNCTION query_introduced
+// A list of people in a Username:Bodyname type format.
 string *query_introduced()
 {
    return introduced;
 }
 
+//: FUNCTION clear_introduced
+// Remove all the people we have been introduced to.
 void clear_introduced()
 {
-   introduced=({});
+   introduced = ({});
 }
 
+//: FUNCTION query_description
+// Returns a description of us including our physical_apparance() (defined in races).
+// This also returns if people are lying down, sitting or standing.
 string query_description()
 {
    string state = query_prone() ? "is lying on the ground" : (query_sitting() ? "is sitting here" : "is standing here");
@@ -78,6 +90,8 @@ string query_description()
 }
 #endif
 
+//: FUNCTION query_long_name
+// Returns the appripriate name for when people find you standing in a room.
 string query_long_name()
 {
 #ifdef USE_INTRODUCTIONS
@@ -102,6 +116,8 @@ string query_long_name()
 #endif
 }
 
+//: FUNCTION query_userid
+// Looks up the user object and returns the userid of the user.
 nomask string query_userid()
 {
    if (!query_link())
@@ -109,11 +125,15 @@ nomask string query_userid()
    return query_link()->query_userid();
 }
 
+//: FUNCTION query_invis_name
+// Return the inivisble name used by this body.
 nomask string query_invis_name()
 {
    return invis_name;
 }
 
+//: FUNCTION query_idle_string
+// Returns the idle string for this person if they're idle or inactive.
 string query_idle_string()
 {
    object link = query_link();
