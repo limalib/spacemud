@@ -11,10 +11,6 @@
 //
 // .. TAGS: RST
 
-//: TODO
-// Styles and colours are hardcoded in here, and should be moved to admtool tool
-// or a config file.
-
 #define TRD 0  // ┌ Right down
 #define TH 1   // ─ Horisontal
 #define THD 2  // ┬ Horisontal down
@@ -726,6 +722,8 @@ string frame_colour_demo(string style, string colour, int w)
    return h_colours(frame_demo_string(style, w), colours[colour]);
 }
 
+//: FUNCTION menu_render
+// Produces a render of the current menu.
 string menu_render()
 {
    string out = "";
@@ -790,6 +788,12 @@ string frame_render()
    return out;
 }
 
+//:FUNCTION frame_add_column
+// Adds a column with a name, and an array of strings or integers to be shown.
+// This can only be renderes if all contents are columns. Use ``frame_render_columns()`` to render.
+// Call ``frame_init_user()`` before adding columns. 
+// Important: Frame header and frame content should
+// not be called as they are calculated automatically.
 void frame_add_column(string name, mixed *data)
 {
    column_order += ({name});
@@ -802,6 +806,10 @@ void frame_add_column(string name, mixed *data)
       max_column_length = sizeof(data);
 }
 
+//:FUNCTION frame_render_columns
+// Render the columns added via ``frame_add_column()``. 
+// Important: Frame header and frame content should
+// not be called as they are calculated automatically.
 string frame_render_columns()
 {
    int index = 0, total_width, width;
@@ -815,8 +823,9 @@ string frame_render_columns()
    {
       if (total_width + column_width[column_order[index]] < width)
       {
-//         TBUG("Max width is: " + width + " Total width is: " + total_width + " New column " + column_order[index] +
-  //            " is " + column_width[column_order[index]]);
+         //         TBUG("Max width is: " + width + " Total width is: " + total_width + " New column " +
+         //         column_order[index] +
+         //            " is " + column_width[column_order[index]]);
          total_width += column_width[column_order[index]];
          rcols += ({column_order[index]});
       }

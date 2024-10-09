@@ -81,7 +81,10 @@ string get_who_string(string arg)
    set_frame_title(sprintf("Who - %d user%s", i, (i != 1 ? "s" : "")));
    if (use_levels_guess)
       frame_add_column("Level", map(u->query_level(), ( : "" + $1:)));
-   frame_add_column("Role",map(u,(:(wizardp($1) ? (adminp($1) ? "Admin" : "Wizard") : ""):)));
+   frame_add_column("Role", map(u, ( : (wizardp($1) ? (adminp($1) ? "Admin" : "Wizard") : "") :)));
+#ifdef USE_WIZ_POSITION
+   frame_add_column("Position", map(u, ( : (wizardp($1) ? $1->query_wiz_position() || "" : "") :)));
+#endif
 #ifdef USE_INTRODUCTIONS
 #ifdef USE_TITLES
    frame_add_column("Title", u->query_title());

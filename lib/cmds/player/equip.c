@@ -137,7 +137,7 @@ void main(string arg)
    {
       set_frame_title("Weapons");
       frame_add_column("Weapon", weapons->short());
-      frame_add_column("WC", map(weapons, ( : $1->query_weapon_class() :)));
+      frame_add_column("WC", weapons->query_weapon_class() );
       frame_add_column("Durability", map(weapons, ( : $1->durability_percent() + "%" :)));
       frame_add_column("Damage Type", map(weapons, (
                                                        : short_damage_types($1->query_loadable() && $1->loaded_with()
