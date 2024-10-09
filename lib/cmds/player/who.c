@@ -80,38 +80,18 @@ string get_who_string(string arg)
    i = sizeof(u);
    set_frame_title(sprintf("Who - %d user%s", i, (i != 1 ? "s" : "")));
    if (use_levels_guess)
-   {
-      set_frame_header("Level   Role     Name");
-   }
-   set_frame_footer(sprintf("%s has been up for %s.", mud_name(), uptime));
-   if (!i)
-      retval += "Sorry, no one fits that bill.";
-   foreach (object body in u)
-   {
+      frame_add_column("Level", map(u->query_level(), ( : "" + $1:)));
+   frame_add_column("Role",map(u,(:(wizardp($1) ? (adminp($1) ? "Admin" : "Wizard") : ""):)));
 #ifdef USE_INTRODUCTIONS
 #ifdef USE_TITLES
-      name = body->query_title();
+   frame_add_column("Title", u->query_title());
 #else
-      name = body->query_name();
+   frame_add_column("Name", u->query_name());
 #endif
 #else
-      name = body->query_formatted_desc(78);
+   frame_add_column("Description", body->query_formatted_desc(80));
 #endif
-      if (!name)
-         name = capitalize(body->query_userid());
-
-      if (!body->is_visible())
-         name = "(" + name + ")";
-      if (body->test_flag(F_IN_EDIT))
-         name = "*" + name;
-      if (body->query_level())
-         retval += sprintf(" %-5.5s   %-6.6s   %-68s\n", "" + body->query_level(),
-                           (wizardp(body) ? (adminp(body) ? "Admin" : "Wizard") : ""), name);
-      else
-         retval += sprintf("%-68s\n", name);
-   }
-   set_frame_content(retval);
-   return frame_render();
+   return frame_render_columns();
 }
 
 private

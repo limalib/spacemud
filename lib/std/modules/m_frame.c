@@ -66,6 +66,15 @@ nosave string *hcolours;
 private
 nosave string *sections;
 
+private
+mapping columns = ([]);
+private
+string *column_order = ({});
+private
+mapping column_width = ([]);
+private
+int max_column_length;
+
 //: FUNCTION colour_strlen
 // Gives the length of the visible portion of s.  Colour
 // codes (e.g. %^GREEN%^ <123>) are ignored.
@@ -251,6 +260,10 @@ string last_colour()
 // the rendering to set the frame up correctly. See most commands using frames.
 void frame_init_user()
 {
+   columns = ([]);
+   column_order = ({});
+   column_width = ([]);
+   max_column_length;
    set_width(this_user()->query_screen_width() ? this_user()->query_screen_width() - 2 : 79);
    hcolours = (this_user()->frames_colour() != "none" ? colours[this_user()->frames_colour()] : colours["none"]);
    set_style(this_user()->frames_style());
@@ -775,4 +788,58 @@ string frame_render()
    if (hcolours && this_user()->terminal_mode() != "plain")
       out = h_colours(out);
    return out;
+}
+
+void frame_add_column(string name, mixed *data)
+{
+   column_order += ({name});
+   columns[name] = data;
+   column_width[name] = max(map(data, ( : 2 + colour_strlen("" + $1) :)));
+   if (column_width[name] < strlen(name))
+      column_width[name] = strlen(name);
+
+   if (sizeof(data) > max_column_length)
+      max_column_length = sizeof(data);
+}
+
+string frame_render_columns()
+{
+   int index = 0, total_width, width;
+   string output = " ";
+   string header = "";
+   string *rcols = ({});
+
+   width = query_width();
+
+   while (total_width < width && index < sizeof(column_order))
+   {
+      if (total_width + column_width[column_order[index]] < width)
+      {
+         total_width += column_width[column_order[index]];
+         rcols += ({column_order[index]});
+      }
+      index++;
+   }
+
+   for (int i = 0; i < max_column_length; i++)
+   {
+      total_width = 0;
+      foreach (string col in rcols)
+      {
+         string value = "";
+         if (!i)
+            header += sprintf("%-" + column_width[col] + "." + column_width[col] + "s", col) + "  ";
+         if (sizeof(columns[col]) > i)
+            value = columns[col][i];
+         else
+            value = "";
+         value = sprintf("%-" + column_width[col] + "." + column_width[col] + "s", value) + "  ";
+         output += value;
+      }
+      output += "\n ";
+   }
+
+   set_frame_header(header);
+   set_frame_content(" " + trim(output));
+   return frame_render();
 }
