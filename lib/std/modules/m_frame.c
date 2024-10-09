@@ -794,9 +794,9 @@ void frame_add_column(string name, mixed *data)
 {
    column_order += ({name});
    columns[name] = data;
-   column_width[name] = max(map(data, ( : 2 + colour_strlen("" + $1) :)));
-   if (column_width[name] < strlen(name))
-      column_width[name] = strlen(name);
+   column_width[name] = 2 + max(map(data, ( : colour_strlen("" + $1) :)));
+   if (column_width[name] < strlen(name) + 5)
+      column_width[name] = strlen(name) + 5;
 
    if (sizeof(data) > max_column_length)
       max_column_length = sizeof(data);
@@ -809,12 +809,14 @@ string frame_render_columns()
    string header = "";
    string *rcols = ({});
 
-   width = query_width();
+   width = query_width() - 16;
 
    while (total_width < width && index < sizeof(column_order))
    {
       if (total_width + column_width[column_order[index]] < width)
       {
+//         TBUG("Max width is: " + width + " Total width is: " + total_width + " New column " + column_order[index] +
+  //            " is " + column_width[column_order[index]]);
          total_width += column_width[column_order[index]];
          rcols += ({column_order[index]});
       }
@@ -833,7 +835,7 @@ string frame_render_columns()
             value = columns[col][i];
          else
             value = "";
-         value = sprintf("%-" + column_width[col] + "." + column_width[col] + "s", ""+value) + "  ";
+         value = sprintf("%-" + column_width[col] + "." + column_width[col] + "s", "" + value) + "  ";
          output += value;
       }
       output += "\n ";
