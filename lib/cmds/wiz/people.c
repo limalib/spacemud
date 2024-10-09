@@ -3,6 +3,7 @@
 /*
 ** 25-Jul-96    Valentino.     Created.
 ** 17-Jan-23    Tsath		    Updated and framed.
+** 09-Oct-24    Tsath          Rewritten to use frame columns.
 */
 
 //: COMMAND
@@ -83,6 +84,8 @@ string get_who_string(string arg)
    string *args = ({});
    string tmp;
 
+   frame_init_user();
+
    if (arg)
    {
       args = explode(arg, "");
@@ -132,7 +135,7 @@ string get_who_string(string arg)
       args -= ({"h"});
       DEBUG("Header");
       if (sizeof(b) == 1)
-         footer += "There is only " + sizeof(b) + " user connected ";
+         footer += "There is only 1 user connected ";
       else
          footer += "There are " + sizeof(b) + " users connected ";
       footer += "at " + ctime(time()) + "" + "\n";
@@ -144,126 +147,85 @@ string get_who_string(string arg)
       DEBUG("Small Header");
       content += sprintf("%s:  (Local Time is: %s)\n", mud_name(), ctime(time()));
    }
-
-   foreach (object body in b)
-   {
-      foreach (string arg2 in args)
-      {
-         switch (arg2)
-         {
-         case "n":
-            DEBUG("Names");
-            if (first_run)
-               header += sprintf("%-14s ", "Player");
-            content += sprintf("%-14s ", body->query_name());
-            break;
-         case "w":
-            if (!wizardp(this_user()))
-               break;
-            if (first_run)
-               header += sprintf("%-25.25s", "Environment");
-            if (env_mod == 25 && strlen(header) + 30 < this_user()->query_screen_width())
-            {
-               header = replace_string(header, "Environment", sprintf("%-31s", "Environment"));
-               env_mod = 45;
-            }
-            content += sprintf("%-" + env_mod + "." + env_mod + "s ",
-                               environment(body) ? environment(body)->get_brief() : "(Nowhere)");
-            break;
-         case "f":
-            if (!wizardp(this_user()))
-               break;
-            if (first_run)
-               header += sprintf("%-20s ", "Path");
-            if (path_mod == 20 && strlen(header) + 30 < this_user()->query_screen_width())
-            {
-               header = replace_string(header, "Path", sprintf("%-24s", "Path"));
-               path_mod = 40;
-            }
-            content += sprintf("%-" + path_mod + "s ",
-                               environment(body) ? filename_ellipsis((environment(body)), path_mod) : "(lost?)");
-            break;
-         case "t":
-            DEBUG("Titles");
-            content += sprintf("  %s  ", body->query_formatted_desc(78));
-            break;
-         case "p":
-            if (first_run)
-               header += sprintf("%-14.14s ", "Position");
-            DEBUG("Position");
-            content += sprintf(" %-14.14s ", body->query_wiz_position() ? body->query_wiz_position() : "(None)");
-            break;
-         case "u":
-#ifdef USE_USER_MENU
-            DEBUG("User");
-            if (first_run)
-               header += sprintf("%-15s", "User");
-            content +=
-                sprintf("%-14.14s ", body->query_link()->query_userid() ? capitalize(body->query_link()->query_userid())
-                                                                        : "(None?)");
-#endif
-            break;
-         case "a":
-            if (!wizardp(this_user()))
-               break;
-            DEBUG("Position II");
-            if (first_run)
-               header += sprintf("%-10s ", "Privilege");
-            if (wizardp(body))
-               content += sprintf("%-10s ", adminp(body) ? "Admin" : "Wizard");
-            else
-               content += "Player     ";
-            break;
-         case "i":
-            if (!wizardp(this_user()))
-               break;
-            DEBUG("Idle times");
-            if (first_run)
-               header += sprintf("%-8.8s ", "Idle");
-            content += sprintf("%-8.8s ",
-                               query_idle(body->query_link()) ? convert_time(query_idle(body->query_link()), 2) : "");
-            break;
-         case "I":
-            if (!wizardp(this_user()))
-               break;
-            DEBUG("Ip's");
-            if (first_run)
-               header += sprintf("%-16.16s ", "IP");
-            content += sprintf("%-16.16s ", query_ip_name(body->query_link()));
-            break;
-         case "l":
-            if (!wizardp(this_user()))
-               break;
-            if (first_run)
-               header += sprintf("%-5.5s  ", "Level");
-            content += body ? sprintf("%-5.5s ", "" + body->query_level()) : "";
-            break;
-         case "F":
-            if (!wizardp(this_user()))
-               break;
-            DEBUG("Flags");
-            if (first_run)
-               header += sprintf("%-5.5s ", "Flags");
-            content += sprintf("%2c%c  ", (query_idle(body->query_link()) > 60 ? 'I' : ' '),
-                               (body && body->test_flag(F_IN_EDIT) ? 'E' : ' '));
-            break;
-         default:
-            if (arg2)
-               bad_flags += arg2;
-         }
-      }
-      first_run = 0;
-      content = rtrim(content);
-      content += "\n ";
-   }
    if (strlen(bad_flags))
       content += warning("Bad flags: " + bad_flags);
 
-   frame_init_user();
+   foreach (string arg2 in args)
+   {
+      switch (arg2)
+      {
+      case "n":
+         frame_add_column("Name", b->query_name());
+         break;
+      case "w":
+         if (wizardp(this_user()))
+            frame_add_column("Environment", map(b, (
+                                                       : environment($1) ? environment($1)->get_brief() : "(Nowhere)"
+                                                       :)));
+         break;
+      case "f":
+         if (wizardp(this_user()))
+            frame_add_column("Path", map(b, (
+                                                : environment($1) ? filename_ellipsis((environment($1)), 40) : "(lost?)"
+                                                :)));
+         break;
+      case "t":
+         frame_add_column("Title", b->query_formatted_desc(78));
+         break;
+      case "p":
+         frame_add_column("Position", map(b, ( : $1->query_wiz_position() ? $1->query_wiz_position() : "(None)" :)));
+         break;
+      case "u":
+#ifdef USE_USER_MENU
+         frame_add_column(
+             "User",
+             map(b, (
+                        : $1->query_link()->query_userid() ? capitalize($1->query_link()->query_userid()) : "(None?)"
+                        :)));
+#endif
+         break;
+      case "a":
+         if (!wizardp(this_user()))
+            break;
+         frame_add_column("Privilege", map(b, ( : wizardp($1) ? (adminp($1) ? "Admin" : "Wizard") : "Player" :)));
+         break;
+      case "i":
+         if (!wizardp(this_user()))
+            break;
+         frame_add_column("Idle",
+                          map(b, (
+                                     : query_idle($1->query_link()) ? convert_time(query_idle($1->query_link()), 2) : ""
+                                     :)));
+         break;
+      case "I":
+         if (!wizardp(this_user()))
+            break;
+         frame_add_column("IP", map(b, ( : query_ip_name($1->query_link()) :)));
+         break;
+      case "l":
+         if (!wizardp(this_user()))
+            break;
+         frame_add_column("Level", map(b, ( : "" + $1->query_level() :)));
+         break;
+      case "F":
+         if (!wizardp(this_user()))
+            break;
+         frame_add_column(
+             "Flags",
+             map(b, (
+                        : query_idle($1->query_link()) > 60 ? "I" : " " + ($1 && $1->test_flag(F_IN_EDIT) ? "E" : " ")
+                        :)));
+         break;
+      default:
+         if (arg2)
+            bad_flags += arg2;
+      }
+   }
    set_frame_title(implode(explode(mud_name(), ""), " "));
-   set_frame_header(header);
-   set_frame_content(rtrim(content));
-   return frame_render();
+   if (strlen(bad_flags))
+      set_frame_footer("Bad flags for people: " + bad_flags);
+
+   return frame_render_columns();
 }
 
 private
