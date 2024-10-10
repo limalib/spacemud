@@ -3,7 +3,7 @@
 // Example rapier that modified a skill when wielded, and removes it again when unwielded.
 // Notice custom property "skillfull".
 
-inherit SWORD;
+inherit WEAPON;
 
 void wielded()
 {

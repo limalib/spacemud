@@ -9,7 +9,7 @@ Inherit the appropriate file - SWORD, .
 Normal setup for adj, size and value (id not needed).
 Set weapon_class - approx max hps of damage from a hit.
 
-inherit SWORD;
+inherit WEAPON;
 
 
 void setup() {

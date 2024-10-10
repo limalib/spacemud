@@ -2,7 +2,7 @@
 
 #include <combat_modules.h>
 
-inherit SWORD;
+inherit WEAPON;
 
 #if BLOWS_STYLE == BLOWS_TYPES
 #define evt_data(evt) evt.data[0]
