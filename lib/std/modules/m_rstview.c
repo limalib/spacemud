@@ -91,6 +91,28 @@ string replace_inv(string s)
 }
 
 private
+string replace_backslash(string s)
+{
+   string *parts = explode(s, "\\");
+   string out = "";
+   int on = 1;
+   foreach (string p in parts)
+   {
+      if (!on)
+      {
+         out += "<213>\\" + p + "\\";
+         on = 1;
+      }
+      else
+      {
+         out += "<res>" + p;
+         on = 0;
+      }
+   }
+   return out;
+}
+
+private
 string replace_quote(string s)
 {
    string *parts = explode(s, "\"");

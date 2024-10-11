@@ -393,9 +393,7 @@ void parse_menu_input(mixed input)
                   prompt_then_return();
                return;
             }
-            TBUG("Goto menu");
             goto_menu(action);
-            TBUG("Been to goto menu");
             return;
          }
       }
@@ -504,8 +502,8 @@ string generate_section_output(class section *sections, int largest_section, int
    class menu_item empty_item = new_menu_item("", "", " ");
    int counter;
 
-   //foreach (class section s in sections)
-   //   TBUG(s.title);
+   // foreach (class section s in sections)
+   //    TBUG(s.title);
 
    for (int i = 0; i < largest_section; i++)
    {
@@ -531,9 +529,9 @@ string generate_section_output(class section *sections, int largest_section, int
          if (this_item.disabled || (this_item.constraint && !evaluate(this_item.constraint)))
             continue;
 
-         //TBUG("Name: " + this_item.description + " Picked:" + picked_col + " Printed:" + printed_columns);
+         // TBUG("Name: " + this_item.description + " Picked:" + picked_col + " Printed:" + printed_columns);
 
-         //We might need to move columns in.
+         // We might need to move columns in.
          if (picked_col > printed_columns)
          {
             output += repeat_string(" ", ((picked_col - printed_columns) * (leftwidth + rightwidth + 4)));
@@ -641,8 +639,6 @@ void display_current_menu()
       tmp += ({({section.title, section.colour})});
 
    num_columns = clamp(query_width() / (rightwidth + leftwidth + 6), 0, sizeof(current_menu.items));
-   // TBUG("Number of columns: " + num_columns);
-
    if (num_columns <= 0)
    {
       write("Your client is too narrow for this layout. Please make it larger.");

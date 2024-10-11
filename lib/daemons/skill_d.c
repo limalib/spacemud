@@ -291,7 +291,7 @@ void init_skills()
    write(SKILL_FLAT_FILE + " loaded.");
 }
 
-//:FUNCTION init_skills
+//:FUNCTION dump_skills_to_file
 // Dump all skills to /data/config/skill-tree.
 void dump_skills_to_file()
 {
