@@ -1,14 +1,14 @@
 /* Do not remove the headers from this file! see /USAGE for more info. */
 
 /*************************************************************************
- **                                                   									**
- **   Configuration file for the LIMA Mudlib				                    **
- **                                                   									**
- **   Many things in the LIMA Mudlib are configurable to make the game	**
- **   more like what you desire.  					                            **
- ** 									                                                  **
- **   It is recommended that you examine these options carefully.	      **
- ** 									                                                  **
+ **                                                                     **
+ **   Configuration file for the LIMA Mudlib                            **
+ **                                                                     **
+ **   Many things in the LIMA Mudlib are configurable to make the game  **
+ **   more like what you desire.                                        **
+ **                                                                     **
+ **   It is recommended that you examine these options carefully.       **
+ **                                                                     **
  *********************************************************************** */
 
 #ifndef __CONFIG_H__
@@ -18,19 +18,19 @@
 #include <driver/runtime_config.h>
 
 /*************************************************************************
- ** 									                                                  **
- **  Options which have moved to other files.  All of these should 	    **
- **  be read through.							                                      **
- ** 									                                                  **
+ **                                                                     **
+ **  Options which have moved to other files.  All of these should      **
+ **  be read through.                                                   **
+ **                                                                     **
  *********************************************************************** */
 
 /* * Combat options. */
 #include "combat_modules.h"
 
 /*************************************************************************
- ** 									                                                  **
- **  Options which affect gameplay.					                            **
- ** 									                                                  **
+ **                                                                     **
+ **  Options which affect gameplay.                                     **
+ **                                                                     **
  *********************************************************************** */
 
 /* The players start room.
@@ -112,9 +112,9 @@
 #define EVALUATION_SKILL_LEVEL 50000
 
 /*************************************************************************
- ** 									                                                  **
- **  Options affecting the appearance of the game.			                **
- ** 									                                                  **
+ **                                                                     **
+ **  Options affecting the appearance of the game.                      **
+ **                                                                     **
  *********************************************************************** */
 
 /* Default screen width, when the user didn't set a width */
@@ -167,9 +167,9 @@
   "You have just encountered a bug.  Please use the bug command to report it.\n"
 
 /*************************************************************************
- **                                                   									**
- **  Other options which affect users, but not gameplay.            		**
- ** 									                                                  **
+ **                                                                     **
+ **  Other options which affect users, but not gameplay.                **
+ **                                                                     **
  *********************************************************************** */
 
 /* Define the character which allows you to call up previous command history.
@@ -203,9 +203,9 @@
 #define CHANNEL_HISTORY_SIZE 20
 
 /*************************************************************************
- ** 									                                                  **
- **  Wizard/builder handling.      					                            **
- ** 									                                                  **
+ **                                                                     **
+ **  Wizard/builder handling.                                           **
+ **                                                                     **
  *********************************************************************** */
 
 /* Define this if you have a lot of wizards */
@@ -226,9 +226,9 @@
 #define WIZARDS_SEE_HIDDEN_EXITS
 
 /*************************************************************************
- ** 									                                                  **
- **  Options affecting game news and logging.				                    **
- ** 									                                                  **
+ **                                                                     **
+ **  Options affecting game news and logging.                           **
+ **                                                                     **
  *********************************************************************** */
 
 /* Define this if you want bug, typo and idea commands to log to /log instead
@@ -243,9 +243,9 @@
 #define FEEDBACK_NEWSGROUP "reporter.discussion"
 
 /*************************************************************************
- ** 									                                                  **
- **  Other stuff. 							                                        **
- ** 									                                                  **
+ **                                                                     **
+ **  Other stuff.                                                       **
+ **                                                                     **
  *********************************************************************** */
 
 /* Max file size for editing etc (eg "ulimit -H -d 1200") */
@@ -291,9 +291,9 @@
 #define LBS_TO_KG 0.453592
 
 /*************************************************************************
- ** 									                                                  **
- **  Directory specifications.						                              **
- ** 									                                                  **
+ **                                                                     **
+ **  Directory specifications.                                          **
+ **                                                                     **
  *********************************************************************** */
 
 /* Where do you want your wizard's shell files to save? */
