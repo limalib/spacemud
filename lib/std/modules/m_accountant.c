@@ -1,13 +1,17 @@
 
 
 inherit M_ACTIONS;
-inherit OLD_MENUS;
+inherit MENUS;
 
 void do_menu_setup();
 void set_id(string *id...);
 
 private
 class menu toplevel;
+private
+class section main;
+private
+class section other;
 private
 string bank_id = "unknown", bank_name = "Unknown Bank";
 private
@@ -62,6 +66,11 @@ void set_bank_id(string id)
 void set_bank_name(string name)
 {
    bank_name = name;
+
+   // Set the name in the toplevel menu and add the sections again.
+   toplevel = (class menu)new_menu(bank_name);
+   add_section_item(toplevel, main);
+   add_section_item(toplevel, other);
 }
 
 //: FUNCTION show_money
@@ -372,13 +381,18 @@ void quit_menu()
 
 void mudlib_setup()
 {
-   toplevel = (MENU)new_menu();
-   add_menu_item(toplevel, new_menu_item("Show the money you have", ( : show_money:), "s"));
-   add_menu_item(toplevel, new_menu_item("List exchange rates", ( : show_rates:), "l"));
-   add_menu_item(toplevel, new_menu_item("Exchange currencies", ( : exchange1:), "x"));
-   add_menu_item(toplevel, new_menu_item("Deposit money", ( : deposit1:), "d"));
-   add_menu_item(toplevel, new_menu_item("Withdraw money", ( : withdraw1:), "w"));
-   add_menu_item(toplevel, new_menu_item("Quit", ( : quit_menu:), "q"));
+   toplevel = (class menu)new_menu(bank_name);
+   main = new_section("Banking", "accent");
+   other = new_section("Other", "warning");
+   add_section_item(toplevel, main);
+   add_section_item(toplevel, other);
+
+   add_menu_item(main, new_menu_item("Show the money you have", ( : show_money:), "s"));
+   add_menu_item(main, new_menu_item("List exchange rates", ( : show_rates:), "l"));
+   add_menu_item(main, new_menu_item("Exchange currencies", ( : exchange1:), "x"));
+   add_menu_item(main, new_menu_item("Deposit money", ( : deposit1:), "d"));
+   add_menu_item(main, new_menu_item("Withdraw money", ( : withdraw1:), "w"));
+   add_menu_item(other, new_menu_item("Quit", ( : quit_menu:), "q"));
    set_id("accountant");
 }
 
@@ -393,6 +407,7 @@ void begin_conversation()
    }
    else
    {
+      frame_init_user();
       player = this_body();
       do_game_command("say Hello " + this_body()->short() + ", welcome to " + bank_name +
                       ". We will be pleased to exchange your "
@@ -401,7 +416,7 @@ void begin_conversation()
                       "%. "
                       "You can deposit your money in " +
                       MONEY_D->query_plural(deposit_currency) + ".\n");
-      set_menu_title(toplevel, "Main Menu of " + bank_name + "\n");
+      // set_menu_title(toplevel, "Main Menu of " + bank_name + "\n");
       init_menu_application(toplevel);
    }
 }
@@ -418,5 +433,5 @@ mixed direct_talk_with_liv()
 
 void remove()
 {
-   menu::remove();
+   ::remove();
 }

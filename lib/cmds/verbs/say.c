@@ -51,7 +51,9 @@ mixed do_say_str(string str)
          string name;
          string msg;
 
-         if (player->is_introduced(this_body()))
+         if (!this_body()->is_body())
+            name = this_body()->query_name();
+         else if (player->is_introduced(this_body()))
             name = this_body()->query_name();
          else
          {
@@ -59,7 +61,7 @@ mixed do_say_str(string str)
             if (wizardp(player))
                name = "[" + this_body()->query_name() + "] " + name;
          }
-         
+
          // Make sure wizards can see who is talking.
          msg = "%^SAY%^" + name + " says:%^RESET%^ " + punctuate(str) + "<res>";
          tell(player, msg);

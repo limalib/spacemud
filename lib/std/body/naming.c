@@ -55,6 +55,9 @@ string query_title();
 // to that this body *knows* the person.
 int is_introduced(object body)
 {
+   //If this is not a player, then we just know them.
+   if (!body->is_body())
+      return 1;
    return member_array(body->query_link()->query_userid() + ":" + body->query_name(), introduced) != -1;
 }
 

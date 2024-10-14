@@ -14,7 +14,6 @@
 
 #include <combat_config.h>
 #include <commands.h>
-#include <mudlib.h>
 #include <playerflags.h>
 
 // ### for now
