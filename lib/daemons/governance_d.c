@@ -50,7 +50,7 @@ int remove_manager(string what, string manager)
       return;
    managers[what] -= ({manager});
    save_me();
-   return sizeof(managers)<> s;
+   return sizeof(managers);
 }
 
 string *query_managers(string what)
