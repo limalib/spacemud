@@ -11,7 +11,7 @@
 
 #include <mudlib.h>
 
-inherit "/std/menu2";
+inherit MENUS;
 inherit CLASS_PARTY;
 
 private

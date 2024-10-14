@@ -11,7 +11,7 @@
 #include <playerflags.h>
 #include <security.h>
 
-inherit "/std/menu2";
+inherit MENUS;
 inherit M_ACCESS;
 
 private

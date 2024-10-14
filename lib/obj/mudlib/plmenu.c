@@ -20,7 +20,7 @@
 // ### for now
 #include <security.h>
 
-inherit "/std/menu2";
+inherit MENUS;
 // ### for now
 inherit M_ACCESS;
 
