@@ -282,6 +282,10 @@ void set_frame_header(string hc)
       add_header = 0;
       return;
    }
+
+   if (!hcolours)
+      error("No colours defined, did you call frame_init_user()?");
+
    header_lines = explode(hc, "\n");
    while (i < sizeof(header_lines))
    {
@@ -788,10 +792,10 @@ string frame_render()
    return out;
 }
 
-//:FUNCTION frame_add_column
+//: FUNCTION frame_add_column
 // Adds a column with a name, and an array of strings or integers to be shown.
 // This can only be renderes if all contents are columns. Use ``frame_render_columns()`` to render.
-// Call ``frame_init_user()`` before adding columns. 
+// Call ``frame_init_user()`` before adding columns.
 // Important: Frame header and frame content should
 // not be called as they are calculated automatically.
 void frame_add_column(string name, mixed *data)
@@ -806,8 +810,8 @@ void frame_add_column(string name, mixed *data)
       max_column_length = sizeof(data);
 }
 
-//:FUNCTION frame_render_columns
-// Render the columns added via ``frame_add_column()``. 
+//: FUNCTION frame_render_columns
+// Render the columns added via ``frame_add_column()``.
 // Important: Frame header and frame content should
 // not be called as they are calculated automatically.
 string frame_render_columns()
