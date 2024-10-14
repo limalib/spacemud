@@ -189,7 +189,7 @@ class menu build_guild_favour_menu(string guild, class menu_item gmi)
    class section o = new_section("Other", "warning");
    int guild_tier = GUILD_D->query_guild_tier(guild) || 1;
    mapping favours = GUILD_D->query_favours(guild_tier);
-   m = new_menu("[-- " + sprintf("%-30s", capitalize(guild) + " Favour") + "                   -----]");
+   m = new_menu(capitalize(guild) + " Favour");
    add_section_item(m, s);
    add_section_item(m, o);
 
