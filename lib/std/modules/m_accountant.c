@@ -1,7 +1,7 @@
 
 
 inherit M_ACTIONS;
-inherit MENUS;
+inherit OLD_MENUS;
 
 void do_menu_setup();
 void set_id(string *id...);

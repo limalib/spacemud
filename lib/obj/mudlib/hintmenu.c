@@ -8,7 +8,7 @@
 
 #include <security.h>
 
-inherit MENUS;
+inherit OLD_MENUS;
 inherit M_WIDGETS;
 inherit M_ACCESS;
 

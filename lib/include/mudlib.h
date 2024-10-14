@@ -31,6 +31,7 @@
 #define WIZ_ROOM           "/domains/std/room/Wizroom"
 
 #define	MENUS              "/std/menu"
+#define	OLD_MENUS          "/std/menu_old"
 #define ADVERSARY          "/std/adversary"
 #define AGGRESSIVE_MONSTER "/std/aggressive_monster"
 #define AMMUNITION         "/std/ammunition"

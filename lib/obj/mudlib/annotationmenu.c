@@ -14,7 +14,7 @@
 #include <classes.h>
 #include <edit.h>
 
-inherit MENUS;
+inherit OLD_MENUS;
 inherit CLASS_ANNOTATION;
 
 class menu toplevel;

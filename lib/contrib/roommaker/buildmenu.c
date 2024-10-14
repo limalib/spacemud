@@ -10,7 +10,7 @@
 #include <playerflags.h>
 #include <security.h> /* ### for now */
 
-inherit MENUS;
+inherit OLD_MENUS;
 inherit M_ACCESS; /* ### for now */
 
 private
