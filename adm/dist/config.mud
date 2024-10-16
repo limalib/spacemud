@@ -64,7 +64,7 @@ maximum local variables : 100
 
 # Maximum amount of 'eval cost' per thread - execution is halted when
 # it is exceeded.
-maximum evaluation cost : 500000
+# maximum evaluation cost : 500000
 
 # This is the maximum array size allowed for one single array.
 maximum array size : 15000
