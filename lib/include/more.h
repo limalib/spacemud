@@ -3,7 +3,7 @@
 #ifndef MORE_H
 #define MORE_H
 
-#define MORE_OB			"/trans/obj/more_ob"
+#define MORE_OB "/trans/obj/more_ob"
 
 #define MORE_FILES 1
 #define MORE_LINES 2

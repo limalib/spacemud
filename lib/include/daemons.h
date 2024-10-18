@@ -16,7 +16,7 @@
 #define CRAFTING_D    "/daemons/crafting_d"
 #define DAMAGE_D      "/daemons/damage_d"
 #define DID_D         "/daemons/did_d"
-#define DOC_D 	      "/daemons/doc_d"
+#define DOC_D         "/daemons/doc_d"
 #define DOMAIN_D      "/daemons/domain_d"
 #define EMOJI_D       "/daemons/emoji_d"
 #define EVENT_D       "/daemons/event_d"
@@ -38,7 +38,7 @@
 #define PREPOSITION_D "/daemons/preposition_d"
 #define QUEST_D       "/daemons/quest_d"
 #define REPORTER_D    "/daemons/reporter_d"
-#define RST_D 	      "/daemons/rst_d"
+#define RST_D         "/daemons/rst_d"
 #define SHUTDOWN_D    "/daemons/shutdown_d"
 #define SKILL_D       "/daemons/skill_d"
 #define SOUL_D        "/daemons/soul_d"
@@ -49,7 +49,6 @@
 #define TIMER_D       "/daemons/timer_d"
 #define VERB_D        "/daemons/verb_d"
 #define WEATHER_D     "/daemons/weather_d"
-
 #define XTERM256_D    "/daemons/xterm256_d"
 
 //Secure daemons

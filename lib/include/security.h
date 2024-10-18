@@ -8,10 +8,9 @@
 #ifndef __SECURITY_H__
 #define __SECURITY_H__
 
-#define ACCESS_SAVE	"/data/secure/access"
+#define ACCESS_LOG	    "/data/secure/LOG"
+#define ACCESS_SAVE	    "/data/secure/access"
 #define ACCESS_SAVE_BAK	"/data/secure/access_backup"
-
-#define ACCESS_LOG	"/data/secure/LOG"
 
 
 #endif /* __SECURITY_H__ */
