@@ -82,7 +82,7 @@ void end_busy(mixed *args)
 // is assumed well, but on 0 a message of:
 //  You fail at <action>.
 // is sent to the adversary.
-varargs int busy_with(object ob, string action, string bf, mixed args)
+varargs int busy_with(object ob, string action, string bf, mixed args, int busy)
 {
    if (time() - busy_at > MAX_BUSY || !busy_with)
    {
@@ -91,7 +91,7 @@ varargs int busy_with(object ob, string action, string bf, mixed args)
       busy_with = ob;
       busy_func = bf;
       busy_action = action;
-      call_out("end_busy", BUSY_LENGTH, args);
+      call_out("end_busy", busy || BUSY_LENGTH, args);
       return 1;
    }
 
