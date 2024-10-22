@@ -14,7 +14,7 @@
 #include <classes.h>
 #include <edit.h>
 
-inherit OLD_MENUS;
+inherit MENUS;
 inherit CLASS_ANNOTATION;
 
 class menu toplevel;
@@ -22,7 +22,7 @@ class menu view_annotations;
 class menu rm_annotations;
 class menu_item quit_item;
 class menu_item goto_main_menu_item;
-class menu_item seperator;
+class section main, other, sub, suboth;
 private
 nosave object annotation_target;
 private
@@ -49,12 +49,16 @@ void rcv_can_ed(string y_or_n)
    }
    ANNOTATION_D->add_annotation(annotation_target, new_annotation);
    write("**Annotation added**\n\n");
-   goto_menu_silently(toplevel);
+   goto_menu(toplevel);
 }
 
 private
 void end_edit(string *annotation)
 {
+   if (!annotation)
+   {
+      return;
+   }
    new_annotation.text = implode(annotation, "\n");
    get_input_then_call((
                            : rcv_can_ed:),
@@ -103,19 +107,24 @@ void remove_annotation()
       write("**No Annotations to remove.**\n\n");
       return;
    }
-   rm_annotations = new_menu("Remove Annotations");
+   rm_annotations = new_menu("Remove an annotation");
+   sub = new_section("Which one?", "accent");
+   suboth = new_section("Other", "warning");
+   add_section_item(rm_annotations, sub);
+   add_section_item(rm_annotations, suboth);
    for (int i = 0; i < sizeof(ann); i++)
    {
       a = ann[i];
-      add_menu_item(rm_annotations,
-                    new_menu_item(sprintf("%-30s (%s on %s)", a.title, capitalize(a.author), a.date), (
-                                                                                                          : rm_it($(i))
-                                                                                                          :)));
+      add_menu_item(sub, new_menu_item(sprintf("%-30s (%s on %s)", a.title, capitalize(a.author), a.date),
+                                       (
+                                           : rm_it($(i))
+                                           :),
+                                       "" + (i + 1)));
    }
-   add_menu_item(rm_annotations, goto_main_menu_item);
-   add_menu_item(rm_annotations, quit_item);
+   add_menu_item(suboth, goto_main_menu_item);
+   add_menu_item(suboth, quit_item);
 
-   goto_menu_silently(rm_annotations);
+   goto_menu(rm_annotations);
 }
 
 private
@@ -156,20 +165,26 @@ void see_annotations()
       write("**No Annotations to view.**\n\n");
       return;
    }
-   view_annotations = new_menu("View Annotations -- Which to view?");
+   view_annotations = new_menu("View Annotations");
+   sub = new_section("Which to view?", "accent");
+   suboth = new_section("Other", "warning");
+   add_section_item(view_annotations, sub);
+   add_section_item(view_annotations, suboth);
+
    for (int i = 0; i < sizeof(ann); i++)
    {
       a = ann[i];
-      add_menu_item(view_annotations,
-                    new_menu_item(sprintf("%-30s (%s on %s)", a.title, capitalize(a.author), a.date), (
-                                                                                                          : see_it($(i))
-                                                                                                          :)));
+      add_menu_item(sub, new_menu_item(sprintf("%-30s (%s on %s)", a.title, capitalize(a.author), a.date),
+                                       (
+                                           : see_it($(i))
+                                           :),
+                                       "" + (i + 1)));
    }
 
-   add_menu_item(view_annotations, goto_main_menu_item);
-   add_menu_item(view_annotations, quit_item);
+   add_menu_item(suboth, goto_main_menu_item);
+   add_menu_item(suboth, quit_item);
 
-   goto_menu_silently(view_annotations);
+   goto_menu(view_annotations);
 }
 
 void create(object o)
@@ -178,22 +193,23 @@ void create(object o)
    annotation_target = o;
 
    toplevel = new_menu(mud_name() + " Annotation Menu");
+   main = new_section("Menu", "accent");
+   other = new_section("Other", "warning");
+   add_section_item(toplevel, main);
+   add_section_item(toplevel, other);
 
    quit_item = new_menu_item("Quit", ( : quit_menu_application:), "q");
    goto_main_menu_item = new_menu_item("Return to main menu", toplevel, "m");
-   seperator = new_seperator("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
 
    // Add items to the toplevel (main) menu.
-   add_menu_item(toplevel, new_menu_item("Add annotation", ( : add_annotation:), "a"));
-   add_menu_item(toplevel, new_menu_item("View annotations", ( : see_annotations:), "v"));
-   add_menu_item(toplevel, new_menu_item("Remove an annotation", ( : remove_annotation:), "r"));
-   add_menu_item(toplevel, quit_item);
-
-   allow_empty_selection(toplevel);
-   set_no_match_function(toplevel, ( : quit_if_cr:));
+   add_menu_item(main, new_menu_item("Add annotation", ( : add_annotation:), "a"));
+   add_menu_item(main, new_menu_item("View annotations", ( : see_annotations:), "v"));
+   add_menu_item(main, new_menu_item("Remove an annotation", ( : remove_annotation:), "r"));
+   add_menu_item(other, quit_item);
 }
 
 void start_menu()
 {
+   frame_init_user();
    init_menu_application(toplevel);
 }

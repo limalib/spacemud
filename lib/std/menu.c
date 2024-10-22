@@ -633,6 +633,8 @@ void display_current_menu()
 
    largest_section = max(map(current_menu.items, ( : sizeof((class section)$1.items) :)));
 
+   if (!current_menu.title)
+      error("Menu doesn't have a title.");
    set_frame_header("header");
    set_frame_title(trim(current_menu.title));
 
