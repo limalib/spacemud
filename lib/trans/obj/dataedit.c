@@ -2,12 +2,14 @@
 
 #include <security.h>
 
-inherit OLD_MENUS;
+inherit MENUS;
 inherit M_ACCESS;
+inherit M_COLOURS;
 
 /****** Begin private data and functions */
 private:
 class menu toplevel;
+class section main, other;
 class menu_item quit1, quit2, blank;
 
 string fname;
@@ -15,7 +17,7 @@ mapping data;
 
 string menu_title()
 {
-   return "\nSave file editor: \"" + fname + "\"\nVariables: " + implode(keys(data), ", ") + "\n";
+   return "\nSave file editor: \"" + fname + "\"";
 }
 
 void update()
@@ -86,6 +88,15 @@ mixed expression(string str)
    rm("/tmp/dataedit.c");
 
    return value;
+}
+
+void print_variables()
+{
+   string *nicedata = sort_array(keys(data), 1);
+   int w = this_user()->query_screen_width() - 20;
+   int max_length = max(map(nicedata, ( : strlen($1) :)))+4;
+
+   write("Variables:\n" + colour_table(nicedata, w, w / max_length));
 }
 
 void quit_and_discard()
@@ -240,24 +251,27 @@ void start_menu(string file)
       return;
    }
 
+   frame_init_user();
    toplevel = new_menu(menu_title());
-   blank = new_seperator("");
-#define NME(X) add_menu_item(toplevel, new_menu_item X)
+   main = new_section("Edit data", "accent");
+   other = new_section("Other", "warning");
+   add_section_item(toplevel, main);
+   add_section_item(toplevel, other);
 
-   add_menu_item(toplevel, blank);
-   NME(("Delete Variable", ( : remove_var:), "d"));
-   NME(("Rename Variable", ( : rename_var:), "r"));
-   NME(("Set Variable", ( : set_var:), "="));
-   NME(("Print Expression", ( : print:), "p"));
-   NME(("Merge Datafile", ( : merge:), "m"));
-   NME(("Save as ...", ( : save_to:), "s"));
-   NME(("Quit and Save", ( : quit_and_save:), "q"));
-   NME(("Quit w/o Saving", ( : quit_and_discard:), "Q"));
-   add_menu_item(toplevel, blank);
+   //Main section
+   add_menu_item(main, new_menu_item("Delete Variable", ( : remove_var:), "d"));
+   add_menu_item(main, new_menu_item("Rename Variable", ( : rename_var:), "r"));
+   add_menu_item(main, new_menu_item("Set Variable", ( : set_var:), "="));
+   add_menu_item(main, new_menu_item("List all variables", ( : print_variables:), "l"));
+   add_menu_item(main, new_menu_item("Print Expression", ( : print:), "p"));
+   add_menu_item(main, new_menu_item("Merge Datafile", ( : merge:), "m"));
+   
+   //Other section
+   add_menu_item(other, new_menu_item("Save as ...", ( : save_to:), "s"));
+   add_menu_item(other, new_menu_item("Quit and Save", ( : quit_and_save:), "q"));
+   add_menu_item(other, new_menu_item("Quit w/o Saving", ( : quit_and_discard:), "Q"));
 
    set_menu_prompt(toplevel, "[dr=pmsqQ] ");
-   allow_empty_selection(toplevel);
-
    init_menu_application(toplevel);
 }
 
