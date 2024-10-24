@@ -36,7 +36,8 @@ int get_spell_level()
 // This should drain spell points, etc..
 nomask mixed valid_circumstances(object target, object reagent)
 {
-   return this_body()->query_member_guild("stock-mage") >= get_spell_level();
+   //return this_body()->query_member_guild("stock-mage") >= get_spell_level();
+   return 1;
 }
 
 nomask void cast_spell(object target, object reagent)

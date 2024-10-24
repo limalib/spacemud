@@ -6,8 +6,8 @@ void setup()
 {
    set_spell_name("cure cold");
    set_cast_time(5);
-   set_difficulty(10);
-   set_skill_used("spell/disease");
+   set_difficulty(1);
+   set_skill_used("magic/spell/disease");
 }
 
 mixed valid_target(object ob)

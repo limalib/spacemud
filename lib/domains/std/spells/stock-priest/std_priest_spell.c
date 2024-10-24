@@ -23,9 +23,9 @@ nosave int tag;
 
 void setup()
 {
-   set_spell_name("standard spell cold");
-   set_cast_time(5);
-   set_difficulty(10);
+   set_spell_name("standard priest spell");
+   //set_cast_time(5);
+   //set_difficulty(10);
 }
 
 // This hook interrupts casting when called -
@@ -85,8 +85,8 @@ void check_success(object target, object reagent)
 // This should drain spell points, etc..
 nomask mixed valid_circumstances(object target, object reagent)
 {
-   if (this_body()->query_member_guild("stock-priest") < 1)
-      return "You need to be a priest to cast a priest spell!";
+   //if (this_body()->query_member_guild("stock-priest") < 1)
+   //   return "You need to be a priest to cast a priest spell!";
    return 1;
 }
 
