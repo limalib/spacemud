@@ -17,7 +17,7 @@ mapping data;
 
 string menu_title()
 {
-   return "\nSave file editor: \"" + fname + "\"";
+   return "Save file editor: \"" + fname + "\"";
 }
 
 void update()
