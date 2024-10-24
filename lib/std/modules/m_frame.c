@@ -842,6 +842,7 @@ string frame_render_columns()
       foreach (string col in rcols)
       {
          string value = "";
+
          if (!i)
             header += sprintf("%-" + column_width[col] + "." + column_width[col] + "s", col) + "  ";
          if (sizeof(columns[col]) > i)
@@ -855,6 +856,8 @@ string frame_render_columns()
    }
 
    set_frame_header(header);
-   set_frame_content(" " + trim(output));
+   
+   //Cheeky way to strip off last "\n " off the string.
+   set_frame_content(output[0..<2]);
    return frame_render();
 }
