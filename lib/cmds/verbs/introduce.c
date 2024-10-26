@@ -21,6 +21,7 @@ void do_introduce_wrd_to_obj(string word, object ob)
       return;
    }
 
+   ob->introduce(this_body());
    tell(this_body(), "You introduce yourself to " + ob->query_name() + ".");
    tell(ob, this_body()->query_name() + " introduces " + this_body()->query_reflexive() + " to you.");
 }
