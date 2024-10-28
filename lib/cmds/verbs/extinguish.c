@@ -2,6 +2,15 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``extinguish <something>``
+//
+// Extinguish something that is on fire.
+//
+// .. TAGS: RST
+
 void do_extinguish_obj(object ob)
 {
    ob->do_extinguish();

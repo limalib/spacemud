@@ -2,6 +2,15 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``close <something>``
+//
+// Close a bag, a door or other things that can be opened.
+//
+// .. TAGS: RST
+
 mixed do_close_obj(object ob)
 {
    ob->do_close();

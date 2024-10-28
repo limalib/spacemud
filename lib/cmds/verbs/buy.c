@@ -4,6 +4,16 @@
 //   Fixes by Darklord, March 4, 1997.
 /* Changed from command to verb 6-Feb-98 by MonicaS */
 
+//: COMMAND
+// USAGE
+//
+//  |  ``buy <something>``
+//  |  ``buy <something> from <someone>``
+//
+// Buy something from a vendor or someone selling things.
+//
+// .. TAGS: RST
+
 inherit VERB_OB;
 
 mixed test_vendor()

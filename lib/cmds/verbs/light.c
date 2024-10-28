@@ -2,6 +2,16 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``light <something>``
+//  |  ``light <something> with <something>``
+//
+// Light the fireplace, light the candle with a match.
+//
+// .. TAGS: RST
+
 void do_light_obj(object ob)
 {
    ob->do_light();

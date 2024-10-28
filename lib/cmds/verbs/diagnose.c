@@ -4,6 +4,16 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``diagnose``
+//  |  ``diagnose <someone>``
+//
+// Diagnose your own health, or something or someone near you.
+//
+// .. TAGS: RST
+
 void create()
 {
    clear_flag(NEED_TO_SEE);

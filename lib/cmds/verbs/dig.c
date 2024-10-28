@@ -5,6 +5,23 @@
 ** out what people mean.
 */
 
+//: COMMAND
+// USAGE
+//
+//  |  ``dig <something> with <tool>``
+//  |  ``dig in <something>``
+//  |  ``dig in <something> with <tool>``
+//  |  ``dig out <something>``
+//  |  ``dig out <something with <tool>``
+//  |  ``dig up <something>``
+//  |  ``dig up <something> with <tool>``
+//  |  ``dig with <tool>``
+//  |  ``dig with <tool> in <something>``
+//
+// Dig a hole, dig in dirt with your space, dig up something. Just dig!
+//
+// .. TAGS: RST
+
 #include <mudlib.h>
 
 inherit VERB_OB;

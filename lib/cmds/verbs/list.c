@@ -6,6 +6,17 @@
 inherit VERB_OB;
 inherit M_FRAME;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``list``
+//  |  ``list from <someone>``
+//  |  ``list <something> from <someone>``
+//
+// List items sold by a vendor, list items from a specific vendor, or list spades sold by the salesperson.
+//
+// .. TAGS: RST
+
 mixed test_vendor()
 {
    object ob, vendor;

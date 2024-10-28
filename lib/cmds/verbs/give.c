@@ -2,6 +2,16 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``give <items> to <someone>``
+//  |  ``give <a number of> <items> to <someone>``
+//
+// Give or hand items to someone else.
+//
+// .. TAGS: RST
+
 void do_give_obj_to_liv(object ob, object liv)
 {
    mixed msg = ob->move(liv);

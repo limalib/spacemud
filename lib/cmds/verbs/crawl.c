@@ -6,6 +6,17 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``crawl <preposition> <something>``
+//  |  ``i.e. crawl under bed``
+//
+// Crawl somewhere where they will not find you. Ever.
+//
+// .. TAGS: RST
+
+
 void do_crawl_wrd_obj(string prep, object ob)
 {
    ob->do_verb_rule("crawl", "WRD OBJ", prep, ob);

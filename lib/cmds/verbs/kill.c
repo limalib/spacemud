@@ -4,6 +4,17 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``kill``
+//  |  ``kill <someone>``
+//  |  ``kill <someone> with <something>``
+//
+// Kill someone - possibly with the candlestick in the kitchen.
+//
+// .. TAGS: RST
+
 int combat_allowed()
 {
    if (environment(this_body()) && environment(this_body())->query_combat_forbidden())

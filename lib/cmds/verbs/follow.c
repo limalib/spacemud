@@ -2,6 +2,16 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``follow``
+//  |  ``follow <something>``
+//
+// Follow something.
+//
+// .. TAGS: RST
+
 mixed direct_follow_obj(object ob)
 {
    if (!present(ob, environment(this_body())))

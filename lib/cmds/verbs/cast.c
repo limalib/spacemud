@@ -1,5 +1,21 @@
 /* Do not remove the headers from this file! see /USAGE for more info. */
 
+//: COMMAND
+// USAGE
+//
+//  |  ``cast <spell> on <something>``
+//  |  ``cast <spell> on <something> with <component>``
+//  |  ``cast <spell> at <something>``
+//  |  ``cast <spell> at <something> with <component>``
+//  |  ``cast <spell> with <component>``
+//  |  ``cast <spell> with <component> on <something>``
+//  |  ``cast <spell> with <component> at <something>``
+//  |  ``cast <spell>``
+//
+// A range of spell casting options.
+//
+// .. TAGS: RST
+
 inherit VERB_OB;
 
 #define NO_TARGET 0

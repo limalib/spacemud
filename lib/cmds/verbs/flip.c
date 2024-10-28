@@ -2,6 +2,23 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``flip <something>``
+//  |  ``flip <something> for <something>``
+//  |  ``flip <something> to <something>``
+//  |  ``flip off <something>``
+//  |  ``flip on <something> with <something>``
+//  |  ``flip <something> off``
+//  |  ``flip <something> on``
+//  |  ``flip <something> with <something>``
+//
+// Flip a switch on or off, or flip something with something else.
+//
+// .. TAGS: RST
+
+
 mixed can_flip_obj_wrd_obj(object ob1, string p, object ob2)
 {
    if (p == "for" || p == "to")

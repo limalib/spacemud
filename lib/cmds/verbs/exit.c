@@ -2,6 +2,15 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``exit <something>``
+//
+// Exit, leave, or disembark something.
+//
+// .. TAGS: RST
+
 void do_exit()
 {
    string *exits;

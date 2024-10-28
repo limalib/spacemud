@@ -5,6 +5,17 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``dualwield <item>``
+//  |  ``dualwield <item> in both hands``
+//  |  ``dualwield <item> with both hands``
+//
+// Dualwield weapons.
+//
+// .. TAGS: RST
+
 void do_dualwield_obj(object ob)
 {
    if (!try_to_acquire(ob))

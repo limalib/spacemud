@@ -12,6 +12,17 @@
 
 // May 23rd.  Added functionality for fill_obj_from_obj.
 
+//: COMMAND
+// USAGE
+//
+//  |  ``fill <something>``
+//  |  ``fill <something> with <something>``
+//  |  ``fill <something> from <something>``
+//
+// Fill your flask, fill it from the keg, fill it with beer.
+//
+// .. TAGS: RST
+
 #include <mudlib.h>
 #include <setbit.h>
 

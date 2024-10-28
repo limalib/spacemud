@@ -6,6 +6,15 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``descend <something>``
+//
+// Descend from your high horse, a ladder, a tree or other things you find yourself on.
+//
+// .. TAGS: RST
+
 void do_descend_obj(object ob)
 {
    ob->do_verb_rule("descend", "OBJ", ob);

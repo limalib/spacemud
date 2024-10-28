@@ -2,6 +2,20 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``introduce``
+//  |  ``introduce yourself``
+//  |  ``introduce myself``
+//  |  ``introduce yourself to <someone>``
+//  |  ``introduce myself to <someone>``
+//  |  ``introduce to <someone>``
+//
+// Introduce yourself to someone or everyone in the room. 
+//
+// .. TAGS: RST
+
 void do_introduce()
 {
    write("Introduce who?");

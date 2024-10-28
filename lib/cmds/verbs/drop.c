@@ -5,6 +5,16 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``drop <item>``
+//  |  ``drop <items>``
+//
+// Drop a torch, drop 100 gold, drop it.
+//
+// .. TAGS: RST
+
 mixed can_drop_obj()
 {
    // give a better message for this case, since all the errors generated

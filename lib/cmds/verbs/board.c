@@ -6,6 +6,15 @@
  *   /bin/verbs by zifnab
  ******************************/
 
+//: COMMAND
+// USAGE
+//
+//  |  ``board <something>``
+//
+// Board something can that be boarded.
+//
+// .. TAGS: RST
+
 #include <mudlib.h>
 inherit VERB_OB;
 

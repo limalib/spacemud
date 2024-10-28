@@ -9,6 +9,19 @@
 //  fluid sources when the fluid_object itself is not present.
 //  In your renewable fluid source's id, put "<fluid>_source".
 
+//: COMMAND
+// USAGE
+//
+//  |  ``drink``
+//  |  ``drink <something>``
+//  |  ``drink <something> from <somewhere>``
+//  |  ``drink from <something>``
+//  |  ``drink <something> from <something>``
+//
+// Have a drink.
+//
+// .. TAGS: RST
+
 #include <mudlib.h>
 #include <setbit.h>
 

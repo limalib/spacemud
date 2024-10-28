@@ -2,6 +2,15 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``count <something>``
+//
+// Count something you see.
+//
+// .. TAGS: RST
+
 void do_count_obj(object ob)
 {
    ob->do_count();

@@ -4,6 +4,16 @@
 ** dismount.c
 */
 
+//: COMMAND
+// USAGE
+//
+//  |  ``dismount``
+//  |  ``dismount <something>``
+//
+// Dismount something you're sitting on, a high chair or a horse.
+//
+// .. TAGS: RST
+
 inherit VERB_OB;
 
 void do_dismount_obj(object ob)

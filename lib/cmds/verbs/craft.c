@@ -6,6 +6,17 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``craft <item>``
+//  |  ``cast <item> on <workbench>``
+//
+// Craft an item.
+//
+// .. TAGS: RST
+
+
 void do_craft_str_on_obj(string str, object ob)
 {
    if (ob->is_crafting_station())

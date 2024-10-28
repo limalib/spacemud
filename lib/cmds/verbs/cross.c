@@ -2,6 +2,15 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``cross <item>``
+//
+// Cross a stream, the road. Never the beams.
+//
+// .. TAGS: RST
+
 void do_cross_word_obj(string prep, object ob)
 {
    ob->do_verb_rule("cross", "WRD OBJ", prep, ob);

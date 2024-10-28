@@ -11,6 +11,15 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``go <direction>``
+//
+// Go or leave in some direction.
+//
+// .. TAGS: RST
+
 void do_go_obj(object ob)
 {
    ob->do_verb_rule("go", "OBJ", ob);

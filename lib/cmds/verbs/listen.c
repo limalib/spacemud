@@ -2,6 +2,17 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``listen``
+//  |  ``listen to <something>``
+//  |  ``listen to <something> with <item>``
+//
+// Listen to your heart, the sounds in the room, listen to the wall with a glass.
+//
+// .. TAGS: RST
+
 void do_listen_to_obj_with_obj(object ob1, object ob2)
 {
    ob2->do_listen(ob1);

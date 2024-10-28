@@ -4,6 +4,16 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``eat <item>``
+//  |  ``bite <item>``
+//
+// Eat something or bite it.
+//
+// .. TAGS: RST
+
 void do_eat_obj(object ob)
 {
    mixed err = try_to_acquire(ob);

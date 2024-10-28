@@ -2,6 +2,16 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``fire <something>``
+//  |  ``fire <something> at <someone>``
+//
+// Fire something, or fire it at someone.
+//
+// .. TAGS: RST
+
 void do_fire_obj(object ob)
 {
    ob->do_fire();

@@ -4,6 +4,15 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``curse``
+//
+// It's not polite, but sometimes it makes you feel better.
+//
+// .. TAGS: RST
+
 mixed do_curse()
 {
    write("Such language in a high class establishment like this!\n");

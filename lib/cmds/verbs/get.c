@@ -10,6 +10,21 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``get <items>``
+//  |  ``get all <items>``
+//  |  ``get <items> from <container>``
+//  |  ``get <items> out of <container>``
+//  |  ``get <items> with <item>``
+//  |  ``get all from <container>``
+//  |  ``get all from <container>``
+//
+// Get, take, carry, pick up items, all of them, or all of them from somewhere.
+//
+// .. TAGS: RST
+ 
 private
 nomask void get_one(object ob, object with_ob, string rel)
 {

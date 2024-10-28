@@ -2,6 +2,16 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``enter``
+//  |  ``enter <something>``
+//
+// Enter something in your environment, a door, a car, a portal, an airlock.
+//
+// .. TAGS: RST
+
 void do_enter()
 {
    string *doors;

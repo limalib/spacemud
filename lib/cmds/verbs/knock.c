@@ -2,6 +2,16 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``knock on <something>``
+//  |  ``knock at <something>``
+//
+// Knock on the door, rap on the window.
+//
+// .. TAGS: RST
+
 void do_knock_on_obj(object obj)
 {
    obj->do_knock();

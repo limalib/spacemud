@@ -2,6 +2,16 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``lie``
+//  |  ``lie down``
+//
+// Lie about something, or lie down.
+//
+// .. TAGS: RST
+
 void do_lie_wrd_obj(string prep, object ob)
 {
    environment(this_body())->do_go_obj(ob, prep);

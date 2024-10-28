@@ -8,6 +8,16 @@
 ** 951123, Deathblade: created
 */
 
+//: COMMAND
+// USAGE
+//
+//  |  ``drive``
+//  |  ``drive <direction>``
+//
+// Drive things that can be driven somewhere.
+//
+// .. TAGS: RST
+
 inherit VERB_OB;
 
 mixed can_drive_str(string str)

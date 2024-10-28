@@ -1,8 +1,15 @@
 /* Do not remove the headers from this file! see /USAGE for more info. */
 
-/*
- * Revised 2-14-99 by Tigran in his exit rewrite
- */
+//: COMMAND
+// USAGE
+//
+//  |  ``climb <something>``
+//  |  ``climb <preposition> <something>``
+//  |  ``i.e. climb over hedge``
+//
+// Climb things, or over, under, on, etc.
+//
+// .. TAGS: RST
 
 inherit VERB_OB;
 

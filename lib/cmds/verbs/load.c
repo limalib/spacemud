@@ -2,6 +2,16 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``load <something> with <something>``
+//  |  ``load <something> in <something>``
+//
+// Load your gun with ammo, load ammo into your shotgun, ready your crossbow with a bolt.
+//
+// .. TAGS: RST
+
 void do_load_obj_with_obj(object ob1, object ob2)
 {
    if (!try_to_acquire(ob1) || !try_to_acquire(ob2))
