@@ -3,7 +3,7 @@
 /*
 ** socket.c
 **
-** This object represents an open UDP/TCP socket using the MudOS
+** This object represents an open UDP/TCP socket using the FluffOS
 ** socket facilities.
 **
 ** 09-Feb-95. Deathblade. Created.
@@ -11,6 +11,7 @@
 ** 12-Jul-96. Rust. Added write callback.
 ** 25-Jun-23. Tsath. changed stat_me to return string. The rest of the mudlib
 **            expects this, who knows why it returned int.
+** 29-Oct-24. Tsath. Extended with external_start() support.
 */
 
 #include <driver/socket_err.h>
@@ -332,7 +333,7 @@ nomask string local_address()
    return address;
 }
 
-void create(int skt_style, mixed p1, mixed p2, mixed p3)
+void create(int skt_style, mixed p1, mixed p2, mixed p3, mixed p4)
 {
    int err;
 
@@ -460,6 +461,11 @@ void create(int skt_style, mixed p1, mixed p2, mixed p3)
    case SKT_STYLE_INT_ACQUIRE:
       read_func = p1;
       close_func = p2;
+      break;
+   case SKT_STYLE_EXTSTART:
+      read_func = p3;
+      close_func = p4;
+      external_start(p1, p2, read_func, close_func);
       break;
    }
 }

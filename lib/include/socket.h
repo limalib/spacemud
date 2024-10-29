@@ -25,6 +25,8 @@
 #define SKT_STYLE_LISTEN_M	21	/* listen for connections (mud) */
 #define SKT_STYLE_CONNECT_M	22	/* connect to remote skt (mud) */
 
+#define SKT_STYLE_EXTSTART  30  /* external start socket */
+
 #define SKT_STYLE_INT_ACQUIRE	100	/* internal */
 
 
