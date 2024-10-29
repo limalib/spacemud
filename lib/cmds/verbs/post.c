@@ -9,6 +9,12 @@
 //: COMMAND
 // Used mainly to post a message to a board.
 //
+//  |  ``post about <something>``
+//  |  ``post on <something> about <something>``
+//  |  ``post on <something> about <something> on <something>``
+//  |  ``post <something> with <something>``
+//  |  ``post <something> with <something> on <something>``
+//
 // .. TAGS: RST
 
 inherit VERB_OB;

@@ -9,6 +9,15 @@
 inherit VERB_OB;
 inherit M_GRAMMAR;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``say <something>``
+//
+//  Say something.
+//
+// .. TAGS: RST
+
 mixed can_say_str()
 {
    return 1;

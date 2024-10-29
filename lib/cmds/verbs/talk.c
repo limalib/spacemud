@@ -2,6 +2,17 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``talk``
+//  |  ``talk with <someone>``
+//  |  ``talk to <someone>``
+//
+//  Talk to noone in particular, or to someone you have met.
+//
+// .. TAGS: RST
+
 void do_talk()
 {
    this_body()->simple_action("$N $vstart babbling about nothing (and to noone) in particular.");

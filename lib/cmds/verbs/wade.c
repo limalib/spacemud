@@ -2,6 +2,16 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``wade``
+//  |  ``wade <preposition> <something>``
+//
+// Just wade, or wade in the water.
+//
+// .. TAGS: RST
+
 void do_wade()
 {
    mixed s = environment(this_body())->wade();

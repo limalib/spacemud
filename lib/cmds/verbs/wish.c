@@ -2,6 +2,15 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``wish for <something>``
+//
+// All you can do is hope, right?
+//
+// .. TAGS: RST
+
 void do_wish_for_str(string str)
 {
    write("That would be nice, wouldn't it?\n");

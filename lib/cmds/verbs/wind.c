@@ -4,6 +4,16 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``wind <something>``
+//  |  ``wind <something> with <something>``
+//
+// Wind the spool, wind the yarn with the spool.
+//
+// .. TAGS: RST
+
 void do_wind_obj(object ob)
 {
    ob->do_wind();

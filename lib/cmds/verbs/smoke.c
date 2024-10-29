@@ -2,6 +2,15 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``smoke <something>``
+//
+//  Try not to smoke, it's a nasty habbit.
+//
+// .. TAGS: RST
+
 void do_smoke_obj(object ob)
 {
    ob->do_smoke();

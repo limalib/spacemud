@@ -2,6 +2,16 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``unlock <something>``
+//  |  ``unlock <something> with <something>``
+//
+//  Unlock the door, unlock it using a key.
+//
+// .. TAGS: RST
+
 void do_unlock_obj_with_obj(object ob1, object ob2)
 {
    ob1->do_unlock(ob2);

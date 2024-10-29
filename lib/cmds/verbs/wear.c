@@ -4,6 +4,16 @@ inherit VERB_OB;
 
 #include <driver/type.h>
 
+//: COMMAND
+// USAGE
+//
+//  |  ``wear <something>``
+//  |  ``wear all``
+//
+// Wear a dress, wear all.
+//
+// .. TAGS: RST
+
 void do_wear_obj(object ob)
 {
    if (!try_to_acquire(ob))

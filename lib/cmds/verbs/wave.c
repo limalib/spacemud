@@ -6,6 +6,17 @@
 inherit VERB_OB;
 inherit M_PARSING;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``wave <something>``
+//  |  ``wave <something> at <something>``
+//
+// Wave at the stranger, wave a white flag at the army.
+//
+// .. TAGS: RST
+
+
 // Anything can be waved at/be waved.  Might not do anything, tho :)
 mixed direct_wave_obj(object ob)
 {

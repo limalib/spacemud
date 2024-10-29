@@ -11,6 +11,16 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``swim``
+//  |  ``swim in <something>``
+//
+//  Swim/dive, swim in money.
+//
+// .. TAGS: RST
+
 void do_swim()
 {
    mixed s = environment(this_body())->swim();

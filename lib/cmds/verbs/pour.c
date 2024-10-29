@@ -5,6 +5,18 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``pour <something>``
+//  |  ``pour <something> <preposition> <something>``
+//  |  ``pour <something> out``
+//  |  ``empty <something>``
+//
+//  Pour the coffee, pour the cream into the cup, pour the rest out, empty it all out.
+//
+// .. TAGS: RST
+
 void do_pour_obj(object ob)
 {
    ob->pour(0, environment(this_body()));

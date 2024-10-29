@@ -1,5 +1,16 @@
 /* Do not remove the headers from this file! see /USAGE for more info. */
 
+//: COMMAND
+// USAGE
+//
+//  |  ``open <something>``
+//  |  ``open up <something>``
+//  |  ``open <something> with <something>``
+//
+// Open your door, open the can with the opener. 
+//
+// .. TAGS: RST
+
 inherit VERB_OB;
 
 /* open <something destroyable> with <weapon> */

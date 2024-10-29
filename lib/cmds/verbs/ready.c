@@ -3,6 +3,15 @@
 #include <verbs.h>
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``ready <something>``
+//
+//  Ready your crossbow, ready things.
+//
+// .. TAGS: RST
+
 void ready_one(object ob)
 {
    ob->do_ready();

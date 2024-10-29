@@ -2,6 +2,17 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``press <something>``
+//  |  ``press <something> <in some way>``
+//  |  ``press <something> with <something>``
+//
+//  Press or push a button, push it hard, press the flowers with the books.
+//
+// .. TAGS: RST
+
 void do_press_obj(object ob, string name)
 {
    ob->do_press();

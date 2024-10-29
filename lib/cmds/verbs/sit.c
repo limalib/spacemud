@@ -6,8 +6,16 @@
 
 inherit VERB_OB;
 
-/* I'm not sure that I like the lie_down() part here.  It's sitting, you're
- * not going prone -- Tigran */
+//: COMMAND
+// USAGE
+//
+//  |  ``sit <preposition> <something>``
+//  |  ``sit down``
+//
+//  Sit on a chair, sit down. Remain calm.
+//
+// .. TAGS: RST
+
 void do_sit_wrd_obj(string prep, object ob)
 {
    ob->do_verb_rule("sit", "WRD OBJ", prep, ob);

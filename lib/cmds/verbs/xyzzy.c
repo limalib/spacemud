@@ -2,6 +2,15 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``xuzzy``
+//
+// Plugh, plover. Easy way to make money.
+//
+// .. TAGS: RST
+
 void do_xyzzy()
 {
    write("A hollow voice says: Fool!\n");

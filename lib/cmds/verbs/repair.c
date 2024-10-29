@@ -3,6 +3,16 @@
 inherit VERB_OB;
 inherit M_INPUT;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``repair <something>``
+//  |  ``repair <something> <preposition> <something>``
+//
+//  Repair the broken window, repair your sword with metal shards.
+//
+// .. TAGS: RST
+
 void do_repair()
 {
    write("Repair what with what?\n");

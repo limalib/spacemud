@@ -2,6 +2,18 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``salvage <something>``
+//  |  ``salvage <a lot of things>``
+//  |  ``salvage <something> on <something>``
+//  |  ``salvage all``
+//
+//  Salvage parts from something you found turning it into materials.
+//
+// .. TAGS: RST
+
 mixed direct_salvage_obj(object ob)
 {
    return 1;

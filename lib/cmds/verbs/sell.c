@@ -5,6 +5,16 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``sell <something>``
+//  |  ``sell <something> to <someone>``
+//
+//  Sell your horse, sell your mother to your dad.
+//
+// .. TAGS: RST
+
 mixed test_vendor()
 {
    object ob, vendor;

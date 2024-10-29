@@ -2,6 +2,17 @@
 
 inherit VERB_OB;
 
+
+//: COMMAND
+// USAGE
+//
+//  |  ``tie <something>``
+//  |  ``tie <something> to <something>``
+//
+//  Tie your shoes, tie the laces to a chair.
+//
+// .. TAGS: RST
+
 void do_tie_obj_to_obj(object ob1, object ob2)
 {
    ob1->do_tie(ob2);

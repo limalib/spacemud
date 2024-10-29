@@ -9,6 +9,17 @@
    Basically rewritten in March 1999 by Tigran
 */
 
+//: COMMAND
+// USAGE
+//
+//  |  ``stand``
+//  |  ``stand <preposition>``
+//  |  ``stand <preposition> <something>``
+//
+//  Stand, stand up, stand down, stand on chair.
+//
+// .. TAGS: RST
+
 inherit VERB_OB;
 
 void do_stand()

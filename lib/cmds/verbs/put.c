@@ -9,6 +9,20 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``put <something> <preposition> <something>``
+//  |  ``put <count> <money> in <something>``
+//  |  ``put <count> <money> into <something>``
+//
+//  Put/insert/place/stuff/hide the blanket into the suitcase, put the dogfood in the cupboard,
+//  put 10 gold into the sack.
+//
+// .. TAGS: RST
+
+   add_rules(({"OBS WRD OBJ", "WRD STR in OBJ", "WRD STR into OBJ"}), ({"insert", "place", "stuff", "hide"}));
+
 void do_put_obj_wrd_obj(object ob1, string p, object ob2)
 {
    mixed tmp;

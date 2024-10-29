@@ -2,6 +2,21 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``read <something>``
+//  |  ``read from <something>``
+//  |  ``read in <something>``
+//  |  ``read about <topic>``
+//  |  ``read about <topic> in <something>``
+//  |  ``read <topic> in <something>``
+//  |  ``read <topic> from <something>``
+//
+//  Read in books about stuff, read signs.
+//
+// .. TAGS: RST
+
 private
 object *get_all_readable_entry_items()
 {

@@ -8,6 +8,22 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``search <something>``
+//  |  ``search <something> with <something>``
+//  |  ``search for <something>``
+//  |  ``search for <something> in <something>``
+//  |  ``search <something> for <something>``
+//  |  ``search <something> with <somthing> for <something>``
+//  |  ``search <something> for <somthing> with <something>``
+//  |  ``search for <something> in <something> with <something>``
+//
+//  Search for the key, search for potion in the bag, search for the stamp in the book with the magnifying glass.
+//
+// .. TAGS: RST
+
 void do_search_obj(object ob)
 {
    ob->do_search();

@@ -5,6 +5,17 @@
 **
 */
 
+//: COMMAND
+// USAGE
+//
+//  |  ``pick <something>``
+//  |  ``pick <something> with <something>``
+//
+// Pick an apple, pick the lock with your thieves tools.
+//
+// .. TAGS: RST
+
+
 #include <move.h>
 #include <setbit.h>
 

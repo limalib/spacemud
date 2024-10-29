@@ -2,6 +2,15 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``use <something>``
+//
+// Use something.
+//
+// .. TAGS: RST
+
 void create()
 {
    add_rules(({"OBJ"}));

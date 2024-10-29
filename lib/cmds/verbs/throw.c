@@ -10,6 +10,16 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``throw <something>``
+//  |  ``throw <something> at <something>``
+//
+//  Throw a grenade, throw it at something. Then run.
+//
+// .. TAGS: RST
+
 varargs private nomask void throw_one(object ob, object target)
 {
    mixed tmp;

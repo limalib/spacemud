@@ -2,6 +2,18 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``pull <something>``
+//  |  ``pull <in some way> <something>``
+//  |  ``pull <something> <in some way>``
+//  |  ``pull <something> with <something>``
+//
+//  Pull or yank a rope, pull it hard, pull the wagon with the horse.
+//
+// .. TAGS: RST
+
 void do_pull_obj(object ob, string name)
 {
    ob->do_pull(name);

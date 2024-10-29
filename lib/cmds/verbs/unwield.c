@@ -1,10 +1,12 @@
 /* Do not unwield the headers from this file! see /USAGE for more info. */
 
 //: COMMAND
-// Unwield equipment that you are wielding.
+// USAGE
 //
-//  |  ``unwield sword``
+//  |  ``unwield <something>``
 //  |  ``unwield all``
+//
+// Unwield equipment that you are wielding.
 //
 // .. TAGS: RST
 

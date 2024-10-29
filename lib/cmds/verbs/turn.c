@@ -2,6 +2,16 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``turn <something>``
+//  |  ``turn <something> <preposition <something>``
+//
+//  Turn the switch, turn the table to point north.
+//
+// .. TAGS: RST
+
 void do_turn_obj(object ob)
 {
    ob->do_turn();

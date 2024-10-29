@@ -11,6 +11,17 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``touch <something>``
+//  |  ``throw <something> with <something>``
+//
+//  Touch the panel, touch canvas with paintbrush. You can touch things
+//  as a ghost as well.
+//
+// .. TAGS: RST
+
 void do_touch_obj(object ob)
 {
    object who = this_body();

@@ -2,6 +2,16 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``write <text> on <something>``
+//  |  ``write <something> with <text>``
+//
+// Write or inscribe something. We do not endorse graffiti.
+//
+// .. TAGS: RST
+
 mixed can_verb_rule()
 {
    return check_vision();

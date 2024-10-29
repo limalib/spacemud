@@ -3,6 +3,17 @@
 #include <verbs.h>
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``pray``
+//  |  ``pray <something>``
+//  |  ``pray to <something>``
+//
+//  Pray it works, pray to something that matters.
+//
+// .. TAGS: RST
+
 void do_pray_to_obj(object ob)
 {
    ob->do_pray();

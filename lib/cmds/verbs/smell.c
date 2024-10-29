@@ -2,6 +2,16 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``smell``
+//  |  ``smell <something>``
+//
+//  Smell/sniff the air, smell the flowers.
+//
+// .. TAGS: RST
+
 mixed direct_smell_obj(object ob)
 {
    return 1;

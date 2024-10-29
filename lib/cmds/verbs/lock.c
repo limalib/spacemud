@@ -2,6 +2,16 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``lock <something> with <something>``
+//  |  ``lock <something>``
+//
+// Lock your door, lock a chest with a key.
+//
+// .. TAGS: RST
+
 void do_lock_obj_with_obj(object ob1, object ob2)
 {
    ob1->do_lock(ob2);

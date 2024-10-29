@@ -5,6 +5,17 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``wield <something>``
+//  |  ``wield all``
+//  |  ``wield <something> in left hand``
+//
+// Wield something somewhere.
+//
+// .. TAGS: RST
+
 void do_wield_obj(object ob)
 {
    if (!try_to_acquire(ob))

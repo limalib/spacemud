@@ -2,6 +2,16 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``tune <something>``
+//  |  ``tune <something> to <something>``
+//
+//  Tune your guitar, tune the radio to channel 80.
+//
+// .. TAGS: RST
+
 void do_tune_obj(object ob)
 {
    ob->do_tune();

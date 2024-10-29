@@ -2,6 +2,15 @@
 
 inherit VERB_OB;
 
+//: COMMAND
+// USAGE
+//
+//  |  ``wait``
+//
+// ...
+//
+// .. TAGS: RST
+
 void do_wait()
 {
    write("Do I have to do EVERYTHING for you?\n");

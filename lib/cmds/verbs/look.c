@@ -7,8 +7,19 @@
 
 #include <verbs.h>
 
-// ### peer should be a synonym for some, but not all, of these rules.
-// ### E.g. not "" or it will interfere with the emote
+//: COMMAND
+// USAGE
+//
+//  |  ``look``
+//  |  ``look at <something>``
+//  |  ``look for <something>``
+//  |  ``look at <something> with <something>``
+//  |  ``look at <something> on <something>``
+//
+// Look at your surroundings, look at or for something, look at the horizon with your binoculars,
+// look at the map with the magnifying glass. 
+//
+// .. TAGS: RST
 
 inherit VERB_OB;
 inherit M_GRAMMAR;
