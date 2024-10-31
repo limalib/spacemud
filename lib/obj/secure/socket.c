@@ -333,6 +333,14 @@ nomask string local_address()
    return address;
 }
 
+nomask void start(mixed p1, mixed p2)
+{
+   if (style != SKT_STYLE_EXTSTART)
+      error("Socket not SKT_STYLE_EXTSTART, so start() not available in socket.");
+   SKTLOG("start: self " + sprintf("external %s %s", "" + p1, p2), this_object());
+   external_start(p1, p2, read_func, close_func);
+}
+
 void create(int skt_style, mixed p1, mixed p2, mixed p3, mixed p4)
 {
    int err;
