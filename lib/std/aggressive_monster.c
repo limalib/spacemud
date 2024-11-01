@@ -11,7 +11,6 @@ inherit M_AGGRESSIVE;
 void mudlib_setup()
 {
    adversary::mudlib_setup();
-   m_aggressive::mudlib_setup();
 }
 
 /*
