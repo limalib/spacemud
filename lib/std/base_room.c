@@ -243,6 +243,7 @@ string long()
 string long_without_object(object o)
 {
 #ifdef OBVIOUS_EXITS_BOTTOM
+   string objtally = show_objects(o);
 #ifdef COUNT_EXITS
    return sprintf("%s%s: %%^ROOM_EXIT%%^%s%%^RESET%%^\n%s", simple_long(), describe_exits(), show_exits(),
                   show_objects(o));
