@@ -212,7 +212,7 @@ string fancy_long()
    return rtrim("\n   " + replace_string(simple_long(), "\n", "\n\n   ")) + "\n";
 }
 
-//Only used for #define COUNT_EXITS.
+// Only used for #define COUNT_EXITS.
 private
 string describe_exits()
 {
@@ -243,7 +243,13 @@ string long()
 string long_without_object(object o)
 {
 #ifdef OBVIOUS_EXITS_BOTTOM
-   return sprintf("%sObvious Exits: %%^ROOM_EXIT%%^%s%%^RESET%%^\n%s", simple_long(), show_exits(), show_objects(o));
+#ifdef COUNT_EXITS
+   return sprintf("%s%s: %%^ROOM_EXIT%%^%s%%^RESET%%^\n%s", simple_long(), describe_exits(), show_exits(),
+                  show_objects(o));
+#else
+   return sprintf("%sObvious Exits: %%^ROOM_EXIT%%^%s%%^RESET%%^\n%s", (dont_show_long() ? "" : fancy_long()),
+                  show_exits() + "\n", objtally);
+#endif
 #else
    return sprintf("%s%s", simple_long(), show_objects(o));
 #endif
