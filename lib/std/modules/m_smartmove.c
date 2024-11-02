@@ -96,10 +96,13 @@ nomask int move_me_there(class move_data data)
       txt = query_msg("leave");
 
 #ifdef USE_INTRODUCTIONS
-   if (arrayp(txt))
-      txt = map(txt, ( : replace_string($1, "$N", capitalize(add_article(this_object()->query_race()))) :));
-   if (stringp(txt))
-      txt = replace_string(txt, "$N", capitalize(add_article(this_object()->query_race())));
+   if (this_object()->is_body())
+   {
+      if (arrayp(txt))
+         txt = map(txt, ( : replace_string($1, "$N", capitalize(add_article(this_object()->query_race()))) :));
+      if (stringp(txt))
+         txt = replace_string(txt, "$N", capitalize(add_article(this_object()->query_race())));
+   }
 #endif
 
    /* Display the message */
@@ -130,7 +133,11 @@ nomask int move_me_there(class move_data data)
       msgs = action(({this_object()}), txt);
 
 #ifdef USE_INTRODUCTIONS
-   msgs[1] = replace_string(msgs[1], this_object()->query_name(), capitalize(add_article(this_object()->query_race())));
+   if (this_object()->is_body())
+   {
+      msgs[1] =
+          replace_string(msgs[1], this_object()->query_name(), capitalize(add_article(this_object()->query_race())));
+   }
 #endif
 
    tell_environment(this_object(), msgs[1], MSG_INDENT, ({this_object()}));
