@@ -94,6 +94,7 @@ string get_who_string(string arg)
 #else
    frame_add_column("Description", body->query_formatted_desc(80));
 #endif
+   set_frame_footer(sprintf("%s has been up for %s.", mud_name(), uptime));
    return frame_render_columns();
 }
 
