@@ -8,65 +8,10 @@
 
 inherit M_DAEMON_DATA;
 
-void save_me();
+#define METHOD_CONFIG_FILE "/data/config/methods"
 
-mapping methods = (["dismount":({
-                                   "dismount",
-                                   "get off",
-                               }),
-                     "descend":({
-                                   "descend",
-                                   "climb down",
-                                   "go down",
-                               }),
-                      "ascend":({
-                                   "ascend",
-                                   "climb up",
-                                   "go up",
-                               }),
-                 "crawl under":({
-                                   "crawl under",
-                                   "get under",
-                               }),
-                      "lie on":({
-                                   " lie on ",
-                               }),
-                      "sit in":({
-                                   "enter",
-                                   "sit in",
-                                   "get in",
-                               }),
-                       "leave":({
-                                   "exit",
-                                   "leave",
-                                   "get out",
-                               }),
-                          "go":({
-                                   "go",
-                               }),
-                     "wade in":({
-                                   "wade in",
-                               }),
-                    "stand on":({
-                                   "get on",
-                                   "stand on",
-                               }),
-                       "enter":({
-                                   "enter",
-                               }),
-                       "stand":({
-                                   "stand",
-                                   "stand up",
-                               }),
-                       "mount":({
-                                   "mount",
-                                   "sit on",
-                                   "get on",
-                               }),
-                      "sit on":({
-                                   "get on",
-                                   "sit on",
-                               })]);
+private
+mapping methods = ([]);
 
 //: FUNCTION add_method
 // Add a method and a set of equivalents
@@ -172,4 +117,51 @@ string *list_method_equivalents(string method)
 mapping debug()
 {
    return methods;
+}
+
+void load_config_from_file()
+{
+   string *input;
+   methods = ([]);
+
+   if (!sizeof(stat(METHOD_CONFIG_FILE)))
+   {
+      write("Error: Missing config file '" + METHOD_CONFIG_FILE + "'.");
+      return;
+   }
+
+   input = explode(read_file(METHOD_CONFIG_FILE), "\n");
+
+   foreach (string line in input)
+   {
+      string mthd, equiv, *tmpar;
+
+      // Skip comments
+      if (line[0..0] == "#")
+      {
+         continue;
+      }
+      else if (sscanf(line, "%s:%s", mthd, equiv) == 2)
+      {
+         tmpar = explode(equiv, ",");
+         tmpar -= ({""});
+         tmpar = map(tmpar, ( : trim($1) :));
+         add_method(mthd);
+         add_method_equivalents(mthd, explode(equiv,",")...);
+      }
+      else
+      {
+         add_method(mthd);
+      }
+   }
+
+   write(__FILE__ + ": " + METHOD_CONFIG_FILE + " loaded.");
+   write("Saved.");
+   save_me();
+}
+
+void create()
+{
+   ::create();
+   load_config_from_file();
 }
