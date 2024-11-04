@@ -151,7 +151,7 @@ void load_config_from_file()
       }
       else
       {
-         add_method(mthd);
+         add_method(line);
       }
    }
 
