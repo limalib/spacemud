@@ -30,7 +30,7 @@ nomask void handle_piping(string arg)
       return;
    }
 
-   resend("/cmds/player/say", arg);
+   resend("/cmds/verbs/say", arg);
 }
 
 nomask void start_cmd()

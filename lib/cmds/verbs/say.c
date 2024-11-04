@@ -101,5 +101,5 @@ nomask int valid_resend(string ob)
 
 nomask void do_resend(mixed arg1, mixed arg2)
 {
-   do_say_str(arg2);
+   do_say_str(arg1);
 }
