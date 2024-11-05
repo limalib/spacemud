@@ -147,7 +147,7 @@ void load_config_from_file()
          tmpar -= ({""});
          tmpar = map(tmpar, ( : trim($1) :));
          add_method(mthd);
-         add_method_equivalents(mthd, explode(equiv,",")...);
+         add_method_equivalents(mthd, explode(equiv, ",")...);
       }
       else
       {
@@ -163,5 +163,6 @@ void load_config_from_file()
 void create()
 {
    ::create();
-   load_config_from_file();
+   if (!sizeof(keys(methods)))
+      load_config_from_file();
 }
