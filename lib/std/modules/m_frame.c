@@ -71,6 +71,8 @@ mapping column_width = ([]);
 private
 int max_column_length;
 
+int debug;
+
 //: FUNCTION colour_strlen
 // Gives the length of the visible portion of s.  Colour
 // codes (e.g. %^GREEN%^ <123>) are ignored.
@@ -810,6 +812,11 @@ void frame_add_column(string name, mixed *data)
       max_column_length = sizeof(data);
 }
 
+void debug()
+{
+   debug = 1;
+}
+
 //: FUNCTION frame_render_columns
 // Render the columns added via ``frame_add_column()``.
 // Important: Frame header and frame content should
@@ -817,7 +824,7 @@ void frame_add_column(string name, mixed *data)
 string frame_render_columns()
 {
    int index = 0, total_width, width;
-   string output = " ";
+   string *output = ({});
    string header = "";
    string *rcols = ({});
 
@@ -827,9 +834,8 @@ string frame_render_columns()
    {
       if (total_width + column_width[column_order[index]] < width)
       {
-         //         TBUG("Max width is: " + width + " Total width is: " + total_width + " New column " +
-         //         column_order[index] +
-         //            " is " + column_width[column_order[index]]);
+         // TBUG("Max width is: " + width + " Total width is: " + total_width + " New column " + column_order[index] +
+         //     " is " + column_width[column_order[index]]);
          total_width += column_width[column_order[index]];
          rcols += ({column_order[index]});
       }
@@ -838,26 +844,27 @@ string frame_render_columns()
 
    for (int i = 0; i < max_column_length; i++)
    {
+      string row = " ";
       total_width = 0;
       foreach (string col in rcols)
       {
-         string value = "";
-
+         string value;
          if (!i)
             header += sprintf("%-" + column_width[col] + "." + column_width[col] + "s", col) + "  ";
          if (sizeof(columns[col]) > i)
             value = columns[col][i];
          else
             value = "";
-         value = sprintf("%-" + column_width[col] + "." + column_width[col] + "s", "" + value) + "  ";
-         output += value;
+         row += sprintf("%-" + column_width[col] + "." + column_width[col] + "s", "" + value) + "  ";
       }
-      output += "\n ";
+      output += ({row});
    }
 
+   if (debug)
+      TBUG(output);
    set_frame_header(header);
-   
-   //Cheeky way to strip off last "\n " off the string.
-   set_frame_content(output[0..<2]);
+
+   // Cheeky way to strip off last "\n " off the string.
+   set_frame_content(implode(output, "\n"));
    return frame_render();
 }
