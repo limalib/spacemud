@@ -6,7 +6,7 @@
 // To store list of valid damage types,
 // so weapons and armours check against the list
 // (from M_DAMAGE_SOURCE and M_DAMAGE_SINK)
-// 
+//
 // Currently, this daemon reads the config file ``/data/config/damage-types`` at
 // start up, so modify this file to add/remove data from this daemon permanently.
 //
@@ -199,5 +199,6 @@ void load_config_from_file()
 void create()
 {
    ::create();
-   load_config_from_file();
+   if (damage == ({}))
+      load_config_from_file();
 }

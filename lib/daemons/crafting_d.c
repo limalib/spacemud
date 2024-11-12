@@ -800,7 +800,10 @@ void create()
 {
    ::create();
    load_crafting_recipes();
-   load_config_from_file();
+   if (materials == ([]))
+   {
+      load_config_from_file();
+   }
    refresh_cache();
 }
 
