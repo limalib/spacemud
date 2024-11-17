@@ -20,7 +20,7 @@ void add_method(string method, string *equivs...)
 {
    string *add = ({});
    string verb, prep;
-   if (!check_privilege("Mudlib:daemons"))
+   if (!check_privilege("Mudlib:daemons") && previous_object() != find_object("/secure/master"))
       error("Insufficient privileges to add_method()");
    if (sscanf(method, "%s %s", verb, prep) == 2)
    {
@@ -51,7 +51,7 @@ void add_method(string method, string *equivs...)
 // Remove a method and it's equivalents
 void remove_method(string method)
 {
-   if (!check_privilege("Mudlib:daemons"))
+   if (!check_privilege("Mudlib:daemons") && previous_object() != find_object("/secure/master"))
       error("Insufficient privileges to remove_method");
    map_delete(methods, method);
    save_me();
@@ -69,7 +69,7 @@ string *list_methods()
 void add_method_equivalents(string method, string *equivs...)
 {
    string *add = ({});
-   if (!check_privilege("Mudlib:daemons"))
+   if (!check_privilege("Mudlib:daemons") && previous_object() != find_object("/secure/master"))
       error("Insufficient privileges to add_method_equivalents");
    if (member_array(method, keys(methods)) == -1)
       error("Attempted to add equivalents to a nonexistant method");
@@ -156,7 +156,6 @@ void load_config_from_file()
    }
 
    write(__FILE__ + ": " + METHOD_CONFIG_FILE + " loaded.");
-   write("Saved.");
    save_me();
 }
 
