@@ -21,4 +21,4 @@ cd lima/adm/dist
 ```
 
 # License
-Same as original Lima Lib.
+GPL, see original License in library as well.
