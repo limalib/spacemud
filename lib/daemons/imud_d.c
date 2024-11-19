@@ -250,7 +250,7 @@ void create()
       destruct(this_object());
       return;
    }
-   if (mud_name() != "LIMA" && ADMIN_EMAIL == "billg@microsoft.com")
+   if (mud_name() != "LIMA" && ADMIN_EMAIL == "invalid.email@nowhere.none")
    {
       write("ERROR:\n"
             "  The IMUD daemon will not load until you set a proper ADMIN_EMAIL\n"
