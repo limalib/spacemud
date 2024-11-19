@@ -603,6 +603,67 @@ string *epilog(int eflag)
    return filter_array(explode(read_file(PRELOAD_FILE), "\n") - ({""}), ( : $1[0] != '#' :));
 }
 
+// This apply is called by the driver during MSSP requests.
+mapping get_mud_stats()
+{
+   return ([
+        /* --- Required --- */
+        "NAME"              : mud_name(),
+        "PLAYERS"           : ""+(sizeof(bodies())),
+        "UPTIME"            : ""+(time() - uptime()),
+
+        /* --- Generic --- */
+        "CODEBASE"          : lima_version(),
+        "CONTACT"           : ADMIN_EMAIL,
+        "CRAWL DELAY"       : "-1",
+        "CREATED"           : "2022",
+        // "HOSTNAME"          : "",
+        // "ICON"              : "",
+        // "IP"                : "",
+        // "IPV6"              : "",
+        "LANGUAGE"          : "English",
+        // "LOCATION"          : "US",
+        "PORT"              : ""+(__PORT__),
+        "WEBSITE"           : "https://www.limalib.dev/",
+
+        /* --- Generic --- */
+        "FAMILY"            : "LPMud",
+        // "GAMEPLAY"          : "Player versus Environment",
+        // "GENRE"             : "Science Fiction",
+        // "SUBGENRE"          : "Space and Planets",
+        "STATUS"            : "LIMA Mudlib Development",
+        "GAMESYSTEM"        : "Custom",
+        "INTERMUD"          : "1",
+
+        /* --- World --- */
+        // "AREAS"             : "",
+        "HELPFILES"         : ""+sizeof(keys(HELP_D->query_topics())),
+        // "MOBILES"           : "",
+        // "OBJECTS"           : "",
+        // "ROOMS"             : "",
+        // "CLASSES"           : "",
+        // "LEVELS"            : "",
+         "RACES"             : ""+(sizeof(get_dir("/std/race/*.c"))+sizeof(get_dir("/std/race/restricted/*.c"))),
+         "SKILLS"            : ""+sizeof(SKILL_D->query_skills()),
+
+        /* --- Protocols --- */
+        "ANSI"              : "1",
+        // "MSP"               : "",
+        "UTF-8"             : "1",
+        "VT100"             : "1",
+        "XTERM 256 COLORS"  : "1",
+        "XTERM TRUE COLORS" : "0",
+
+        /* --- Commercial --- */
+        // "PAY TO PLAY"       : "0",
+        // "PAY FOR PERKS"     : "U0",
+
+        /* --- Hiring --- */
+        // "HIRING BUILDERS"   : "0",
+        // "HIRING CODERS"     : "0",
+    ]);
+}
+
 string object_name(object ob)
 {
    object link;
