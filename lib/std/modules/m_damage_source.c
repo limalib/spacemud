@@ -303,22 +303,12 @@ int query_weapon_class()
 
 private
 string skill_used = "combat/melee/unarmed";
-private
-string magic_skill_used = "magic/casting";
 
 string query_skill_used()
 {
    // Can be removed once all .o files are fixed
    if (skill_used == "combat/unarmed")
       skill_used = "combat/melee/unarmed";
-   return skill_used;
-}
-
-string query_magic_skill_used()
-{
-   // Can be removed once all .o files are fixed
-   if (magic_skill_used == "magic/casting")
-      skill_used = "magic/casting";
    return skill_used;
 }
 
@@ -329,10 +319,6 @@ void set_restricted(int rest)
 void set_skill_used(string new_skill_used)
 {
    skill_used = new_skill_used;
-}
-void set_magic_skill_used(string new_magic_skill_used)
-{
-   magic_skill_used = new_magic_skill_used;
 }
 void set_skill_restriction_message(string new_restriction_msg)
 {
