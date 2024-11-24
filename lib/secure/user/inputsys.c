@@ -66,6 +66,12 @@ void terminal_type(string term)
    terminal_type = explode(lower_case(term), " ")[0];
 }
 
+// Not used for anything yet. Beign considered.
+void receive_environ(string var, string value)
+{
+   TBUG("receive_environ(" + var + "," + value + ");");
+}
+
 void window_size(int w, int h)
 {
    width = w;
@@ -74,7 +80,7 @@ void window_size(int w, int h)
 
 int *query_window_size()
 {
-   return ({width ||DEFAULT_SCREEN_WIDTH, height || DEFAULT_SCREEN_HEIGHT});
+   return ({width || DEFAULT_SCREEN_WIDTH, height || DEFAULT_SCREEN_HEIGHT});
 }
 
 string query_terminal_type()
