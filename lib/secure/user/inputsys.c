@@ -66,7 +66,7 @@ void terminal_type(string term)
    terminal_type = explode(lower_case(term), " ")[0];
 }
 
-// Not used for anything yet. Beign considered.
+// Not used for anything yet. Being considered.
 void receive_environ(string var, string value)
 {
    TBUG("receive_environ(" + var + "," + value + ");");
