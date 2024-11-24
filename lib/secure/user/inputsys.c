@@ -66,7 +66,8 @@ void terminal_type(string term)
    terminal_type = explode(lower_case(term), " ")[0];
 }
 
-// Not used for anything yet. Being considered.
+// ### Not used for anything yet. Being considered.
+// ### Might be useful for more automatic input detection.
 void receive_environ(string var, string value)
 {
    TBUG("receive_environ(" + var + "," + value + ");");
