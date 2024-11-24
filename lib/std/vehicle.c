@@ -132,8 +132,8 @@ int is_vehicle()
 
 mixed enter_check()
 {
-   if (environment(this_body()) != environment(this_object()) && query_relation(this_body()))
-      return "You are already there.  Maybe you should stand up first.";
+   if (environment(this_body()) == this_object() && query_relation(this_body()))
+      return "#You are already there.  Maybe you should stand up first.";
    return 1;
 }
 

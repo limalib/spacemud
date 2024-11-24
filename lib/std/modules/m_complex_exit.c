@@ -523,6 +523,7 @@ int complex_exit_do_verb_rule(string verb, string rule, mixed args...)
    string method;
    mixed dest;
    object sibling;
+   mixed checks;
    /* For our purposes the rule should always be WRD OBJ or OBJ or no rule at
       all.  -- Check for no rule first.*/
 
@@ -561,8 +562,18 @@ int complex_exit_do_verb_rule(string verb, string rule, mixed args...)
    data.through = sibling;
    data.who = this_body();
 
-   /* It is now time to move the body to the destination */
-   return this_body()->move_to(data);
+   checks = query_method_checks(method);
+
+   if (stringp(checks))
+   {
+      if (checks[0] == '#')
+         checks = checks[1..];
+      write(checks);
+      return 0;
+   }
+
+   /* It is now time to check enter methods, and then move the body to the destination */
+   return intp(checks) && checks == 1 && this_body()->move_to(data);
 }
 
 string stat_me()
