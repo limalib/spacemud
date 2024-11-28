@@ -92,7 +92,7 @@ string get_who_string(string arg)
    frame_add_column("Name", u->query_name());
 #endif
 #else
-   frame_add_column("Description", u->query_formatted_desc(80));
+   frame_add_column("Name", u->query_formatted_desc(80));
 #endif
    set_frame_footer(sprintf("%s has been up for %s.", mud_name(), uptime));
    return frame_render_columns();
