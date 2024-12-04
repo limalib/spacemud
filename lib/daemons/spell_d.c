@@ -80,12 +80,12 @@ void build_spell_table()
          string obname = dir + file[0.. < 3];
          string spell_name;
 
-         if (catch (spell_name = obname->get_spell_name()))
+         if (catch (spell_name = obname->query_name()))
             continue;
 
          if (!valid_spell_name(spell_name))
          {
-            // log it...
+            write("** Invalid spell name: "+spell_name+" for "+file);
             continue;
          }
          if (spell_table[spell_name])
@@ -104,7 +104,7 @@ void build_spell_table()
    }
 }
 
-string get_spell_obname(string spell_name)
+string query_spell_obname(string spell_name)
 {
    return spell_table[spell_name];
 }
@@ -141,6 +141,11 @@ nomask string find_spell_obname(string spell)
    return spell_table[implode(parts, " ")];
 }
 
+mapping query_spell_table()
+{
+   return spell_table;
+}
+
 varargs mixed check_valid_spell(string spell, int has_target, int has_reagent)
 {
    string spell_obname;
@@ -148,10 +153,12 @@ varargs mixed check_valid_spell(string spell, int has_target, int has_reagent)
    ENSURE(previous_object() == find_object(VERB_OB_CAST));
 
    spell_obname = find_spell_obname(spell);
+   TBUG(spell);
+   TBUG(spell_obname);
    if (!spell_obname)
       return "You know of no such spell.\n";
 
-   return spell_obname->_check_valid_spell(has_target, has_reagent);
+   return spell_obname->check_valid_spell(has_target, has_reagent);
 }
 
 varargs mixed check_valid_target(string spell, object target, mixed has_reagent)
@@ -162,9 +169,9 @@ varargs mixed check_valid_target(string spell, object target, mixed has_reagent)
 
    spell_obname = find_spell_obname(spell);
    if (!spell_obname)
-      return "You know of no such spell.\n";
+      return "You know of no such spell..\n";
 
-   return spell_obname->_check_valid_target(target, has_reagent);
+   return spell_obname->check_valid_target(target, has_reagent);
 }
 
 varargs mixed check_valid_reagent(string spell, object reagent, mixed has_target)
@@ -175,9 +182,9 @@ varargs mixed check_valid_reagent(string spell, object reagent, mixed has_target
 
    spell_obname = find_spell_obname(spell);
    if (!spell_obname)
-      return "You know of no such spell.\n";
+      return "You know of no such spell...\n";
 
-   return spell_obname->_check_valid_reagent(reagent, has_target);
+   return spell_obname->check_valid_reagent(reagent, has_target);
 }
 
 varargs void cast_spell(string spell, object target, object reagent)
@@ -189,12 +196,12 @@ varargs void cast_spell(string spell, object target, object reagent)
    spell_obname = find_spell_obname(spell);
    ENSURE(spell_obname);
 
-   return spell_obname->_cast_spell(target, reagent);
+   return spell_obname->internal_cast_spell(target, reagent);
 }
 
 void register_spell()
 {
-   string spell_name = previous_object()->get_spell_name();
+   string spell_name = previous_object()->qu_spell_name();
    string spell_info = spell_table[spell_name];
 
    ENSURE(spell_name /* You didn't provide a spell name. */);
@@ -212,6 +219,6 @@ void register_spell()
       spell_table[spell_name] = obname;
    }
 
-   ENSURE(find_object(get_spell_obname(spell_name)) == previous_object()
+   ENSURE(find_object(query_spell_obname(spell_name)) == previous_object()
           /* Some other spell already has this name.*/);
 }

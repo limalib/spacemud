@@ -97,7 +97,7 @@ string *query_msg_types()
    return clean_array(keys(messages) + keys(MESSAGES_D->query_messages(def_message_type)));
 }
 
-*handle_obs(mixed *obs, string res, mapping has)
+mixed *handle_obs(mixed *obs, string res, mapping has)
 {
    string *ret = ({});
    mapping items = ([]);

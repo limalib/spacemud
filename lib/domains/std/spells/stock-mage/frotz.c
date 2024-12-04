@@ -1,10 +1,10 @@
 /* Do not remove the headers from this file! see /USAGE for more info. */
 
-inherit "/domains/std/spells/stock-mage/std_mage_spell";
+inherit SPELL;
 
 void setup()
 {
-   set_spell_name("frotz");
+   set_name("frotz");
    set_cast_time(3);
 }
 

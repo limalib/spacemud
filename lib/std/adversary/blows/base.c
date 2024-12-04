@@ -206,24 +206,28 @@ void handle_result(class event_info evt)
       // Do not message without a target or if the target is a ghost.
       if (evt.target && !evt->target->query_ghost())
       {
+         int do_stun = 0, stun_chance;
          // TBUG(event_to_str(evt));
-         // TBUG("handle_message %" + percent + " Msg: " + damage_message(percent) + " Target: " + evt.target + "
-         // Weapon: " + evt.weapon + " Extra: " + evt.target_extra);
          percent = to_int(percent / (1.0 * evt->target->query_max_health(evt.target_extra)) * 100);
+         // TBUG("handle_message %" + percent + " Msg: " + damage_message(percent) + " Target: " + evt.target +
+         //      " Weapon: " + evt.weapon + " Extra: " + evt.target_extra);
 
          // Stun code
          if (percent >= STUN_FROM_PERCENT)
          {
-            int stun_chance = percent - STUN_FROM_PERCENT;
+            stun_chance = percent - STUN_FROM_PERCENT;
             // TBUG("Chance of stun is " + stun_chance + " percent!");
             if (random(60) < stun_chance)
             {
-               // TBUG("STUN happened!");
-               evt->target->stun(evt.target_extra, stun_chance);
+               // TBUG("<214>STUN happened!<res>");
+               do_stun = 1;
             }
+            // else TBUG("<214>NO STUN<res>");
          }
 
          handle_message(damage_message(percent), evt.target, evt.weapon, evt.target_extra);
+         if (do_stun)
+            evt->target->stun(evt.target_extra, stun_chance);
          percent = evt->target->do_damage_event(evt);
       }
    }

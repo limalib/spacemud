@@ -1,12 +1,11 @@
 /* Do not remove the headers from this file! see /USAGE for more info. */
 
-inherit "/domains/std/spells/stock-priest/std_priest_spell";
+inherit SPELL;
 
 void setup()
 {
-   set_spell_name("cure cold");
+   set_name("cure cold");
    set_cast_time(5);
-   set_difficulty(1);
    set_skill_used("magic/spell/disease");
 }
 

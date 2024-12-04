@@ -4,7 +4,7 @@ inherit SPELL;
 
 void setup()
 {
-   set_spell_name("unlock");
+   set_name("unlock");
 }
 
 void cast_spell(object ob, object reagent)

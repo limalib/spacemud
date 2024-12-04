@@ -1,43 +1,113 @@
 /* Do not remove the headers from this file! see /USAGE for more info. */
 
+// T: You need some variables to hold all these:
+/*
+    What are the things that all spells/abilities have in common
+    - Name - string?
+    - reflex Cost - cost how? int?
+    - Damage Type - string that can be verified towards DAMAGE_D?  query_valid_damage_type(string str)
+    - Casting type - int ? Perhaps spell.h to define different casting types?
+    - Skills used - string?
+    - Components - mapping perhaps? (["black powder":2,"piece of rope":1]) ? So you could specify how
+                   much is used?
+    - target - int ? perhaps also target types defined in spell.h? TARGET_LIVING TARGET_ITEM etc?
+                     So let the spell specify what type of target it expects?
+*/
+
+// T: Materials: Could it be the ones also used for crafting? I think two different material sets
+//    might be a bit much for  a MUD?
+//  When on lima calls:
+//  @CRAFTING_D->query_material_categories()
+//  Then for each of those do:
+//  @CRAFTING_D->query_materials("textile") e.g.
+//
+//  Further categories and materials could easily be added, like a magical category etc.
+//  I'm just mindfil to keep LIMA somewhat generic so it can be spun into Rifts, DND and a sci-fi MUD.
+
 #include <assert.h>
+#include <spells.h>
 
 private
 nosave string spell_name;
+private
+nosave int reflex_cost = 1;
+private
+nosave int cast_time;
+private
+nosave string skill_used;
+private
+nosave int instant_cast;
+private
+nosave string magic_skill_used;
+private
+nosave int channeling;
+private
+nosave int valid_targets;
+
+mapping spell_components = ([]);
+string casting_string;
+string channeling_string = "channeling";
+
+void do_effects(object target, object sc);
+
+void create()
+{
+   this_object()->setup();
+}
 
 protected
-void cast_spell(object target, object reagent);
-
-protected
-void set_spell_name(string s)
+void set_name(string s)
 {
    spell_name = s;
 }
-string get_spell_name()
+
+string query_name()
 {
    return spell_name;
 }
 
-// You could check for things in these f()'s such as: does the person have
-// the necessary components?  Does the person have the spell in memory, or
-// is a scroll present?
-// Return a string error message or 1 if it is cool.
+protected
+void set_reflex_cost(int c)
+{
+   ASSERT(c > 0);
+   reflex_cost = c;
+}
+
+int query_reflex_cost()
+{
+   return reflex_cost;
+}
 
 protected
-mixed valid_reagent(object reagent)
+int check_reflex(object b)
 {
-   /* DEFAULT: if there is a reagent, then it can't be used */
-   if (reagent)
-   {
-      return 0;
-   }
-   return 1;
+   return b->query_reflex() >= reflex_cost;
+}
+
+protected
+int spend_reflex(object b)
+{
+   return b->use_reflex(reflex_cost);
+}
+
+protected
+void set_instant_cast(int c)
+{
+   if (c == 1)
+      instant_cast = 1;
+   else
+      instant_cast = 0;
+}
+
+int query_instant_cast()
+{
+   return instant_cast;
 }
 
 protected
 mixed valid_target(object target)
 {
-   /* DEFAULT: if there is a target, then it is invalid */
+   /*DEFAULT: if there is a target, then it is invalid*/
    if (target)
    {
       return 0;
@@ -46,109 +116,118 @@ mixed valid_target(object target)
 }
 
 protected
-mixed valid_circumstances(mixed target, mixed reagent)
+mixed valid_spell_components(mapping sc)
 {
-   /* DEFAULT: spells can be cast at any time */
+   /*DEFAULT: if there is a spell component, then it cant be used*/
+   if (sc)
+   {
+      return 0;
+   }
    return 1;
 }
 
 protected
-mixed check_valid_spell(int has_target, int has_reagent)
+mixed valid_circumstances(mixed target, mixed sc)
 {
-   return valid_circumstances(has_target, has_reagent);
+   return 1;
 }
 
-protected
-mixed check_valid_target(object target, mixed has_reagent)
+nomask mixed check_valid_spell(int has_target, int has_sc)
 {
-   mixed res;
+   // Did we define only specific valid targets?
+   // Do we not have a target? Then we need to have TARGET_ROOM
+   // defined as a valid target.
+   TBUG(valid_targets);
+   if (valid_targets && !has_target)
+      return valid_targets & TARGET_ROOM ? 1 : "The spell requires a target.";
 
-   res = valid_circumstances(target, has_reagent);
-   if (res != 1)
-      return res;
+   return valid_circumstances(has_target, has_sc);
+}
 
+nomask void set_targets(int targets)
+{
+   valid_targets = targets;
+}
+
+nomask mixed check_valid_target(object target, mixed has_sc)
+{
+   mixed result;
+
+   result = valid_circumstances(target, has_sc);
+   if (!result)
+      return result;
+
+   TBUG("check_valid_target(" + target + ")");
    return valid_target(target);
 }
 
-protected
-mixed check_valid_reagent(object reagent, mixed has_target)
+nomask mixed check_valid_spell_components(mapping sc, mixed has_target)
 {
-   mixed res;
+   mixed result;
 
-   res = valid_circumstances(has_target, reagent);
-   if (res != 1)
-      return res;
+   result = valid_circumstances(has_target, sc);
+   if (!result)
+      return result;
 
-   return valid_reagent(reagent);
-
-#if 0
-    if ( !res )
-    {
-	return reagent ?
-	    sprintf("You can't cast that with %s.\n", reagent->the_short()) :
-	    "You need something to help you cast that.\n";
-    }
-    if ( stringp(res) )
-    {
-	return res;
-    }
-    ENSURE(res == 1);
-
-    res = valid_target(target);
-    if ( !res ) 
-    {
-	return target ?
-	    sprintf("You can't cast that on %s.\n", target->the_short()) :
-	    "You need to cast that on something.\n";
-    }
-    if ( stringp(res) )
-    {
-	return res;
-    }
-    ENSURE(res == 1);
-
-    return 1;
-#endif
+   return valid_spell_components(sc);
 }
 
-nomask mixed _check_valid_spell(int has_target, int has_reagent)
+void set_skill_used(string val)
 {
-   ENSURE(previous_object() == find_object(SPELL_D));
-   return check_valid_spell(has_target, has_reagent);
+   skill_used = val;
 }
 
-nomask mixed _check_valid_target(object target, mixed has_reagent)
+string query_skill_used()
 {
-   ENSURE(previous_object() == find_object(SPELL_D));
-   return check_valid_target(target, has_reagent);
+   return skill_used;
 }
 
-nomask mixed _check_valid_reagent(object reagent, mixed has_target)
+void set_magic_skill_used(string val)
 {
-   ENSURE(previous_object() == find_object(SPELL_D));
-   return check_valid_reagent(reagent, has_target);
+   magic_skill_used = val;
 }
 
-// The daemon calls this, we check if it came from the daemon, and then call
-// the local (protected) cast_spell
-nomask void _cast_spell(object target, object reagent)
+string query_magic_skill_used()
 {
-   ENSURE(previous_object() == find_object(SPELL_D));
-   cast_spell(target, reagent);
+   return magic_skill_used;
 }
 
-void setup()
+// Timer that is relevant to the spells, either cast time, cooldown, or channeling duration
+void set_cast_time(int t)
 {
+   ASSERT(t >= 0);
+   cast_time = t;
 }
 
-nomask void create()
+nomask void channel_spell(object target, object sc)
 {
-   if (base_name() == SPELL)
+   TBUG(target);
+   TBUG(sc);
+   this_body()->other_action("$N $vbegin to channel.");
+   this_body()->busy_with(this_object(), channeling_string, "channel_action", ({target, sc}));
+}
+
+void channel_action(mixed *args)
+{
+   object target = args[0];
+   object sc = args[1];
+   TBUG(target);
+   TBUG(sc);
+   this_object()->cast_spell(target, sc);
+}
+
+// Different versions of how a spell would be cast
+void internal_cast_spell(object target, object sc)
+{
+   if (!check_reflex(this_body()))
+   {
+      write("You cannot focus on casting spells right now.");
       return;
+   }
+   spend_reflex(this_body());
 
-   /* let the subclass set up the spell info/characteristics */
-   setup();
-
-   /* now register with the spell daemon */
-   SPELL_D->register_spell();
+   if (cast_time > 0)
+      channel_spell(target, sc);
+   else
+      this_object()->cast_spell(target, sc);
 }

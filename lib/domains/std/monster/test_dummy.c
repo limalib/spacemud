@@ -80,6 +80,20 @@ varargs int hurt_us(int x, string limb)
    // tell_target("" + x + " HP damage on " + limb);
 }
 
+// Add a small message to stand up action.
+void stand_up()
+{
+   ::stand_up();
+   simple_action("$N $vbounce back up.");
+}
+
+// A bit of built-in stun protection.
+void stun(string limb, int period)
+{
+   ::stun(limb, 2);
+   call_out("stand_up", 3);
+}
+
 void take_a_swing(object t)
 {
    // Do nothing

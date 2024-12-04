@@ -1,11 +1,13 @@
-inherit SPELL;
+/* Do not remove the headers from this file! see /USAGE for more info. */
+
+#include <spells.h>
+
 inherit COMBAT_SPELL;
 
 void setup()
 {
-   set_spell_name("magic arrow");
-   set_combat_messages("combat-torch");
-   set_damage_type("force");
+   set_name("magic arrow");
+   set_targets(TARGET_LIVING);
 }
 
 int calculate_damage()
@@ -15,24 +17,13 @@ int calculate_damage()
 
 void cast_spell(object ob, object reagent)
 {
-   object *targets;
-
    if (!ob)
    {
-      targets = filter(all_inventory(environment(this_body())), ( : $1 != this_body() && $1->is_living() :));
-      this_body()->simple_action("$N $vcast a magic arrow!");
+      write("Your target has disappeared.");
    }
    else
    {
-      targets = ({ob});
       this_body()->targetted_action("$N $vcast a magic arrow at $t1.", ob);
-   }
-
-   foreach (object item in targets)
-   {
-      if (item && item == this_body())
-         continue;
-
-      do_spell_damage(item, ( : calculate_damage:));
+      do_spell_damage(ob, ( : calculate_damage:));
    }
 }

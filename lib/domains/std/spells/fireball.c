@@ -1,18 +1,46 @@
 /* Do not remove the headers from this file! see /USAGE for more info. */
 
-inherit SPELL;
 inherit COMBAT_SPELL;
+
+string fireball_potency = "spark";
 
 void setup()
 {
-   set_spell_name("fireball");
-   set_combat_messages("combat-torch");
+   set_name("fireball");
    set_damage_type("fire");
+   set_reflex_cost(3);
+   set_cast_time(5);
 }
 
 int calculate_damage()
 {
-   return random(5) + 1;
+   int dmg = random(70) + 50;
+
+   switch (dmg)
+   {
+   case 0..10:
+      fireball_potency = "tiny";
+      break;
+   case 11..20:
+      fireball_potency = "";
+      break;
+   case 21..30:
+      fireball_potency = "large";
+      break;
+   case 31..50:
+      fireball_potency = "huge";
+      break;
+   default:
+      fireball_potency = "extremely huge";
+      break;
+   }
+
+   return dmg;
+}
+
+string short()
+{
+   return add_article(fireball_potency + " " + query_name());
 }
 
 void cast_spell(object ob, object reagent)
@@ -27,7 +55,7 @@ void cast_spell(object ob, object reagent)
    else
    {
       targets = ({ob});
-      this_body()->targetted_action("$N $vcast a fireball spell at $t1.", ob);
+      this_body()->targetted_action("$N $vcast a fireball spell at $t1!", ob);
    }
 
    foreach (object item in targets)
