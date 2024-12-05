@@ -9,7 +9,7 @@
 ###############################################################################
 
 # name of this mud
-name : My LIMA MUD
+name : LIMA
 
 # port number to accept users on
 external_port_1: telnet 7878
@@ -350,3 +350,8 @@ enable gmcp : 1
 enable zmp : 0
 enable mssp : 1
 enable msp : 0
+
+# External commands
+external_cmd_1 : /usr/bin/curl
+external_cmd_2 : c:\Windows\System32\curl.exe
+

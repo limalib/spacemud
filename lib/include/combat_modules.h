@@ -153,7 +153,7 @@
 // impacted first before the hitpoints are affected. (A bit like SDC in Rifts)
 // or like various shields in sci-fi shooters. 
 // This options works only when HEALTH_STYLE is HEALTH_LIMBS.
-#define LIMB_SHIELDS
+#undef LIMB_SHIELDS
 
 /* #define or #undef these. Modify them without fear of messing anything
    up in your .o files. */
