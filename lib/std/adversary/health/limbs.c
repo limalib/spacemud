@@ -514,6 +514,7 @@ void kill_us()
    if (previous_object()->is_turret())
       killer = previous_object()->acts_for();
 
+   die();
    if (killer)
    {
       string team = PARTY_D->locate_user(killer->short());
@@ -539,7 +540,6 @@ void kill_us()
       }
    }
 
-   die();
 }
 
 //: FUNCTION query_random_limb

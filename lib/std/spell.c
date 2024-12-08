@@ -218,7 +218,7 @@ void set_cast_time(int t)
 nomask void delayed_cast_spell(object target, object sc)
 {
    this_body()->other_action("$N $vbegin casting a spell.");
-   this_body()->busy_with(this_object(), "casting "+query_name(), "cast_action", ({target, sc}));
+   this_body()->busy_with(this_object(), "casting " + query_name(), "cast_action", ({target, sc}));
 }
 
 void cast_action(mixed *args)
@@ -226,6 +226,12 @@ void cast_action(mixed *args)
    object target = args[0];
    object sc = args[1];
    this_object()->cast_spell(target, sc);
+}
+
+object transient(string name, mixed *args...)
+{
+   object t = new ("/domains/std/spell/transient/" + name, args...);
+   return t;
 }
 
 // Different versions of how a spell would be cast
