@@ -115,6 +115,22 @@ class event_info modify_our_event(class event_info evt)
    return evt;
 }
 
+class event_info effect_modify_event(class event_info evt)
+{
+   object *effects;
+   if (stringp(evt.data))
+      return evt;
+
+   effects = filter_array(all_inventory(), ( : $1->is_transient_effect() :));
+
+   if (sizeof(effects))
+      foreach (object ef in effects)
+         if (ef)
+            evt = ef->effect_modify_event(evt);
+
+   return evt;
+}
+
 class event_info health_modify_event(class event_info evt)
 {
    if (stringp(evt.data))
@@ -146,6 +162,7 @@ class event_info armours_modify_event(class event_info evt)
 // the event does any damage to us, make modifications.
 class event_info modify_event(class event_info evt)
 {
+   evt = effect_modify_event(evt);
    evt = health_modify_event(evt);
    evt = armours_modify_event(evt);
 

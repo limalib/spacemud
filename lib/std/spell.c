@@ -42,6 +42,8 @@ nosave string magic_skill_used;
 private
 nosave int channeling;
 private
+nosave int channeling_interval;
+private
 nosave int valid_targets;
 
 mapping spell_components = ([]);
@@ -192,6 +194,20 @@ string query_magic_skill_used()
    return magic_skill_used;
 }
 
+// Timer for how long the spell is channeled (ongoing) in the room
+void set_channeling_time(int t)
+{
+   ASSERT(t > 0);
+   channeling = t;
+}
+
+// Timer for how long between actions
+void set_channeling_interval(int t)
+{
+   ASSERT(t > 0);
+   channeling_interval = t;
+}
+
 // Timer that is relevant to the spells, either cast time, cooldown, or channeling duration
 void set_cast_time(int t)
 {
@@ -199,20 +215,16 @@ void set_cast_time(int t)
    cast_time = t;
 }
 
-nomask void channel_spell(object target, object sc)
+nomask void delayed_cast_spell(object target, object sc)
 {
-   TBUG(target);
-   TBUG(sc);
-   this_body()->other_action("$N $vbegin to channel.");
-   this_body()->busy_with(this_object(), channeling_string, "channel_action", ({target, sc}));
+   this_body()->other_action("$N $vbegin casting a spell.");
+   this_body()->busy_with(this_object(), "casting "+query_name(), "cast_action", ({target, sc}));
 }
 
-void channel_action(mixed *args)
+void cast_action(mixed *args)
 {
    object target = args[0];
    object sc = args[1];
-   TBUG(target);
-   TBUG(sc);
    this_object()->cast_spell(target, sc);
 }
 
@@ -227,7 +239,7 @@ void internal_cast_spell(object target, object sc)
    spend_reflex(this_body());
 
    if (cast_time > 0)
-      channel_spell(target, sc);
+      delayed_cast_spell(target, sc);
    else
       this_object()->cast_spell(target, sc);
 }

@@ -12,6 +12,7 @@
 inherit OBJ;
 inherit M_GETTABLE;
 inherit M_STATEFUL;
+inherit CLASS_EVENT_INFO;
 
 int effect_duration;
 string effect_type;
@@ -102,6 +103,12 @@ void extend_effect(object t)
       add_effect_duration(t->query_effect_duration());
       t->remove();
    }
+}
+
+class event_info effect_modify_event(class event_info evt)
+{
+   //Override in effects to impact combat event.
+   return evt;
 }
 
 varargs mixed move(object dest, string where)
