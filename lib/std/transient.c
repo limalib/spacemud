@@ -107,7 +107,7 @@ void extend_effect(object t)
 
 class event_info effect_modify_event(class event_info evt)
 {
-   //Override in effects to impact combat event.
+   // Override in effects to impact combat event.
    return evt;
 }
 
@@ -117,6 +117,7 @@ varargs mixed move(object dest, string where)
    {
       if (!ob->is_transient_effect())
          continue;
+
       if (ob->query_effect_type() == effect_type && ob->query_effect_name() == effect_name)
       {
          ob->extend_effect(this_object());

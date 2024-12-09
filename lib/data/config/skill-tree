@@ -29,6 +29,9 @@ combat/thrown/grenade:1
 
 # Magic section
 magic:1 
+magic/technique:1
+magic/technique/channeling
+magic/technique/casting
 magic/arcane:1 
 magic/arcane/knowledge:1 
 magic/spell:1 

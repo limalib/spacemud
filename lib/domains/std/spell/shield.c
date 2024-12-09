@@ -8,7 +8,7 @@ void setup()
 {
    set_name("shield");
    set_targets(TARGET_ROOM);
-   set_reflex_cost(1);
+   extra_reflex_cost(1);
 }
 
 void cast_spell(object ob, object reagent)

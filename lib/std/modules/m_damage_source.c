@@ -35,6 +35,10 @@ private
 nosave int must_dual_wield = 0;
 private
 nosave int can_dual_wield = 0;
+private
+nosave string skill_used = "combat/melee/unarmed";
+private
+nosave string magic_skill_used = "magic/technique/casting";
 
 /* Restrictions */
 private
@@ -301,11 +305,6 @@ int query_weapon_class()
    return weapon_class + query_weapon_class_bonus();
 }
 
-private
-string skill_used = "combat/melee/unarmed";
-private
-string magic_skill_used = "magic/casting";
-
 string query_skill_used()
 {
    // Can be removed once all .o files are fixed
@@ -317,8 +316,8 @@ string query_skill_used()
 string query_magic_skill_used()
 {
    // Can be removed once all .o files are fixed
-   if (magic_skill_used == "magic/casting")
-      skill_used = "magic/casting";
+   if (magic_skill_used == "magic/technique/casting")
+      skill_used = "magic/technique/casting";
    return skill_used;
 }
 

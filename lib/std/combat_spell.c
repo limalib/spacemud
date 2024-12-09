@@ -34,7 +34,7 @@ void create()
    // Generic spell messages that uses the damage type for description.
    set_combat_messages("combat-generic-spell");
 #ifdef USE_SKILLS
-   set_magic_skill_used("magic/casting");
+   set_magic_skill_used("magic/technique/casting");
 #endif
    // Call create down here so the defaults above can be overwritten.
    ::create();

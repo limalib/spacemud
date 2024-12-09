@@ -8,7 +8,7 @@ void setup()
 {
    set_name("fireball");
    set_damage_type("fire");
-   set_reflex_cost(3);
+   extra_reflex_cost(3);
    set_cast_time(5);
 }
 
