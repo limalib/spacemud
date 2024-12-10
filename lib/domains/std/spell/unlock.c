@@ -5,6 +5,7 @@ inherit SPELL;
 void setup()
 {
    set_name("unlock");
+   set_category("transmutation");
 }
 
 void cast_spell(object ob, object reagent)

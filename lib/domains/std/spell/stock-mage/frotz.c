@@ -5,6 +5,7 @@ inherit SPELL;
 void setup()
 {
    set_name("frotz");
+   set_category("conjuration");
    set_cast_time(3);
 }
 

@@ -30,6 +30,8 @@
 private
 nosave string spell_name;
 private
+nosave string spell_category;
+private
 nosave int reflex_cost = 1;
 private
 nosave int cast_time;
@@ -57,6 +59,23 @@ void do_effects(object target, object sc);
 void create()
 {
    this_object()->setup();
+}
+
+//: FUNCTION set_category
+// Sets the category of the spell.
+// Parameters:
+// - c: The category of the spell.
+protected
+void set_category(string c)
+{
+   spell_category = c;
+}
+
+//: FUNCTION query_category
+// Returns the category of the spell.
+string query_category()
+{
+   return spell_category;
 }
 
 //: FUNCTION set_level
@@ -120,7 +139,7 @@ int query_reflex_cost()
 protected
 int check_reflex(object b)
 {
-   return b->query_reflex() >= reflex_cost;
+   return b->query_reflex() >= query_reflex_cost();
 }
 
 //: FUNCTION spend_reflex
@@ -328,10 +347,10 @@ void set_cast_time(int t)
 // Parameters:
 // - target: The target object.
 // - sc: The spell components object.
-nomask void delayed_cast_spell(object target, object sc)
+nomask void delayed_cast_spell(object target, object sc, int success)
 {
    this_body()->other_action("$N $vbegin casting a spell.");
-   this_body()->busy_with(this_object(), "casting " + query_name(), "cast_action", ({target, sc}));
+   this_body()->busy_with(this_object(), "casting " + query_name(), "cast_action", ({target, sc, success}));
 }
 
 //: FUNCTION cast_action
@@ -357,6 +376,21 @@ object transient(string name, mixed *args...)
    return t;
 }
 
+int test_spell()
+{
+   if (!spell_name || !spell_category)
+   {
+      write("Spell not fully defined with name (" + spell_name + ") and category (" + spell_category + ").\n");
+      return 0;
+   }
+   if (!SKILL_D->valid_skill("magic/" + spell_category + "/" + spell_name))
+   {
+      write("Undefined skill used for spell. Add 'magic/" + spell_category + "/" + spell_name + "' to SKILL_D.\n");
+      return 0;
+   }
+   return 1;
+}
+
 //: FUNCTION internal_cast_spell
 // Internally handles the casting of the spell.
 // Parameters:
@@ -365,6 +399,7 @@ object transient(string name, mixed *args...)
 void internal_cast_spell(object target, object sc)
 {
    object caster = this_body();
+   int success;
 
    if (!check_reflex(caster))
    {
@@ -373,16 +408,18 @@ void internal_cast_spell(object target, object sc)
    }
 
    spend_reflex(caster);
-   if (!caster->test_skill("magic/technique/casting", level * 100))
+   if (!caster->test_skill("magic/technique/casting", SKILL_D->pts_for_rank(level)))
    {
       write("You fail to cast the spell.");
       return;
    }
 
+   success = caster->test_skill("magic/technique/casting", SKILL_D->pts_for_rank(level));
+
    if (cast_time > 0)
-      delayed_cast_spell(target, sc);
+      delayed_cast_spell(target, sc, success);
    else
-      this_object()->cast_spell(target, sc);
+      this_object()->cast_spell(target, sc, success);
 }
 
 string stat_me()

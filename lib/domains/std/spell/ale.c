@@ -3,6 +3,7 @@ inherit SPELL;
 void setup()
 {
    set_name("conjure ale");
+   set_category("conjuration");
 }
 
 void cast_spell(object ob, object reagent)

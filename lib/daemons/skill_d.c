@@ -286,6 +286,7 @@ void init_skills()
    {
       if (line[0] == '#')
          continue;
+      sscanf(line, "%s:%*d", line);
       register_skill(line);
    }
    write(SKILL_FLAT_FILE + " loaded.");

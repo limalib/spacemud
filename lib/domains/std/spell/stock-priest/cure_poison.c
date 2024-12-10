@@ -4,9 +4,9 @@ inherit SPELL;
 
 void setup()
 {
-   set_name("cure cold");
+   set_name("cure poison");
+   set_category("healing");
    set_cast_time(5);
-   set_skill_used("magic/spell/disease");
 }
 
 mixed valid_target(object ob)

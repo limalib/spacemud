@@ -85,7 +85,13 @@ void build_spell_table()
 
          if (!valid_spell_name(spell_name))
          {
-            write("** Invalid spell name: "+spell_name+" for "+file);
+            write("** Invalid spell name: " + spell_name + " for " + file);
+            continue;
+         }
+
+         if (!obname->test_spell())
+         {
+            write(spell_name+" failed test_spell()");
             continue;
          }
          if (spell_table[spell_name])

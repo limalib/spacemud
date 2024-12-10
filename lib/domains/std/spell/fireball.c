@@ -6,7 +6,9 @@ string fireball_potency = "spark";
 
 void setup()
 {
+   set_level(3);
    set_name("fireball");
+   set_category("evocation");
    set_damage_type("fire");
    extra_reflex_cost(3);
    set_cast_time(5);
