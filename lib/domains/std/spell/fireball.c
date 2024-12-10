@@ -45,7 +45,7 @@ string short()
    return add_article(fireball_potency + " " + query_name());
 }
 
-void cast_spell(object ob, object reagent)
+void cast_spell(object ob, object reagent, int success)
 {
    object *targets;
 

@@ -6,7 +6,7 @@ void setup()
    set_category("conjuration");
 }
 
-void cast_spell(object ob, object reagent)
+void cast_spell(object ob, object reagent, int success)
 {
    object ale;
    this_body()->simple_action("A streak of ale appears at the wave of $p hand.");

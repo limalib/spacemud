@@ -12,7 +12,7 @@ void setup()
    extra_reflex_cost(1);
 }
 
-void cast_spell(object ob, object reagent)
+void cast_spell(object ob, object reagent, int success)
 {
    this_body()->simple_action("A semi-transparent blue shield materializes in front of $n.");
    transient("shield", 1, 10, "A shimmering, protective shield envelops $n.")->move(this_body());

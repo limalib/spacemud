@@ -8,7 +8,7 @@ void setup()
    set_category("transmutation");
 }
 
-void cast_spell(object ob, object reagent)
+void cast_spell(object ob, object reagent, int success)
 {
    mixed result = ob->magic_unlock();
 

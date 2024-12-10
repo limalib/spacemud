@@ -361,7 +361,8 @@ void cast_action(mixed *args)
 {
    object target = args[0];
    object sc = args[1];
-   this_object()->cast_spell(target, sc);
+   int success = args[2];
+   this_object()->cast_spell(target, sc, success);
 }
 
 //: FUNCTION transient
@@ -414,7 +415,8 @@ void internal_cast_spell(object target, object sc)
       return;
    }
 
-   success = caster->test_skill("magic/technique/casting", SKILL_D->pts_for_rank(level));
+   // Safe to test this one, we already tested for it existing when loading the spell via SPELL_D.
+   success = caster->test_skill("magic/" + spell_category + "/" + spell_name, SKILL_D->pts_for_rank(level));
 
    if (cast_time > 0)
       delayed_cast_spell(target, sc, success);
