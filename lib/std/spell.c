@@ -431,9 +431,9 @@ string target_to_str()
    return format_list(targs);
 }
 
-string reflex_string()
+string cast_time_string()
 {
-   switch (query_reflex_cost())
+   switch (query_cast_time())
    {
    case 0:
       return "Instant";
@@ -450,6 +450,23 @@ string reflex_string()
    }
 }
 
+string reflex_string()
+{
+   switch (reflex_cost)
+   {
+   case 0:
+      return "Very low";
+   case 1:
+      return "Low";
+   case 2:
+      return "Moderate";
+   case 3:
+      return "High";
+   default:
+      return "Very high";
+   }
+}
+
 string query_description()
 {
    int width = this_user()->query_screen_width();
@@ -460,9 +477,9 @@ string query_description()
                    "Level", (query_level() ? query_level() + "" : "Cantrip"),                             //
                    "Category", capitalize(query_category()),                                              //
                    "Targets", target_to_str());
-   desc += sprintf("<bld>%10.10s:<res> %-10.10s<bld>%10.10s:<res> %-15.15s\n",             //
-                   "Reflex", reflex_string(),                                              //
-                   "Cast time", (query_cast_time() ? query_cast_time() + "" : "Instant")); //
+   desc += sprintf("<bld>%10.10s:<res> %-10.10s<bld>%10.10s:<res> %-15.15s\n", //
+                   "Reflex", "" + reflex_string(),                             //
+                   "Cast time", cast_time_string());                           //
    desc += "\n";
    desc += "<228>Example of use:<res>\n";
    if (valid_targets & TARGET_ROOM || !valid_targets)

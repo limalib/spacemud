@@ -25,7 +25,7 @@ string spell_name_colour(string name)
 {
    object spell_ob;
    int level, rank;
-   if (!name || name=="")
+   if (!name || name == "")
       return "<196>";
    spell_ob = load_object(SPELL_D->query_spell_obname(name));
    level = spell_ob->query_level();
@@ -107,9 +107,9 @@ void list_spells(mixed arg)
    frame_add_column("S", map(spells->query_name(), ( : $(ranks)[$1] :)));
    frame_add_column("Level", map(spells->query_level(), ( : !$1 ? "Cantrip" : "" + $1:)));
    frame_add_column("Category", map(spells->query_category(), ( : capitalize($1) :)));
-   frame_add_column("Reflex", map(spells, ( : $1->reflex_string() :)));
+   frame_add_column("Reflex", spells->reflex_string());
 
-   frame_add_column("Cast Time", map(spells, ( : $1->query_cast_time() ? $1->query_cast_time() + "" : "Instant" :)));
+   frame_add_column("Cast Time", spells->cast_time_string());
    set_frame_footer("Use 'cast <spell>' to cast a spell, use e.g. 'spells " + choice(spells)->query_name() +
                     "' for details about that spell.\n"
                     "<081>Cantrip<res> - <118>Easy<res> - <220>Medium<res> - <196>Hard<res>");

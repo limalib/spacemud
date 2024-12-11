@@ -11,7 +11,7 @@ void setup()
    set_category("evocation");
    set_targets(TARGET_LIVING);
    set_cast_time(1);
-   set_description("This spell creates a magical force arrow that flies at the target.");
+   set_description("This spell creates a magical arrow that flies at the target.");
 }
 
 int calculate_damage()
