@@ -65,6 +65,8 @@ nosave string *sections;
 private
 mapping columns = ([]);
 private
+mapping column_functions = ([]);
+private
 string *column_order = ({});
 private
 mapping column_width = ([]);
@@ -282,6 +284,7 @@ void set_frame_header(string hc)
    if (!hc)
    {
       add_header = 0;
+      header_content = 0;
       return;
    }
 
@@ -361,7 +364,7 @@ string *create_section_header()
    foreach (string *data in sections)
    {
       // TBUG("Width: " + width + " Len: " + len + " Out len: " + colour_strlen(out));
-      if (colour_strlen(out) + len > width)
+      if (strlen(out) + len > width)
       {
          headers += ({out + (first_header ? bits[TLD] : bits[TVL]) + "\n"});
          first_header = 0;
@@ -380,14 +383,13 @@ string *create_section_header()
       out += bits[TH] + sprintf("<bld>%s%s<res> ", data[1], data[0]) +
              repeat_string(bits[TH], (section_width - strlen(data[0]) + 3));
       if (!len)
-         len = colour_strlen(out + bits[TLD]);
+         len = strlen(out + bits[TLD]);
    }
 
    if (strlen(out))
    {
-      if (sizeof(headers) && colour_strlen(out) < colour_strlen(headers[0]))
-         headers +=
-             ({out + repeat_string(bits[TH], colour_strlen(headers[0]) - colour_strlen(out) - 2) + bits[TVL] + "\n"});
+      if (sizeof(headers) && strlen(out) < strlen(headers[0]))
+         headers += ({out + repeat_string(bits[TH], strlen(headers[0]) - strlen(out) - 2) + bits[TVL] + "\n"});
       else
          headers += ({out + (first_header ? bits[TLD] : bits[TVL]) + "\n"});
    }
@@ -800,10 +802,11 @@ string frame_render()
 // Call ``frame_init_user()`` before adding columns.
 // Important: Frame header and frame content should
 // not be called as they are calculated automatically.
-void frame_add_column(string name, mixed *data)
+varargs void frame_add_column(string name, mixed *data, function colour_function)
 {
    column_order += ({name});
    columns[name] = data;
+   column_functions[name] = colour_function || ( : "<res>" :);
    column_width[name] = 2 + max(map(data, ( : colour_strlen("" + $1) :)));
    if (column_width[name] < strlen(name) + 5)
       column_width[name] = strlen(name) + 5;
@@ -855,7 +858,8 @@ string frame_render_columns()
             value = columns[col][i];
          else
             value = "";
-         row += sprintf("%-" + column_width[col] + "." + column_width[col] + "s", "" + value) + "  ";
+         row += evaluate(column_functions[col], value) +
+                sprintf("%-" + column_width[col] + "." + column_width[col] + "s", "" + value) + "  ";
       }
       output += ({row});
    }
