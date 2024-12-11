@@ -1,27 +1,16 @@
 /* Do not remove the headers from this file! see /USAGE for more info. */
 
+#include <spells.h>
+
 inherit SPELL;
 
 void setup()
 {
-   set_name("frotz");
+   set_name("light");
    set_category("conjuration");
    set_cast_time(3);
-}
-
-int get_spell_level()
-{
-   return 1;
-}
-
-mixed valid_target(object ob)
-{
-   if (!ob)
-   {
-      return "You need to specify what you want to cast frotz on.\n";
-   }
-
-   return 1;
+   set_level(0);
+   set_targets(TARGET_ROOM);  
 }
 
 void do_effects(object target, object reagent)
