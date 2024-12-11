@@ -471,6 +471,8 @@ string query_description()
       desc += "   cast " + query_name() + " on <living>\n";
    if (valid_targets & TARGET_ITEM || !valid_targets)
       desc += "   cast " + query_name() + " on <item>\n";
+   if (!query_level())
+      desc += "\nTip: Cantrips are easy to cast, and a great way of training.";
 
    return desc;
 }
