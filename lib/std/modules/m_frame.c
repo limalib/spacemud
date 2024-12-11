@@ -263,7 +263,7 @@ void frame_init_user()
    columns = ([]);
    column_order = ({});
    column_width = ([]);
-   max_column_length;
+   max_column_length=0;
    set_width(this_user()->query_screen_width() ? this_user()->query_screen_width() - 2 : 79);
    hcolours = (this_user()->frames_colour() != "none" ? colours[this_user()->frames_colour()] : colours["none"]);
    set_style(this_user()->frames_style());
