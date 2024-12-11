@@ -23,9 +23,13 @@ spell_sort(mixed a, mixed b)
 
 string spell_name_colour(string name)
 {
-   object spell_ob = load_object(SPELL_D->query_spell_obname(name));
-   int level = spell_ob->query_level();
-   int rank = SKILL_D->skill_rank(this_body(), "magic/" + spell_ob->query_category() + "/" + spell_ob->query_name());
+   object spell_ob;
+   int level, rank;
+   if (!name || name=="")
+      return "<196>";
+   spell_ob = load_object(SPELL_D->query_spell_obname(name));
+   level = spell_ob->query_level();
+   rank = SKILL_D->skill_rank(this_body(), "magic/" + spell_ob->query_category() + "/" + spell_ob->query_name());
 
    if (level == 0)
       return "<081>"; // Cantrip
