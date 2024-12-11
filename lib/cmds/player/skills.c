@@ -25,10 +25,23 @@ inherit CLASS_SKILL;
 inherit M_WIDGETS;
 inherit M_FRAME;
 
+//Sometimes training down the tree has not managed to propagate to level 2.
+//This function manually adds in the level 2 skills if needed.
+mapping introduce_level_twos(mapping skills)
+{
+   foreach (string name, class skill skill in skills)
+   {
+      string *parts = explode(name, "/");
+      if (sizeof(parts) > 2 && !skills[implode(parts[0..1], "/")])
+         skills[implode(parts[0..1], "/")] = new (class skill);
+   }
+   return skills;
+}
+
 private
 void main(string arg)
 {
-   mapping skills = this_body()->query_skills();
+   mapping skills;
    int width = this_user()->query_screen_width();
    int skill_bar;
    string barchar = uses_unicode() ? "▅" : "=";
@@ -64,6 +77,7 @@ void main(string arg)
       target = this_body();
 
    skills = target->query_skills();
+   skills = introduce_level_twos(skills);
 
    if (sizeof(skills) == 0)
    {
@@ -100,7 +114,7 @@ void main(string arg)
 
          if (level == 1)
          {
-            if (content!="")
+            if (content != "")
             {
                set_frame_content(content);
                out(frame_render());
