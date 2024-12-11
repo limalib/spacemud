@@ -12,6 +12,7 @@ void setup()
    set_damage_type("fire");
    extra_reflex_cost(3);
    set_cast_time(5);
+   set_description("This spell creates a ball of fire that flies at the target or everyone in the room.");
 }
 
 int calculate_damage()

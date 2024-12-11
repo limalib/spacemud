@@ -1,11 +1,17 @@
 /* Do not remove the headers from this file! see /USAGE for more info. */
 
+#include <spells.h>
+
 inherit SPELL;
 
 void setup()
 {
    set_name("unlock");
    set_category("transmutation");
+   set_level(1);
+   set_description("This spell has a chance of unlocking a non-magical lock. The chance of success is based on the "
+                   "caster's skills, and the difficulty of the lock.");
+   set_targets(TARGET_ITEM);
 }
 
 void cast_spell(object ob, object reagent, int success)

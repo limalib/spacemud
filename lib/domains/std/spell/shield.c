@@ -10,6 +10,8 @@ void setup()
    set_category("abjuration");
    set_targets(TARGET_ROOM);
    extra_reflex_cost(1);
+   set_description("This spell creates a semi-transparent blue shield in front of the caster protecting against "
+                   "incoming bludgeoning attacks.");
 }
 
 void cast_spell(object ob, object reagent, int success)

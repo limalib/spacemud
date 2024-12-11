@@ -10,7 +10,8 @@ void setup()
    set_category("conjuration");
    set_cast_time(3);
    set_level(0);
-   set_targets(TARGET_ROOM);  
+   set_targets(TARGET_ROOM); 
+   set_description("This spell creates a small light source.");
 }
 
 void do_effects(object target, object reagent)

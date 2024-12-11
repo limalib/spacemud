@@ -40,8 +40,6 @@ nosave int level = 1;
 private
 nosave string skill_used;
 private
-nosave int instant_cast;
-private
 nosave string magic_skill_used;
 private
 nosave int channeling;
@@ -49,6 +47,8 @@ private
 nosave int channeling_interval;
 private
 nosave int valid_targets;
+private
+nosave string description;
 
 mapping spell_components = ([]);
 string casting_string;
@@ -151,27 +151,6 @@ protected
 int spend_reflex(object b)
 {
    return b->use_reflex(query_reflex_cost());
-}
-
-//: FUNCTION set_instant_cast
-// Sets whether the spell is an instant cast.
-// Parameters:
-// - c: 1 if the spell is an instant cast, 0 otherwise.
-protected
-void set_instant_cast(int c)
-{
-   if (c == 1)
-      instant_cast = 1;
-   else
-      instant_cast = 0;
-}
-
-//: FUNCTION query_instant_cast
-// Returns whether the spell is an instant cast.
-// Returns: 1 if the spell is an instant cast, 0 otherwise.
-int query_instant_cast()
-{
-   return instant_cast;
 }
 
 //: FUNCTION valid_target
@@ -342,6 +321,13 @@ void set_cast_time(int t)
    cast_time = t;
 }
 
+//: FUNCTION query_cast_time
+// Returns the cast time of the spell.
+int query_cast_time()
+{
+   return cast_time;
+}
+
 //: FUNCTION delayed_cast_spell
 // Initiates a delayed cast for the spell.
 // Parameters:
@@ -422,6 +408,71 @@ void internal_cast_spell(object target, object sc)
       delayed_cast_spell(target, sc, success);
    else
       this_object()->cast_spell(target, sc, success);
+}
+
+string set_description(string d)
+{
+   description = d;
+}
+
+string target_to_str()
+{
+   string *targs = ({});
+
+   if (!valid_targets)
+      return "Flexible";
+
+   if (valid_targets & TARGET_ROOM)
+      targs += ({"Room"});
+   if (valid_targets & TARGET_LIVING)
+      targs += ({"Living"});
+   if (valid_targets & TARGET_ITEM)
+      targs += ({"Item"});
+   return format_list(targs);
+}
+
+string reflex_string()
+{
+   switch (query_reflex_cost())
+   {
+   case 0:
+      return "Instant";
+   case 1:
+      return "Very fast";
+   case 2..3:
+      return "Fast";
+   case 4..6:
+      return "Moderate";
+   case 7..9:
+      return "Slow";
+   default:
+      return "Very slow";
+   }
+}
+
+string query_description()
+{
+   int width = this_user()->query_screen_width();
+   string desc = "<bld>Description<res>\n";
+   desc += wrap(description || "(This spell is missing a description)", width - 20);
+   desc += "\n\n";
+   desc += sprintf("<bld>%10.10s:<res> %-10.10s<bld>%10.10s:<res> %-15.15s<bld>%10.10s:<res> %-10.10s\n", //
+                   "Level", (query_level() ? query_level() + "" : "Cantrip"),                             //
+                   "Category", capitalize(query_category()),                                              //
+                   "Targets", target_to_str());
+   desc += sprintf("<bld>%10.10s:<res> %-10.10s<bld>%10.10s:<res> %-15.15s\n",             //
+                   "Reflex", reflex_string(),                                              //
+                   "Cast time", (query_cast_time() ? query_cast_time() + "" : "Instant")); //
+   desc += "\n";
+   desc += "<228>Example of use:<res>\n";
+   if (valid_targets & TARGET_ROOM || !valid_targets)
+      desc += "   cast " + query_name() + "\n";
+   if (valid_targets & TARGET_LIVING || !valid_targets)
+      desc += "   cast " + query_name() + " on <living>\n";
+   if (valid_targets & TARGET_ITEM || !valid_targets)
+      desc += "   cast " + query_name() + " on <item>\n";
+
+   return desc;
 }
 
 string stat_me()

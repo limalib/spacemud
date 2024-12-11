@@ -1,5 +1,7 @@
 /* Do not remove the headers from this file! see /USAGE for more info. */
 
+#include <spells.h>
+
 inherit SPELL;
 
 void setup()
@@ -7,6 +9,8 @@ void setup()
    set_name("cure poison");
    set_category("healing");
    set_cast_time(5);
+   set_description("This spell cures the target of any poison effects.");
+   set_targets(TARGET_LIVING);
 }
 
 mixed valid_target(object ob)
