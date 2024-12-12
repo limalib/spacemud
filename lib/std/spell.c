@@ -51,8 +51,6 @@ private
 nosave string description;
 
 mapping spell_components = ([]);
-string casting_string;
-string channeling_string = "channeling";
 
 void do_effects(object target, object sc);
 
@@ -333,22 +331,77 @@ int query_cast_time()
 // Parameters:
 // - target: The target object.
 // - sc: The spell components object.
+// - success: The success level of the spell casting.
 nomask void delayed_cast_spell(object target, object sc, int success)
 {
    this_body()->other_action("$N $vbegin casting a spell.");
-   this_body()->busy_with(this_object(), "casting " + query_name(), "cast_action", ({target, sc, success}));
+   this_body()->busy_with(this_object(), (channeling_interval > 0 ? "channeling " : "casting ") + query_name(),
+                          "cast_action", ({target, sc, success}), cast_time);
+}
+
+//: FUNCTION continue_channeling
+// Continues the channeling of the spell.
+// Parameters:
+// - target: The target object.
+// - sc: The spell components object.
+void continue_channeling(object target, object sc)
+{
+   object caster = this_body();
+   int channeling_level = clamp(level - 1, 0, 100);
+   int success;
+
+   if (!check_reflex(caster))
+   {
+      write("You cannot focus on casting spells right now.");
+      return;
+   }
+
+   spend_reflex(caster);
+
+   // We check for channeling_level which is one level lower than spell level, to make it easier
+   // to channel the spell.
+   if (!caster->test_skill("magic/technique/channeling", SKILL_D->pts_for_rank(channeling_level)))
+   {
+      write("You fail to continue channeling " + query_name() + ".");
+      return;
+   }
+
+   // Safe to test this one, we already tested for it existing when loading the spell via SPELL_D.
+   success = caster->test_skill("magic/" + spell_category + "/" + spell_name, SKILL_D->pts_for_rank(level));
+
+   caster->busy_with(this_object(), (channeling_interval > 0 ? "channeling " : "casting ") + query_name(),
+                     "cast_action", ({target, sc, success}), channeling_interval);
+}
+
+//: FUNCTION channel_failure
+// Handles the failure of channeling the spell.
+// Parameters:
+// - message: The failure message.
+void channel_failure(string message)
+{
+   write(message);
+   channeling = 0;
 }
 
 //: FUNCTION cast_action
 // Executes the casting action for the spell.
 // Parameters:
-// - args: An array containing the target and spell components.
-void cast_action(mixed *args)
+// - args: An array containing the target, spell components, and success level.
+int cast_action(mixed *args)
 {
-   object target = args[0];
-   object sc = args[1];
-   int success = args[2];
+   int success;
+   object target, sc;
+   if (channeling_interval)
+      channeling = 1;
+   if (sizeof(args) != 3)
+      return 0;
+   target = args[0];
+   sc = args[1];
+   success = args[2];
    this_object()->cast_spell(target, sc, success);
+   if (channeling && channeling_interval)
+      continue_channeling(target, sc);
+   return 1;
 }
 
 //: FUNCTION transient
@@ -363,6 +416,9 @@ object transient(string name, mixed *args...)
    return t;
 }
 
+//: FUNCTION test_spell
+// Tests if the spell is fully defined and valid.
+// Returns: 1 if the spell is valid, 0 otherwise.
 int test_spell()
 {
    if (!spell_name || !spell_category)
@@ -410,11 +466,18 @@ void internal_cast_spell(object target, object sc)
       this_object()->cast_spell(target, sc, success);
 }
 
+//: FUNCTION set_description
+// Sets the description of the spell.
+// Parameters:
+// - d: The description of the spell.
 string set_description(string d)
 {
    description = d;
 }
 
+//: FUNCTION target_to_str
+// Converts the valid targets to a string representation.
+// Returns: A comma separated string representation of the valid targets.
 string target_to_str()
 {
    string *targs = ({});
@@ -431,6 +494,9 @@ string target_to_str()
    return format_list(targs);
 }
 
+//: FUNCTION cast_time_string
+// Converts the cast time to a string representation.
+// Returns: A string representation of the cast time.
 string cast_time_string()
 {
    switch (query_cast_time())
@@ -450,6 +516,9 @@ string cast_time_string()
    }
 }
 
+//: FUNCTION reflex_string
+// Converts the reflex cost to a string representation.
+// Returns: A string representation of the reflex cost.
 string reflex_string()
 {
    switch (reflex_cost)
@@ -467,6 +536,15 @@ string reflex_string()
    }
 }
 
+//: FUNCTION spell_skill_rank
+// Returns the skill rank for the spell.
+int spell_skill_rank()
+{
+   return SKILL_D->skill_rank(this_body(), "magic/" + spell_category + "/" + spell_name);
+}
+
+//: FUNCTION query_description
+// Returns the description of the spell.
 string query_description()
 {
    int width = this_user()->query_screen_width();
@@ -480,6 +558,10 @@ string query_description()
    desc += sprintf("<bld>%10.10s:<res> %-10.10s<bld>%10.10s:<res> %-15.15s\n", //
                    "Reflex", "" + reflex_string(),                             //
                    "Cast time", cast_time_string());                           //
+   if (channeling_interval)
+      desc += sprintf("<bld>%10.10s:<res> %-10.10s<bld>%10.10s:<res> %-15.15s\n", //
+                      "Channeling", channeling_interval ? "Yes" : "No",           //
+                      "Interval", channeling_interval + "s");                     //
    desc += "\n";
    desc += "<228>Example of use:<res>\n";
    if (valid_targets & TARGET_ROOM || !valid_targets)
@@ -492,14 +574,4 @@ string query_description()
       desc += "\nTip: Cantrips are easy to cast, and a great way of training.";
 
    return desc;
-}
-
-string stat_me()
-{
-   return "Spell: " + query_name() + "\n" + "Spell Level: " + query_level() + "\n" +
-          "Reflex Cost: " + query_reflex_cost() + "\n" + "Skill Used: " + query_skill_used() + "\n" +
-          "Magic Skill Used: " + query_magic_skill_used() + "\n" + "Cast Time: " + cast_time + "\n" +
-          "Channeling Time: " + channeling + "\n" + "Channeling Interval: " + channeling_interval + "\n" +
-          "Valid Targets: " + valid_targets + "\n" + "Spell Components: " + identify(spell_components) + "\n" +
-          "Casting String: " + casting_string + "\n" + "Channeling String: " + channeling_string + "\n";
 }

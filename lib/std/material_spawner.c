@@ -159,7 +159,7 @@ void do_search()
 int search_action()
 {
    if (!present(this_body(), environment()))
-      return 0;
+      return -1;
 
    if (member_array(this_body()->query_name(), keys(receiver_counts)) != -1)
    {

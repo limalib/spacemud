@@ -55,13 +55,17 @@ void end_busy(mixed *args)
 {
    int retvalue;
    if (busy_with && busy_func)
+   {
       retvalue = call_other(busy_with, busy_func, args);
+   }
 
-   if (!retvalue)
+   if (retvalue == -1)
    {
       tell(this_object(), "You fail at " + busy_action + ".\n");
    }
-   not_busy();
+
+   if (find_call_out("end_busy") == -1)
+      not_busy();
 }
 
 //: FUNCTION busy_with
@@ -71,12 +75,12 @@ void end_busy(mixed *args)
 // The action string is used for messaging like
 //  You begin <action> ...
 //  You are busy <action>!
-// The function is called in the object given after busy seconds 
+// The function is called in the object given after busy seconds
 // (or BUSY_LENGTH if no busy given) with arguments args.
 // BUSY_LENGTH is defined in /std/adversary/behaviors.
 //
-// This function returns 1 if the player was successfully set busy or
-// 0 if it failed.
+// This function must return 1 if the player was successfully set busy or
+// -1 if it failed. A 0 is also seen as a success.
 //
 // The function is the object is called and if it returns 1, everything
 // is assumed well, but on 0 a message of:
@@ -84,14 +88,22 @@ void end_busy(mixed *args)
 // is sent to the adversary.
 varargs int busy_with(object ob, string action, string bf, mixed args, int busy)
 {
-   if (time() - busy_at > MAX_BUSY || !busy_with)
+   string busy_str = "begin";
+
+   if (busy_action == action && busy_with)
    {
-      tell(this_object(), "You begin " + action + " ...\n");
+      busy_str = "continue";
+   }
+
+   if (busy_action == action && busy_with || time() - busy_at > MAX_BUSY || !busy_with)
+   {
+      tell(this_object(), "You " + busy_str + " " + action + " ...\n");
       busy_at = time();
       busy_with = ob;
       busy_func = bf;
       busy_action = action;
       call_out("end_busy", busy || BUSY_LENGTH, args);
+      add_hook("interrupt", ( : end_busy:));
       return 1;
    }
 

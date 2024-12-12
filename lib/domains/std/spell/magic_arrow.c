@@ -16,7 +16,7 @@ void setup()
 
 int calculate_damage()
 {
-   return random(8) + 1 + SKILL_D->skill_rank(this_body(), "magic/evocation/magic_arrow");
+   return random(8) + 1 + spell_skill_rank();
 }
 
 void cast_spell(object ob, object reagent, int success)

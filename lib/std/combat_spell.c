@@ -11,8 +11,6 @@ inherit M_DAMAGE_SOURCE;
 
 void do_spell_damage(object target, function damage_func)
 {
-   TBUG("Target " + sprintf("%O", target) + " TO: " + sprintf("%O", this_object()) +
-        " damage_func: " + sprintf("%O", damage_func));
    this_body()->add_event(target, this_object(), "torso", evaluate(damage_func));
    this_body()->start_fight(target);
 }
