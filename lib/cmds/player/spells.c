@@ -112,7 +112,7 @@ void list_spells(mixed arg)
    frame_add_column("Cast Time", spells->cast_time_string());
    set_frame_footer("Use 'cast <spell>' to cast a spell, use e.g. 'spells " + choice(spells)->query_name() +
                     "' for details about that spell.\n"
-                    "<081>Cantrip<res> - <118>Easy<res> - <220>Medium<res> - <196>Hard<res>");
+                    "<081>Not a challenge<res> - <118>Easy<res> - <220>Medium<res> - <196>Hard<res> to cast");
    out(frame_render_columns());
 }
 

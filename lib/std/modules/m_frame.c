@@ -263,7 +263,7 @@ void frame_init_user()
    columns = ([]);
    column_order = ({});
    column_width = ([]);
-   max_column_length=0;
+   max_column_length = 0;
    set_width(this_user()->query_screen_width() ? this_user()->query_screen_width() - 2 : 79);
    hcolours = (this_user()->frames_colour() != "none" ? colours[this_user()->frames_colour()] : colours["none"]);
    set_style(this_user()->frames_style());
@@ -837,7 +837,7 @@ string frame_render_columns()
    {
       if (total_width + column_width[column_order[index]] < width)
       {
-         // TBUG("Max width is: " + width + " Total width is: " + total_width + " New column " + column_order[index] +
+         // TBUG("Max width is: " + width + " Total width isf: " + total_width + " New column " + column_order[index] +
          //     " is " + column_width[column_order[index]]);
          total_width += column_width[column_order[index]];
          rcols += ({column_order[index]});
@@ -865,7 +865,11 @@ string frame_render_columns()
    }
 
    if (debug)
+   {
+      TBUG("Max column length: " + max_column_length);
+      TBUG(columns);
       TBUG(output);
+   }
    set_frame_header(header);
 
    // Cheeky way to strip off last "\n " off the string.

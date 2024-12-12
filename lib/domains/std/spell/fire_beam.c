@@ -17,7 +17,7 @@ void setup()
 
 int calculate_damage(int success)
 {
-   return random(6) * (success + 1) + 1 + spell_skill_rank());
+   return random(6) * (success + 1) + 1 + spell_skill_rank();
 }
 
 void cast_spell(object ob, object reagent, int success)
