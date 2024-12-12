@@ -329,10 +329,6 @@ void set_skill_used(string new_skill_used)
 {
    skill_used = new_skill_used;
 }
-void set_magic_skill_used(string new_magic_skill_used)
-{
-   magic_skill_used = new_magic_skill_used;
-}
 void set_skill_restriction_message(string new_restriction_msg)
 {
    restricted_message = new_restriction_msg;
