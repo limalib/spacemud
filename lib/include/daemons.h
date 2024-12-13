@@ -32,6 +32,7 @@
 #define MAILBOX_D     "/daemons/mailbox_d"
 #define MESSAGES_D    "/daemons/messages_d"
 #define METHOD_D      "/daemons/method_d"
+#define MISSION_D     "/daemons/mission_d"
 #define MONEY_D       "/daemons/money_d"
 #define NEWS_D        "/daemons/news_d"
 #define PARTY_D       "/daemons/party_d"
