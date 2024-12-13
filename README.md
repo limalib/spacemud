@@ -1,24 +1,12 @@
-LIMA Mudlib that work with latest FluffOS driver.
+A Space themed mudlib that uses the LIMA Mudlib without modifying it.
 
-# Get involved
-- Visit us at limalib.dev 7878 !
-- #LIMA Channel on LPC Discord - https://discord.gg/wzUbBgs3AQ
+This MUD is inspired by games like Mass Effect, Elite and other multiplayer Space exploration games.
+It works on 3 layers of interaction.
 
-# Documentation
-Please see https://docs.limalib.dev/
-
-# How to test and contribute
-```
-#Stable version
-#git clone --recurse-submodules https://github.com/limalib/lima -b stable
-
-#For a more stable experience, try:
-git clone --recurse-submodules https://github.com/limalib/lima
-
-cd lima/adm/dist
-./rebuild
-./run
-```
+# Our 3 layers
+- Person (classic MUD) - you walk around, pick up things, upgrade and explore. Buy spacecrafts!
+- Spacecraft - you fly ships, pick up good, sell goods, dock and navigate space to get to specific planets.
+- Planet management - you extend your corporations on planets and manage the flow of goods on and off planets.
 
 # License
-GPL, see original License in library as well.
+Same as original Lima Lib.

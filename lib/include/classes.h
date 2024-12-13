@@ -15,7 +15,6 @@
 #define CLASS_LIMB          "/std/classes/limb"
 #define CLASS_LIMB_DATA     "/std/classes/limb_data"
 #define CLASS_MAILMSG       "/std/classes/mailmsg"
-#define CLASS_MISSION_INFO  "/std/classes/mission_info"
 #define CLASS_MOVE          "/std/classes/move"
 #define CLASS_NEWSMSG       "/std/classes/newsmsg"
 #define CLASS_PARTY         "/std/classes/party"

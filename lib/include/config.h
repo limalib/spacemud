@@ -67,7 +67,7 @@
 #define USE_RACES
 #define USE_GUILDS
 #define USE_TITLES
-#define USE_INTRODUCTIONS
+#undef USE_INTRODUCTIONS
 
 /* If you define this option, you should also look at <bodyslots.h> and decide
  * which body slots you want to support */
