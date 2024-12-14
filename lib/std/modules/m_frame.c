@@ -364,7 +364,7 @@ string *create_section_header()
    foreach (string *data in sections)
    {
       // TBUG("Width: " + width + " Len: " + len + " Out len: " + colour_strlen(out));
-      if (strlen(out) + len > width)
+      if (colour_strlen(out) + len > width)
       {
          headers += ({out + (first_header ? bits[TLD] : bits[TVL]) + "\n"});
          first_header = 0;
@@ -383,13 +383,14 @@ string *create_section_header()
       out += bits[TH] + sprintf("<bld>%s%s<res> ", data[1], data[0]) +
              repeat_string(bits[TH], (section_width - strlen(data[0]) + 3));
       if (!len)
-         len = strlen(out + bits[TLD]);
+         len = colour_strlen(out + bits[TLD]);
    }
 
    if (strlen(out))
    {
-      if (sizeof(headers) && strlen(out) < strlen(headers[0]))
-         headers += ({out + repeat_string(bits[TH], strlen(headers[0]) - strlen(out) - 2) + bits[TVL] + "\n"});
+      if (sizeof(headers) && colour_strlen(out) < colour_strlen(headers[0]))
+         headers +=
+             ({out + repeat_string(bits[TH], colour_strlen(headers[0]) - colour_strlen(out) - 2) + bits[TVL] + "\n"});
       else
          headers += ({out + (first_header ? bits[TLD] : bits[TVL]) + "\n"});
    }
@@ -749,8 +750,7 @@ string menu_render()
       out += contents[content_count];
       content_count++;
    }
-   if (sizeof(contents) >= content_count)
-      out += contents[content_count];
+   out += contents[content_count];
 
    if (hcolours && this_user()->terminal_mode() != "plain")
       out = h_colours(out);
