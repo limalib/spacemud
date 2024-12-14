@@ -749,7 +749,8 @@ string menu_render()
       out += contents[content_count];
       content_count++;
    }
-   out += contents[content_count];
+   if (sizeof(contents) >= content_count)
+      out += contents[content_count];
 
    if (hcolours && this_user()->terminal_mode() != "plain")
       out = h_colours(out);
