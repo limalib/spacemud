@@ -51,6 +51,12 @@ int not_busy()
    return 1;
 }
 
+void stop_busy()
+{
+   remove_call_out("end_busy");
+   not_busy();
+}
+
 void end_busy(mixed *args)
 {
    int retvalue;
