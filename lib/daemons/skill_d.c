@@ -182,6 +182,9 @@ int skill_rank(object player, string skill_name)
    class skill skill;
    int rank = 0;
 
+   if (!player)
+      return 0;
+
    skill = player->query_skill(skill_name);
    if (!skill)
       return 0;
