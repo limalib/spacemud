@@ -11,5 +11,6 @@ lie on
 enter:sit in,get in
 leave:exit,get out
 go
+wade:wade in
 stand:stand up
 mount:sit on,get on
