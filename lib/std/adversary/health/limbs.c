@@ -359,6 +359,7 @@ string *query_non_limbs()
 // Returns the amount of reflex currently had by the adversary.
 int query_reflex()
 {
+   update_health();
    return reflex;
 }
 
