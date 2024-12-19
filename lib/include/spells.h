@@ -6,5 +6,6 @@
 #define TARGET_ROOM 1
 #define TARGET_LIVING 2
 #define TARGET_ITEM 4
+#define TARGET_SELF 8
 
 #endif

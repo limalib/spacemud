@@ -159,12 +159,31 @@ int spend_reflex(object b)
 protected
 mixed valid_target(object target)
 {
-   /*DEFAULT: if there is a target, then it is invalid*/
-   if (target)
-   {
-      return 0;
-   }
-   return 1;
+   // No rules defined, so any target is valid
+   if (!valid_targets)
+      return 1;
+
+   // If rooms are valid targets, and we have no target
+   // then we can cast the spell.
+   if (valid_targets & TARGET_ROOM && !target)
+      return 1;
+
+   // If living targets are valid, and the target is a living
+   // we can cast the spell.
+   if (valid_targets & TARGET_LIVING && target->is_living())
+      return 1;
+
+   // If item targets are valid, and the target is an item
+   // we can cast the spell.
+   if (valid_targets & TARGET_ITEM && !target->is_living())
+      return 1;
+
+   // If self is a valid target, and the target is the caster
+   // we can cast the spell.
+   if (valid_targets & TARGET_SELF && target == this_body())
+      return 1;
+
+   return 0;
 }
 
 //: FUNCTION valid_spell_components
@@ -398,6 +417,14 @@ int cast_action(mixed *args)
    target = args[0];
    sc = args[1];
    success = args[2];
+
+   // If we have a target, but it's not present in inventory or room, we can't cast the spell.
+   if (target && !present(target, environment(this_body())) && !present(target, this_body()))
+   {
+      channel_failure("Your target has disappeared.");
+      return;
+   }
+
    this_object()->cast_spell(target, sc, success);
    if (channeling && channeling_interval)
       continue_channeling(target, sc);
@@ -412,7 +439,9 @@ int cast_action(mixed *args)
 // Returns: The created transient spell object.
 object transient(string name, mixed *args...)
 {
-   object t = new ("/domains/std/spell/transient/" + name, args...);
+   object t = new ("/domains/std/spell/transient/" + replace_string(name, " ", "_"), args...);
+   if (!t)
+      error("Failed to load transient spell object.");
    return t;
 }
 
@@ -458,6 +487,7 @@ void internal_cast_spell(object target, object sc)
    }
 
    // Safe to test this one, we already tested for it existing when loading the spell via SPELL_D.
+   // Do not make skill checks against target here, as target may change on cast_spell() call.
    success = caster->test_skill("magic/" + spell_category + "/" + spell_name, SKILL_D->pts_for_rank(level));
 
    if (cast_time > 0)
@@ -491,6 +521,8 @@ string target_to_str()
       targs += ({"Living"});
    if (valid_targets & TARGET_ITEM)
       targs += ({"Item"});
+   if (valid_targets & TARGET_SELF)
+      targs += ({"Self"});
    return format_list(targs);
 }
 
@@ -538,9 +570,12 @@ string reflex_string()
 
 //: FUNCTION spell_skill_rank
 // Returns the skill rank for the spell.
-int spell_skill_rank()
+// Parameters:
+// - target: (optional) The target object to check the skill rank for. If not provided, defaults to this_body()
+// (caster). Returns: The skill rank for the spell.
+varargs int spell_skill_rank(object target)
 {
-   return SKILL_D->skill_rank(this_body(), "magic/" + spell_category + "/" + spell_name);
+   return SKILL_D->skill_rank(target || this_body(), "magic/" + spell_category + "/" + spell_name);
 }
 
 //: FUNCTION query_description
@@ -570,6 +605,8 @@ string query_description()
       desc += "   cast " + query_name() + " on <living>\n";
    if (valid_targets & TARGET_ITEM || !valid_targets)
       desc += "   cast " + query_name() + " on <item>\n";
+   if (valid_targets & TARGET_SELF || !valid_targets)
+      desc += "   cast " + query_name() + " on self\n";
    if (!query_level())
       desc += "\nTip: Cantrips are easy to cast, and a great way of training.";
 
