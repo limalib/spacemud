@@ -159,8 +159,6 @@ varargs mixed check_valid_spell(string spell, int has_target, int has_reagent)
    ENSURE(previous_object() == find_object(VERB_OB_CAST));
 
    spell_obname = find_spell_obname(spell);
-   TBUG(spell);
-   TBUG(spell_obname);
    if (!spell_obname)
       return "You know of no such spell.\n";
 
