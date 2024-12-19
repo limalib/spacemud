@@ -239,6 +239,7 @@
 #define TAMING_COLLAR     "/std/taming_collar"
 #define TORCH             "/std/torch"
 #define TRANSIENT         "/std/transient"
+#define TRANSIENT_SPELL   "/std/transient_spell"
 #define VEHICLE           "/std/vehicle"
 
 #endif /* __MUDLIB_H__ */

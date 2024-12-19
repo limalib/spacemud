@@ -225,7 +225,6 @@ nomask mixed check_valid_spell(int has_target, int has_sc)
    // Did we define only specific valid targets?
    // Do we not have a target? Then we need to have TARGET_ROOM
    // defined as a valid target.
-   TBUG(valid_targets);
    if (valid_targets && !has_target)
       return valid_targets & TARGET_ROOM ? 1 : "The spell requires a target.";
 
@@ -255,7 +254,6 @@ nomask mixed check_valid_target(object target, mixed has_sc)
    if (!result)
       return result;
 
-   TBUG("check_valid_target(" + target + ")");
    return valid_target(target);
 }
 
