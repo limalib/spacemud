@@ -44,5 +44,5 @@ int query_call_interval()
 
 void mudlib_setup()
 {
-   call_out("internal_add_to_queue", 1);
+   call_out("internal_add_to_queue", 0);
 }

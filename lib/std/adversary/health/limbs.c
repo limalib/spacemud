@@ -211,7 +211,6 @@ int can_drink()
    return 0;
 }
 
-
 void update_max_health()
 {
    mapping new_body = BODY_D->get_body(body_style);
@@ -360,6 +359,7 @@ string *query_non_limbs()
 // Returns the amount of reflex currently had by the adversary.
 int query_reflex()
 {
+   update_health();
    return reflex;
 }
 
@@ -539,7 +539,6 @@ void kill_us()
          killer->register_kill(this_object(), xp_value(killer));
       }
    }
-
 }
 
 //: FUNCTION query_random_limb
@@ -844,7 +843,7 @@ string badly_wounded()
       object link = this_object()->query_link();
       if (link)
       {
-         wimpy_at = this_user()->query_shell_ob()->get_variable("wimpy_percent") || 20;
+         wimpy_at = link->query_shell_ob()->get_variable("wimpy_percent") || 20;
       }
    }
 

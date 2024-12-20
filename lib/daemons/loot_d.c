@@ -140,6 +140,9 @@ void drop_corpse(object adversary)
       object death_location = environment(adversary);
       adversary->move(HEAVEN);
       corpse->override_room_desc(in_room_singular, in_room_plural);
+
+      filter_array(all_inventory(adversary), ( : $1->is_transient_effect() :))->remove();
+
       if (sizeof(all_inventory(adversary)))
       {
          all_inventory(adversary)->set_worn(0);

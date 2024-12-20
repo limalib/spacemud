@@ -163,6 +163,11 @@ void do_cast_str(string spell)
    SPELL_D->cast_spell(spell);
 }
 
+void do_cast_str_at_str(string spell)
+{
+   SPELL_D->cast_spell(spell);
+}
+
 void do_cast_str_on_obj(string spell, object target)
 {
    SPELL_D->cast_spell(spell, target);
@@ -195,7 +200,7 @@ void do_cast_str_with_obj_at_obj(string spell, object tool, object target)
 
 void create()
 {
-   add_rules(({"STR on OBJ", "STR", "STR at OBJ"}), ({}));
+   add_rules(({"STR on OBJ", "STR", "STR at OBJ","STR at STR"}), ({}));
    add_rules(({"STR with OBJ", "STR at OBJ with OBJ"}), ({}));
    add_rules(({"STR on OBJ with OBJ", "STR with OBJ on OBJ"}), ({}));
    add_rules(({"STR with OBJ at OBJ"}), ({}));

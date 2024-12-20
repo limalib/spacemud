@@ -14,13 +14,28 @@ inherit M_GETTABLE;
 inherit M_STATEFUL;
 inherit CLASS_EVENT_INFO;
 
+private
 int effect_duration;
+private
 string effect_type;
+private
 string effect_name;
+private
+int can_extend = 1;
 
 int is_transient_effect()
 {
    return 1;
+}
+
+int query_can_extend()
+{
+   return can_extend;
+}
+
+void cannot_extend()
+{
+   can_extend = 0;
 }
 
 //: HOOK another_effect_exists
@@ -113,6 +128,11 @@ class event_info effect_modify_event(class event_info evt)
 
 varargs mixed move(object dest, string where)
 {
+   //No magic things, the objects cannot be collapsed into one.
+   if (!can_extend)
+      return ::move(dest, where);
+   
+   //Collapse more effects into a stronger effect
    foreach (object ob in all_inventory(dest))
    {
       if (!ob->is_transient_effect())
