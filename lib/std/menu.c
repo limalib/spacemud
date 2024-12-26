@@ -79,6 +79,12 @@ int screen_width()
    return this_user()->query_screen_width();
 }
 
+class menu reset_menu(class menu m)
+{
+   m.items = ({});
+   return m;
+}
+
 varargs protected class menu new_menu(string title, string prompt, int allow_enter, function no_match_function)
 {
    class menu new_menu;
