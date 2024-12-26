@@ -54,6 +54,7 @@ class section remote;
 class section combat;
 
 void toggle_cc(int flag, string state);
+void toggle_brief();
 
 // right now, we're just going to call the help command.
 // private class menu helpmenu;
@@ -274,14 +275,14 @@ void remote_who()
 }
 void update_ccmenu()
 {
+   ccmenu = reset_menu(ccmenu);
+   combat = new_section("Combat Config", "accent");
    // Add items to the combat config menu
    this_body()->update_combat_config();
    add_section_item(ccmenu, combat);
    add_section_item(ccmenu, other);
    add_menu_item(combat, new_menu_item("Hide missed swings in combat      [" +
-                                           (this_body()->combat_config(CC_HIDE_MISSES) ? "ON"
-                                                                                       : "OFF") +
-                                           "]",
+                                           (this_body()->combat_config(CC_HIDE_MISSES) ? "ON" : "OFF") + "]",
                                        (
                                            : get_input_then_call,
                                              (
@@ -292,9 +293,7 @@ void update_ccmenu()
                                        "s"));
 
    add_menu_item(combat, new_menu_item("Hide attacks without damage       [" +
-                                           (this_body()->combat_config(CC_HIDE_NO_DAMAGE) ? "ON"
-                                                                                          : "OFF") +
-                                           "]",
+                                           (this_body()->combat_config(CC_HIDE_NO_DAMAGE) ? "ON" : "OFF") + "]",
                                        (
                                            : get_input_then_call,
                                              (
@@ -305,9 +304,7 @@ void update_ccmenu()
                                        "n"));
 
    add_menu_item(combat, new_menu_item("Hide low damage attacks           [" +
-                                           (this_body()->combat_config(CC_HIDE_LOW_DAMAGE) ? "ON"
-                                                                                           : "OFF") +
-                                           "]",
+                                           (this_body()->combat_config(CC_HIDE_LOW_DAMAGE) ? "ON" : "OFF") + "]",
                                        (
                                            : get_input_then_call,
                                              (
@@ -317,9 +314,7 @@ void update_ccmenu()
                                            :),
                                        "l"));
    add_menu_item(combat, new_menu_item("Hide disabled limb messages       [" +
-                                           (this_body()->combat_config(CC_HIDE_DISABLE_LIMB) ? "ON"
-                                                                                             : "OFF") +
-                                           "]",
+                                           (this_body()->combat_config(CC_HIDE_DISABLE_LIMB) ? "ON" : "OFF") + "]",
                                        (
                                            : get_input_then_call,
                                              (
@@ -329,9 +324,7 @@ void update_ccmenu()
                                            :),
                                        "d"));
    add_menu_item(combat, new_menu_item("Hide non-vital stuns              [" +
-                                           (this_body()->combat_config(CC_HIDE_SIMPLE_STUNS) ? "ON"
-                                                                                             : "OFF") +
-                                           "]",
+                                           (this_body()->combat_config(CC_HIDE_SIMPLE_STUNS) ? "ON" : "OFF") + "]",
                                        (
                                            : get_input_then_call,
                                              (
@@ -341,9 +334,7 @@ void update_ccmenu()
                                            :),
                                        "S"));
    add_menu_item(combat, new_menu_item("Hide dodges                       [" +
-                                           (this_body()->combat_config(CC_HIDE_DODGES) ? "ON"
-                                                                                       : "OFF") +
-                                           "]",
+                                           (this_body()->combat_config(CC_HIDE_DODGES) ? "ON" : "OFF") + "]",
                                        (
                                            : get_input_then_call,
                                              (
@@ -352,6 +343,37 @@ void update_ccmenu()
                                              "(y/n): "
                                            :),
                                        "D"));
+   add_menu_item(combat, new_menu_item("Brief combat messages             [" +
+                                           (this_body()->query_brief_combat(CC_HIDE_DODGES) ? "ON" : "OFF") + "]",
+                                       (
+                                           : get_input_then_call,
+                                             (
+                                                 : toggle_brief:),
+                                             "Toggle on "
+                                             "(y/n): "
+                                           :),
+                                       "b"));
+}
+
+void toggle_brief(string state)
+{
+   if (state != "y" && state != "n")
+   {
+      write("y or n only.\n");
+      return;
+   }
+
+   if (state == "y")
+   {
+      this_body()->set_brief_combat(1);
+      write("Brief combat messages are now on.\n");
+   }
+   else
+   {
+      this_body()->set_brief_combat(0);
+      write("Brief combat messages are now off.\n");
+   }
+   update_ccmenu();
 }
 
 void toggle_cc(int flag, string state)
@@ -364,7 +386,6 @@ void toggle_cc(int flag, string state)
       return;
    }
 
-   TBUG("What: " + flag + " state: " + state);
    if (get_user_variable("cconfig") == 0)
       shell->set_variable("cconfig", CC_SIZE);
 

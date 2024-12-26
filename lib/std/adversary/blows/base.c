@@ -242,7 +242,7 @@ void handle_result(class event_info evt)
             // else TBUG("<214>NO STUN<res>");
          }
 
-         handle_message(damage_message(percent), evt.target, evt.weapon, evt.target_extra);
+         handle_message(damage_message(percent), evt.target, evt.weapon, evt.target_extra, percent);
          if (do_stun)
             evt->target->stun(evt.target_extra, stun_chance);
          percent = evt->target->do_damage_event(evt);
