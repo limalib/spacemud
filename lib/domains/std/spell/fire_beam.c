@@ -20,17 +20,12 @@ int calculate_damage(int success)
    return random(6) * (success + 1) + 1 + spell_skill_rank();
 }
 
-void cast_spell(object ob, object reagent, int success)
+void cast_spell(object target, object reagent, int success)
 {
-   if (!ob || !present(ob, environment(this_body())))
-   {
-      channel_failure("Your target has disappeared.");
-      return;
-   }
-
    if (success)
-      this_body()->targetted_action("$N $vchannel a <221>fire beam<res> at $t1.", ob);
+      this_body()->targetted_action("$N $vchannel a <221>fire beam<res> at $t1.", target);
    else
-      this_body()->targetted_action("$N $vchannel a wavering fire beam at $t1.", ob);
-   do_spell_damage(ob, ( : calculate_damage:));
+      this_body()->targetted_action("$N $vchannel a wavering fire beam at $t1.", target);
+
+   do_spell_damage(this_body(), target, ( : calculate_damage:));
 }

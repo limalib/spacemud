@@ -68,7 +68,7 @@ void cast_spell(object ob, object reagent, int success)
          continue;
 
       // reduce hit points here
-      do_spell_damage(item, ( : calculate_damage:));
+      do_spell_damage(this_body(), item, ( : calculate_damage:));
    }
 }
 

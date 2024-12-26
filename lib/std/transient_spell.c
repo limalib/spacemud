@@ -52,7 +52,6 @@ int query_boost_strength()
 
 void mudlib_setup(int strength_par, int duration_par, string action_par, string limb_par)
 {
-   TBUG("mudlib_setup called: " + strength_par + " " + duration_par + " " + action_par + " " + limb_par);
    transient::mudlib_setup();
    strength = strength_par;
    action = action_par;
