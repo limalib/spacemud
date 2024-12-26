@@ -36,7 +36,7 @@ string spell_name_colour(string name)
 
    switch (level - rank)
    {
-   case -100.. - 1:
+   case -100..0:
       return "<118>"; // Easy, will succeed
    case 1:
       return "<220>"; // Little too hard, might succeed
@@ -110,6 +110,9 @@ void list_spells(mixed arg)
    frame_add_column("Reflex", spells->reflex_string());
 
    frame_add_column("Cast Time", spells->cast_time_string());
+   frame_add_column("Targets", map(spells, ( : $1->target_to_str() :)));
+   frame_add_column("Channeled", map(spells, ( : $1->is_channeled() ? "Yes" : "No" :)));
+   frame_add_column("Channel interval", map(spells, ( : $1->is_channeled() ? $1->query_channeling_interval() : "-" :)));
    set_frame_footer("Use 'cast <spell>' to cast a spell, use e.g. 'spells " + choice(spells)->query_name() +
                     "' for details about that spell.\n"
                     "<081>Not a challenge<res> - <118>Easy<res> - <220>Medium<res> - <196>Hard<res> to cast");
