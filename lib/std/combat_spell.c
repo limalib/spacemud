@@ -22,7 +22,7 @@ varargs void do_spell_damage(object attacker, object target, mixed damage, strin
    int s_level = query_level();
    int opposing_dodge = SKILL_D->pts_for_rank(s_level);
 
-   if (!attacker)
+   if (!attacker || !target)
       return;
 
    if (functionp(damage))

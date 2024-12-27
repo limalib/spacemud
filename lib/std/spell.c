@@ -122,6 +122,11 @@ void extra_reflex_cost(int c)
    reflex_cost = c;
 }
 
+int is_channeled()
+{
+   return channeling_interval > 0;
+}
+
 //: FUNCTION query_reflex_cost
 // Returns the reflex cost of the spell.
 int query_reflex_cost()
@@ -416,8 +421,14 @@ int cast_action(mixed *args)
    sc = args[1];
    success = args[2];
 
+   if (!target)
+   {
+      channel_failure("Your target has disappeared.");
+      return;
+   }
+
    // If we have a target, but it's not present in inventory or room, we can't cast the spell.
-   if (target && !present(target, environment(this_body())) && !present(target, this_body()))
+   if (!present(target, environment(this_body())) && !present(target, this_body()))
    {
       channel_failure("Your target has disappeared.");
       return;
@@ -522,6 +533,11 @@ string target_to_str()
    if (valid_targets & TARGET_SELF)
       targs += ({"Self"});
    return format_list(targs);
+}
+
+int query_channeling_interval()
+{
+   return channeling_interval;
 }
 
 //: FUNCTION cast_time_string

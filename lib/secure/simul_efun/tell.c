@@ -2,14 +2,14 @@
 
 object find_user(string);
 
-//:FUNCTION tell
+//: FUNCTION tell
 // Tell and object ``ob`` the string ``what`` of ``msg_type``.
 varargs void tell(mixed ob, string what, int msg_type)
 {
    if (arrayp(ob))
       foreach (object o in ob)
          o->receive_private_msg(what, msg_type | PRIVATE_MSG);
-   else
+   else if (objectp(ob))
       ob->receive_private_msg(what, msg_type | PRIVATE_MSG);
 }
 

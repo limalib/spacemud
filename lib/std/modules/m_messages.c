@@ -348,7 +348,7 @@ varargs string compose_message(object forwhom, string msg, object *who, mixed *o
                   break;
                }
                has[who[num]]++;
-               bit = who[num]->a_short();
+               bit = objectp(who[num]) ? who[num]->a_short() : "someone";
                break;
             }
          }
@@ -615,7 +615,8 @@ varargs void targetted_action(mixed msg, object target, mixed *obs...)
    tell(this_object(), us, MSG_INDENT);
    tell(target, them, MSG_INDENT);
    tell_from_outside(all_inventory(this_object()), others, MSG_INDENT);
-   tell_from_outside(all_inventory(target), others, MSG_INDENT);
+   if (objectp(target))
+      tell_from_outside(all_inventory(target), others, MSG_INDENT);
    tell_environment(this_object(), others, MSG_INDENT, who);
 }
 

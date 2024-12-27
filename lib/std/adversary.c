@@ -211,9 +211,7 @@ string defend_skill_used = "combat/defense/dodge";
 
 string query_defend_skill_used()
 {
-   // Can be removed once gone from all .o files
-   if (defend_skill_used == "combat/dodge")
-      defend_skill_used = "combat/defense/dodge";
+   defend_skill_used = "combat/defense/dodge";
    return defend_skill_used;
 }
 

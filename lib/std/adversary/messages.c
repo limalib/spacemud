@@ -8,13 +8,29 @@ void inform(mixed *, mixed, object);
 varargs void filtered_inform(object *who, string *msgs, mixed others, function filter, mixed extra);
 varargs void filtered_simple_action(mixed msg, function filter, mixed extra, mixed *obs...);
 string query_combat_message(string);
+string short();
+
+// Combat config string for keeping configuration
 string cconfig;
+
+// Option to set brief combat mode. Defaults to off.
+int brief_combat;
 
 void update_combat_config()
 {
    cconfig = get_user_variable("cconfig");
    if (!cconfig)
       cconfig = CC_SIZE;
+}
+
+void set_brief_combat(int flag)
+{
+   brief_combat = flag;
+}
+
+int query_brief_combat()
+{
+   return brief_combat;
 }
 
 int combat_config(int flag)
@@ -89,7 +105,16 @@ void dodge_message()
    filtered_simple_action("$N $vdodge an attack.", ( : message_filter:), "dodge");
 }
 
-void handle_message(mixed mess, object target, object weapon, string limb)
+private
+string brief_message(string target, string weapon, string limb, int percent)
+{
+   return sprintf("%%^COMBAT_BRIEF%%^Attacker%%^RESET%%^: %-20.20s %%^COMBAT_BRIEF%%^Target%%^RESET%%^: %-20.20s " +
+                      "%%^COMBAT_BRIEF%%^Weapon%%^RESET%%^: %-20.20s %%^COMBAT_BRIEF%%^Limb%%^RESET%%^: %-15.15s " +
+                      "%%^COMBAT_BRIEF%%^%%%%^RESET%%^%-3.3s",
+                  short(), target, weapon, limb, percent + "");
+}
+
+void handle_message(mixed mess, object target, object weapon, string limb, int percent)
 {
    mixed *combat_who, messages;
    string omess = mess;
@@ -121,7 +146,8 @@ void handle_message(mixed mess, object target, object weapon, string limb)
    combat_who = ({this_object(), target});
    if (!target)
    {
-      TBUG("Missing target: this_object(): " + this_object() + " weapon: " + weapon + " limb: " + limb);
+      TBUG("Missing target: this_object(): " + this_object() + " weapon: " + weapon + " limb: " + limb +
+           " percent: " + percent);
       TBUG(mess);
       return;
    }
@@ -135,5 +161,13 @@ void handle_message(mixed mess, object target, object weapon, string limb)
 
    messages = action(combat_who, mess, weapon->alt_weapon() ? weapon->alt_weapon() : weapon, target->query_weapon(),
                      limb, weapon->secondary_weapon_part());
+   if (brief_combat)
+   {
+      messages[0] = brief_message(target->short(), weapon->short(), limb, percent);
+   }
+   if (target->query_brief_combat())
+   {
+      messages[1] = brief_message(target->short(), weapon->short(), limb, percent);
+   }
    filtered_inform(combat_who, messages, environment(), ( : message_filter:), omess[1..]);
 }
