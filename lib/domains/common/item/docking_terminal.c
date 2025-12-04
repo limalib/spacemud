@@ -235,7 +235,7 @@ mixed indirect_get_obj_from_obj(object ob1, string wrd, object ob2)
 
 void shuttle_pass(object body, object pass)
 {
-   mapping payload = pass->payload();
+   mapping payload = pass->query_mission_details();
    string shuttle_file = pass->shuttle_file();
    object shuttle;
    class ship_info ship_i;
@@ -250,7 +250,7 @@ void shuttle_pass(object body, object pass)
    shuttle->set_location(body->query_starsystem(), body->query_location());
 
    // Transfer payload to shuttle, so it knows what to do.
-   shuttle->set_payload(pass->payload());
+   shuttle->set_payload(pass->query_mission_details());
    ship_i = shuttle->query_ship_info();
    docking_completed = SHIP_D->docking_time(ship_i->type);
    set_docking(ship_i, docking_completed);

@@ -1,30 +1,29 @@
 /*
-**	Housing Terminal by Tsath 2020 for Nuke Mudlib
+**	Navigation computer for Space MUD 2025
 **
 */
 
-#include <menu.h>
-
 inherit MENUS;
 inherit SPACE_CLASSES;
-inherit M_FRAME;
 
 class ship_info *owned_ships;
 object terminal;
 
-MENU toplevel;
+class menu toplevel;
 // submenus of the toplevel (main) menu
-// MENU soulmenu;
+// class menu soulmenu;
 
-MENU_ITEM quit_item;
-MENU_ITEM goto_main_menu_item;
-MENU_ITEM dock_ship_item;
-MENU_ITEM statement_item;
-MENU_ITEM release_ship_item;
-MENU_ITEM space_scan_item;
-MENU_ITEM change_bank_item;
-MENU_ITEM main_seperator;
-MENU_ITEM sub_seperator;
+class menu_item quit_item;
+class menu_item goto_main_menu_item;
+class menu_item dock_ship_item;
+class menu_item statement_item;
+class menu_item release_ship_item;
+class menu_item space_scan_item;
+class menu_item change_bank_item;
+
+class section main;
+class section other;
+class section guild;
 
 // right now, we're just going to call the help command.
 // private MENU helpmenu;
@@ -145,8 +144,7 @@ mapping get_structures(string bank, class structure *sts)
    mapping structs = ([]);
    frame_init_user();
    write(menu_text("Docking Sites"));
-   printf(accent("%-5.5s %-25.25s %-15.15s %-15.15s %-25.25s"), "[#]", "Site name", "Distance", "Docking fee",
-          "Owner");
+   printf(accent("%-5.5s %-25.25s %-15.15s %-15.15s %-25.25s"), "[#]", "Site name", "Distance", "Docking fee", "Owner");
    foreach (class structure st in sts)
    {
       float docking_fee = SPACESTATION_D->query_config(st->name)->docking_fee;
@@ -287,8 +285,7 @@ void show_prices()
    write("\n");
 }
 
-private
-show_frame(string *parts)
+private show_frame(string *parts)
 {
    frame_init_user();
    set_frame_title(parts[0]);
@@ -327,38 +324,39 @@ void create(object t)
    terminal = t;
 
    toplevel = new_menu(menu_text(implode(explode("SHIP NAV", ""), " ")));
-   sub_seperator = new_seperator(menu_text(capitalize(environment(this_body())->query_ship_type())));
-   main_seperator = new_seperator("    Enter your choice\n");
+   main = new_section("Main", "accent");
+   other = new_section("Other", "warning");
+   add_section_item(toplevel, main);
+   add_section_item(toplevel, other);
+
    quit_item = new_menu_item("Quit", ( : quit_menu_application, 0 :), "q");
    goto_main_menu_item = new_menu_item("Return to main menu", toplevel, "m");
-
-   add_menu_item(toplevel, sub_seperator);
-   add_menu_item(toplevel, main_seperator);
 
    if (!docked_at)
    {
       dock_ship_item = new_menu_item("Dock the ship", ( : dock_ship:), "d");
-      add_menu_item(toplevel, dock_ship_item);
+      add_menu_item(main, dock_ship_item);
    }
    else
    {
       release_ship_item = new_menu_item("Cancel your docking", ( : confirm_release:), "C");
-      add_menu_item(toplevel, release_ship_item);
+      add_menu_item(main, release_ship_item);
    }
    space_scan_item = new_menu_item("Space Map", ( : space_scan, 0 :), "m");
-   add_menu_item(toplevel, space_scan_item);
+   add_menu_item(main, space_scan_item);
    space_scan_item = new_menu_item("System Scan Details", ( : space_scan, 1 :), "s");
-   add_menu_item(toplevel, space_scan_item);
+   add_menu_item(main, space_scan_item);
 
    statement_item = new_menu_item("Show Bank Statement", ( : bank_statement:), "b", 1);
-   add_menu_item(toplevel, statement_item);
+   add_menu_item(main, statement_item);
    change_bank_item = new_menu_item("Change Banking Connection", ( : pick_a_bank:), "c");
-   add_menu_item(toplevel, change_bank_item);
+   add_menu_item(main, change_bank_item);
 
-   add_menu_item(toplevel, quit_item);
+   add_menu_item(other, quit_item);
 }
 
 void start_menu()
 {
+   frame_init_user();
    init_menu_application(toplevel);
 }

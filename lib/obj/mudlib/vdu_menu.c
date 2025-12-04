@@ -5,7 +5,7 @@
 
 #include <combat_config.h>
 #include <commands.h>
-#include <menu.h>
+#include <config/guild.h>
 #include <mudlib.h>
 #include <playerflags.h>
 // ### for now
@@ -13,30 +13,31 @@
 
 inherit MENUS;
 inherit M_ACCESS;
-inherit M_FRAME;
 
-MENU toplevel;
+class menu toplevel;
 // submenus of the toplevel (main) menu
-MENU soulmenu;
-MENU ccmenu;
-MENU reportmenu;
-MENU remotemenu;
-MENU personalmenu;
+class menu soulmenu;
+class menu ccmenu;
+class menu reportmenu;
+class menu remotemenu;
+class menu personalmenu;
 // submenus of personalmenu
-MENU biffmenu;
-MENU snoopablemenu;
+class menu biffmenu;
+class menu snoopablemenu;
 
-MENU_ITEM quit_item;
-MENU_ITEM goto_main_menu_item;
-MENU_ITEM main_seperator;
+class menu_item quit_item;
+class menu_item goto_main_menu_item;
+
+class section main;
+class section other;
+class section guild;
 
 void toggle_cc(int flag, string state);
 
 // right now, we're just going to call the help command.
 // private MENU helpmenu;
 
-private
-mapping dispatch = (["o":"Options", "?":"help", ]);
+private mapping dispatch = (["o":"Options", "?":"help", ]);
 
 string menu_text(string s)
 {
@@ -51,6 +52,11 @@ void error_text(string s)
 void accent_text(string s)
 {
    write(sprintf("[" + accent("<162>%-s<res>]\n"), s));
+}
+
+void start_player_menu()
+{
+   new(PLAYER_MENU)->start_menu();
 }
 
 class menu build_guild_menu(string guild)
@@ -77,21 +83,21 @@ void start_mission(int tier, string name, string guild, mapping mats, string rep
    }
 }
 
-void start_favor(int tier, string name, int cost, string guild, string reply)
+void start_favour(int tier, string name, int cost, string guild, string reply)
 {
-   if (reply == "y" || reply == "Y")
+   if (lower_case(trim(reply)) == "y")
    {
-      if (GUILD_D->query_favor_score(guild) >= cost)
+      if (GUILD_D->query_favour_score(guild) >= cost)
       {
-         write("Purchasing favor.\n");
+         write("Purchasing favour.\n");
 
-         if (GUILD_D->spend_favor(guild, cost))
-            GUILD_D->start_favor(tier, name, guild);
+         if (GUILD_D->spend_favour(guild, cost))
+            GUILD_D->start_favour(tier, name, guild);
          else
-            write("Aborted, suddenly not enough favor.\n");
+            write("Aborted, suddenly not enough favour.\n");
       }
       else
-         write("Aborted, suddenly not enough favor.\n");
+         write("Aborted, suddenly not enough favour.\n");
    }
    else
    {
@@ -142,93 +148,102 @@ void guild_mission(string guild, int tier, string name)
    }
 }
 
-void guild_favor(string guild, int tier, string name)
+void guild_favour(string guild, int tier, string name)
 {
-   mapping favor_info = GUILD_D->query_favor(tier, name);
+   mapping favour_info = GUILD_D->query_favour(tier, name);
    string *mgmt = GOVERNANCE_D->query_managers(guild) + ({GOVERNANCE_D->query_leader(guild)});
-   int favor = to_int(favor_info["favor"]);
-   write("[FAVOR INFO]   " + replace_string(favor_info["description"], "<guild>", capitalize(guild)) + "\n");
-   write("[FAVOR COST]   " + favor + "\n");
-   write("[FAVOR LENGTH] " + time_to_string(to_int(favor_info["length"]) * 60) + "\n\n");
+   int favour = to_int(favour_info["favour"]);
+   write("[FAVOUR INFO]   " + replace_string(favour_info["description"], "<guild>", capitalize(guild)) + "\n");
+   write("[FAVOUR COST]   " + favour + "\n");
+   write("[FAVOUR LENGTH] " + time_to_string(to_int(favour_info["length"]) * 60) + "\n\n");
 
    if (member_array(lower_case(this_body()->query_name()), mgmt) != -1)
    {
-      if (GUILD_D->query_favor_score(guild) >= favor)
-         modal_simple(( : start_favor, tier, name, favor, guild:), "Buy this favor for " + favor + " favor? (y/N) ", 1);
+      if (GUILD_D->query_favour_score(guild) >= favour)
+         modal_simple(( : start_favour, tier, name, favour, guild:),
+                      "Buy this favour for " + favour + " favour? (y/N) ", 1);
       else
       {
-         write("\n" + capitalize(guild) + " does not have enough favor to purchase this yet.\n\n");
+         write("\n" + capitalize(guild) + " does not have enough favour to purchase this yet.\n\n");
       }
    }
 }
 
-class menu build_guild_mission_menu(string guild)
+class menu build_guild_mission_menu(string guild, class menu_item gmi)
 {
    class menu m;
+   class section s = new_section("Missions", "accent");
+   class section o = new_section("Other", "warning");
    int count = 1;
-   int guild_tier = GUILD_D->query_guild_tier(guild);
+   int guild_tier = GUILD_D->query_guild_tier(guild) || 1;
    mapping missions = GUILD_D->query_missions(guild_tier);
-   m = new_menu("[-- " + sprintf("%-30s", capitalize(guild) + " Missions") + "                   -----]");
+   m = new_menu(sprintf("%-30s", capitalize(guild) + " Missions"));
+   add_section_item(m, s);
+   add_section_item(m, o);
    foreach (string name, mapping data in missions)
    {
-      class menu_item mi = new_menu_item(sprintf("%-30s", name) + " Favor gain: " + data["favor"],
-                                         (
-                                             : guild_mission, guild, guild_tier, name:),
-                                         count + "");
-      add_menu_item(m, mi);
+      class menu_item mi = new_menu_item(sprintf("%-30s", name) + " Favour gain: " + data["favour"],
+                                         ( : guild_mission, guild, guild_tier, name:), count + "");
+      add_menu_item(s, mi);
       count++;
    }
+   add_menu_item(o, gmi);
    return m;
 }
 
-class menu build_guild_favor_menu(string guild)
+class menu build_guild_favour_menu(string guild, class menu_item gmi)
 {
    class menu m;
    int count = 1;
-   int guild_tier = GUILD_D->query_guild_tier(guild);
-   mapping favors = GUILD_D->query_favors(guild_tier);
+   class section s = new_section("Favour", "accent");
+   class section o = new_section("Other", "warning");
+   int guild_tier = GUILD_D->query_guild_tier(guild) || 1;
+   mapping favours = GUILD_D->query_favours(guild_tier);
+   m = new_menu(capitalize(guild) + " Favour");
+   add_section_item(m, s);
+   add_section_item(m, o);
 
-   m = new_menu("[-- " + sprintf("%-30s", capitalize(guild) + " Favor") + "                   -----]");
-   foreach (string name, mapping data in favors)
+   foreach (string name, mapping data in favours)
    {
-      class menu_item mi = new_menu_item(name + " Favor Cost: " + data["favor"],
-                                         (
-                                             : guild_favor, guild, guild_tier, name:),
-                                         count + "");
-      add_menu_item(m, mi);
+      class menu_item mi = new_menu_item(name + " Favour Cost: " + data["favour"],
+                                         ( : guild_favour, guild, guild_tier, name:), count + "");
+      add_menu_item(s, mi);
       count++;
    }
+   add_menu_item(o, gmi);
+   add_menu_item(o, quit_item);
    return m;
 }
 
 void init_guild_modules(object *modules)
 {
+   guild = new_section("Guild", "accent");
    if (!sizeof(modules))
       return;
    foreach (object module in modules)
    {
       string guild = module->query_module_name();
       class menu gm = build_guild_menu(guild);
-      class menu g_mish = build_guild_mission_menu(guild);
-      class menu g_favor = build_guild_favor_menu(guild);
-      class menu_item mi = new_menu_item(capitalize(guild) + " vdu module", gm, module->query_letter());
+      class section gms = new_section("Guild Menu", "accent");
+      class menu_item guild_menu_item = new_menu_item("Return to guild menu", gm, "m");
+      class menu g_mish = build_guild_mission_menu(guild, guild_menu_item);
+      class menu g_favour = build_guild_favour_menu(guild, guild_menu_item);
+      class menu_item mi =
+          new_menu_item(capitalize(guild) + " " + GUILD_ARTEFACT_PLUGIN + " ", gm, module->query_letter());
       class menu_item mish_item = new_menu_item("Missions", g_mish, "s");
-      class menu_item favor_item = new_menu_item("Favor", g_favor, "f");
+      class menu_item favour_item = new_menu_item("Favour", g_favour, "f");
       class menu_item goto_guild_menu_item = new_menu_item("Return to " + guild + " menu", gm, "m");
-      add_menu_item(g_mish, goto_guild_menu_item);
-      add_menu_item(g_favor, goto_guild_menu_item);
-      add_menu_item(gm, mish_item);
-      add_menu_item(gm, favor_item);
-      add_menu_item(gm, goto_main_menu_item);
-      add_menu_item(toplevel, mi);
-      add_menu_item(gm, quit_item);
-      add_menu_item(g_mish, quit_item);
-      add_menu_item(g_favor, quit_item);
+
+      add_menu_item(main, mi);
+      add_section_item(gm, gms);
+      add_menu_item(gms, mish_item);
+      add_menu_item(gms, favour_item);
+      add_menu_item(gms, goto_main_menu_item);
+      add_menu_item(gms, quit_item);
    }
 }
 
-private
-string print_bank_info(string name, float amount)
+private string print_bank_info(string name, float amount)
 {
    return MONEY_D->currency_to_string(MONEY_D->calculate_denominations(amount, name), name);
 }
@@ -310,7 +325,10 @@ void create(int level)
    set_privilege(1);
 
    toplevel = new_menu(menu_text("Freamon Electronics Ltd. VDU"));
-   main_seperator = new_seperator(menu_text("Version 3.41 - Level " + level));
+   main = new_section("Main", "accent");
+   other = new_section("Other", "warning");
+   add_section_item(toplevel, main);
+   add_section_item(toplevel, other);
 
    // Since we'll use these things more than once, we can just
    // call new_menu_item once, and insert them wherever we want
@@ -319,16 +337,19 @@ void create(int level)
    goto_main_menu_item = new_menu_item("Return to main menu", toplevel, "m");
 
    // Add items to the toplevel (main) menu.
-   add_menu_item(toplevel, main_seperator);
-   add_menu_item(toplevel, new_menu_item("Bank Overview", ( : bank_overview:), "o"));
-   add_menu_item(toplevel, new_menu_item("Show Bank Statement", ( : bank_statement:), "b"));
-   add_menu_item(toplevel, new_menu_item("Change Banking Connection", ( : pick_a_bank :), "c"));
-   add_menu_item(toplevel, new_menu_item("Location", ( : show_location :), "l"));
-   add_menu_item(toplevel, new_menu_item("Time", ( : time :), "t"));
-   add_menu_item(toplevel, quit_item);
+   add_menu_item(main, new_menu_item("Bank Overview", ( : bank_overview:), "o"));
+   add_menu_item(main, new_menu_item("Show Bank Statement", ( : bank_statement:), "b"));
+   add_menu_item(main, new_menu_item("Change Banking Connection", ( : pick_a_bank:), "c"));
+   add_menu_item(main, new_menu_item("Location", ( : show_location:), "l"));
+   add_menu_item(main, new_menu_item("Time", ( : time:), "t"));
+
+   // Add items to the toplevel (main) menu.
+   add_menu_item(other, new_menu_item("MUD Options", ( : start_player_menu:), "o"));
+   add_menu_item(other, quit_item);
 }
 
 void start_menu()
 {
+   frame_init_user();
    init_menu_application(toplevel);
 }
